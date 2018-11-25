@@ -1,4 +1,4 @@
 from __future__ import division, print_function
 
-from relational_db.relational_db_transform import WriteToRelationalDB
-from csv_reader import CsvSource
+from csv_io import ReadFromCsv
+from relational_db_io.relational_db_transform import WriteToRelationalDB

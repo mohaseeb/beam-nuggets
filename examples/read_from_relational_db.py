@@ -4,7 +4,7 @@ import apache_beam as beam
 from apache_beam.io import WriteToText
 from apache_beam.options.pipeline_options import PipelineOptions
 
-from beam_nuggets.io.relational_db.relational_db_transform import (
+from beam_nuggets.io.relational_db_io.relational_db_transform import (
     ReadFromRelationalDB,
 )
 

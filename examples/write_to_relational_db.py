@@ -1,18 +1,16 @@
 from __future__ import division, print_function
 
 import apache_beam as beam
-from apache_beam.io import Read
 from apache_beam.options.pipeline_options import PipelineOptions
 
-from beam_nuggets.io.csv_reader import CsvSource
-from beam_nuggets.io import WriteToRelationalDB
+from beam_nuggets.io import WriteToRelationalDB, ReadFromCsv
 
 
 def main():
     csv_path = get_csv_file()
     db_uri, table_name = get_db_with_student_table()
     with beam.Pipeline(options=PipelineOptions()) as p:
-        students = p | "Reading students records" >> Read(CsvSource(csv_path))
+        students = p | "Reading students records" >> ReadFromCsv(csv_path)
         students | 'Writing to Sqlite table' >> WriteToRelationalDB(
             db_uri, table_name
         )
@@ -31,7 +29,7 @@ def get_csv_file():
         csv_writer.writerow([FIRST_NAME_FIELD, LAST_NAME_FIELD, LEVEL_FIELD])
         csv_writer.writerow(['Andrel', 'Norvell', 3])
         csv_writer.writerow(['Dinorah', 'Proudfoot', 8])
-        csv_writer.writerow(['Trulal', 'Plotkin', 4])
+        csv_writer.writerow(['TrulalLL', 'Plotkin', 14])
     return csv_file_path
 
 
