@@ -13,13 +13,16 @@ class SqlAlchemyDB(object):
         # will be set in self.start_session()
         self._session = None
         self._table_class = None
+        self._column_names = None
 
     def start_session(self):
         self._table_class = get_table(self._uri, self._table_name)
+        self._column_names = get_column_names(self._table_class)
         self._session = get_session(self._uri)
 
     def close_session(self):
         self._session.close()
+        self._session = None
 
     def write_row(self, data):
         try:
@@ -29,6 +32,10 @@ class SqlAlchemyDB(object):
             self._session.rollback()
             self._session.close()
             raise
+
+    def read(self):
+        for row_obj in self._session.query(self._table_class):
+            yield row_obj_to_dict(row_obj, self._column_names)
 
 
 Session = sessionmaker()
@@ -48,3 +55,11 @@ def get_table(db_uri, name):
         __table__ = Table(name, metadata, autoload=True)
 
     return TableClass
+
+
+def get_column_names(table_class):
+    return [col.name for col in table_class.__table__.columns]
+
+
+def row_obj_to_dict(obj, columns):
+    return {col: getattr(obj, col) for col in columns}

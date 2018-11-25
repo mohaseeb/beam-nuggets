@@ -1,9 +1,37 @@
 from __future__ import division, print_function
 
 from apache_beam import PTransform
-from apache_beam.io import iobase
+from apache_beam.io.iobase import BoundedSource, Read, Sink, Writer, Write
 
 from sqlalchemy_db import SqlAlchemyDB
+
+
+class ReadFromRelationalDB(PTransform):
+
+    def __init__(self, uri, table_name, **kwargs):
+        super(ReadFromRelationalDB, self).__init__(**kwargs)
+        self._uri = uri
+        self._table_name = table_name
+
+    def expand(self, pcoll):
+        return pcoll | Read(_RelationalDBSource(self._uri, self._table_name))
+
+
+class _RelationalDBSource(BoundedSource):
+    def __init__(self, uri, table_name):
+        self._uri = uri
+        self._table_name = table_name
+
+    def read(self, range_tracker):
+        # FIXME handle concurrent read?
+        db = SqlAlchemyDB(self._uri, self._table_name)
+        db.start_session()
+        for record in db.read():
+            yield record
+        db.close_session()
+
+    def get_range_tracker(self, start_position, stop_position):
+        pass
 
 
 class WriteToRelationalDB(PTransform):
@@ -15,11 +43,10 @@ class WriteToRelationalDB(PTransform):
 
     def expand(self, pcoll):
         return (
-            pcoll | iobase.Write(RelationalDBSink(self._uri, self._table_name))
-        )
+            pcoll | Write(_RelationalDBSink(self._uri, self._table_name)))
 
 
-class RelationalDBSink(iobase.Sink):
+class _RelationalDBSink(Sink):
 
     def __init__(self, uri, table_name):
         self._uri = uri
@@ -32,8 +59,8 @@ class RelationalDBSink(iobase.Sink):
 
     def open_writer(self, init_result, uid):
         print('init_results: {}, uid: {}'.format(init_result, uid))
-        return RelationalDBWriter(init_result, uid, self._uri,
-                                  self._table_name)
+        return _RelationalDBWriter(init_result, uid, self._uri,
+                                   self._table_name)
 
     def pre_finalize(self, init_result, writer_results):
         pre_finalize_result = None
@@ -48,7 +75,7 @@ class RelationalDBSink(iobase.Sink):
         # FIXME
 
 
-class RelationalDBWriter(iobase.Writer):
+class _RelationalDBWriter(Writer):
 
     def __init__(self, init_results, uid, uri, table_name):
         self._uid = uid
