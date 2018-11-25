@@ -6,7 +6,10 @@ setup(
     name='beam-nuggets',
     version='0.1.0.dev1',
     install_requires=[
-        'apache-beam',
+        'apache-beam>=2.8.0,<3.0.0',
+        'SQLAlchemy>=1.2.14,<2.0.0',
+        'psycopg2-binary>=2.7.6.1,<3.0.0',
+        'sqlalchemy-utils>=0.33.8,<0.34'
     ],
     packages=find_packages()
 )

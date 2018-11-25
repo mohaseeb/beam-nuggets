@@ -7,7 +7,7 @@ class AssignIncrId(beam.DoFn):
     def __init__(self, id_key='id', *unused_args, **unused_kwargs):
         super(AssignIncrId, self).__init__(*unused_args, **unused_kwargs)
         self.id_key = id_key
-        self.id_counter = 0  # FIXME likely not enough!
+        self.id_counter = 0  # FIXME likely not enough for parallel jobs
 
     def process(self, element):
         """
