@@ -35,25 +35,25 @@ def get_csv_file():
 
 def get_db_with_student_table():
     table_name = 'students'
-    db_uri = "sqlite:////tmp/csv_to_sqlite_dummy.sqlite"
+    db_uri = "sqlite:////tmp/csv_to_sqlite_dummy5.sqlite"
 
-    from sqlalchemy import (
-        create_engine, MetaData, Table, Column, Integer, String
-    )
-    from sqlalchemy_utils import create_database
-
-    # create DB
-    create_database(db_uri)
-
-    # create student table
-    metadata = MetaData(create_engine(db_uri))
-    student_table = Table(
-        'students',
-        metadata,
-        Column(FIRST_NAME_FIELD, String, primary_key=True),
-        Column(LAST_NAME_FIELD, String, primary_key=True),
-        Column(LEVEL_FIELD, Integer)
-    )
-    metadata.create_all()
+    # from sqlalchemy import (
+    #     create_engine, MetaData, Table, Column, Integer, String
+    # )
+    # from sqlalchemy_utils import create_database
+    #
+    # # create DB
+    # create_database(db_uri)
+    #
+    # # create student table
+    # metadata = MetaData(create_engine(db_uri))
+    # student_table = Table(
+    #     'students',
+    #     metadata,
+    #     Column(FIRST_NAME_FIELD, String, primary_key=True),
+    #     Column(LAST_NAME_FIELD, String, primary_key=True),
+    #     Column(LEVEL_FIELD, Integer)
+    # )
+    # metadata.create_all()
 
     return db_uri, table_name

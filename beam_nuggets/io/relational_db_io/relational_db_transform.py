@@ -59,8 +59,12 @@ class _RelationalDBSink(Sink):
 
     def open_writer(self, init_result, uid):
         print('init_results: {}, uid: {}'.format(init_result, uid))
-        return _RelationalDBWriter(init_result, uid, self._uri,
-                                   self._table_name)
+        return _RelationalDBWriter(
+            init_result,
+            uid,
+            self._uri,
+            self._table_name
+        )
 
     def pre_finalize(self, init_result, writer_results):
         pre_finalize_result = None
@@ -84,7 +88,7 @@ class _RelationalDBWriter(Writer):
 
     def write(self, record):
         assert isinstance(record, dict)
-        self._db.write_row(record)
+        self._db.write_record(record)
 
     def close(self):
         self._db.close_session()
