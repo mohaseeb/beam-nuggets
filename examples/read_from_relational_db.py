@@ -3,9 +3,7 @@ from __future__ import division, print_function
 import apache_beam as beam
 from apache_beam.options.pipeline_options import PipelineOptions
 
-from beam_nuggets.io.relational_db_io.relational_db_transform import (
-    ReadFromRelationalDB,
-)
+from beam_nuggets.io import ReadFromRelationalDB
 
 with beam.Pipeline(options=PipelineOptions()) as p:
     students = p | "Reading students records" >> ReadFromRelationalDB(

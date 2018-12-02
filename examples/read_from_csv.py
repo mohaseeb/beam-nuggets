@@ -6,14 +6,7 @@ from apache_beam.options.pipeline_options import PipelineOptions
 from beam_nuggets.io import ReadFromCsv
 
 
-def main():
-    csv_path = get_csv_file()
-    with beam.Pipeline(options=PipelineOptions()) as p:
-        students = p | "Reading students records" >> ReadFromCsv(csv_path)
-        students | 'Writing to stdout' >> beam.Map(lambda r: print(r))
-
-
-def get_csv_file():
+def get_csv_file_path():
     csv_file_path = '/tmp/csv_to_sqlite_dummy.csv'
     with open(csv_file_path, 'wb') as csv_file:
         import csv
@@ -23,3 +16,9 @@ def get_csv_file():
         csv_writer.writerow(['Dinorah', 'Proudfoot', 8])
         csv_writer.writerow(['Trulal', 'Plotkin', 14])
     return csv_file_path
+
+
+path_to_csv = get_csv_file_path()
+with beam.Pipeline(options=PipelineOptions()) as p:
+    students = p | "Reading students records" >> ReadFromCsv(path_to_csv)
+    students | 'Writing to stdout' >> beam.Map(lambda r: print(r))

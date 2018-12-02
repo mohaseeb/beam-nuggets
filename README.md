@@ -18,9 +18,7 @@ pip install .
 import apache_beam as beam
 from apache_beam.options.pipeline_options import PipelineOptions
 
-from beam_nuggets.io.relational_db_io.relational_db_transform import (
-    ReadFromRelationalDB,
-)
+from beam_nuggets.io import ReadFromRelationalDB
 
 with beam.Pipeline(options=PipelineOptions()) as p:
     students = p | "Reading students records" >> ReadFromRelationalDB(
@@ -63,6 +61,18 @@ below databases:
 <!--* mysql-->
 ### Read from CSV
 * ReadFromCsv
+```python
+import apache_beam as beam
+from apache_beam.options.pipeline_options import PipelineOptions
+
+from beam_nuggets.io import ReadFromCsv
+
+path_to_csv = get_csv_file_path()
+with beam.Pipeline(options=PipelineOptions()) as p:
+    students = p | "Reading students records" >> ReadFromCsv(path_to_csv)
+    students | 'Writing to stdout' >> beam.Map(lambda r: print(r))
+
+```
 ## Others
 * ...
 # TODO
