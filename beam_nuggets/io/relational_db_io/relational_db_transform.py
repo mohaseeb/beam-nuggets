@@ -7,26 +7,42 @@ from sqlalchemy_db import SqlAlchemyDB
 
 
 class ReadFromRelationalDB(PTransform):
-
-    def __init__(self, uri, table_name, **kwargs):
+    def __init__(
+        self,
+        table_name,
+        drivername,
+        host=None,
+        port=None,
+        database=None,
+        username=None,
+        password=None,
+        **kwargs
+    ):
         super(ReadFromRelationalDB, self).__init__(**kwargs)
-        self._uri = uri
-        self._table_name = table_name
+        self._db_args = dict(
+            host=host,
+            port=port,
+            drivername=drivername,
+            database=database,
+            username=username,
+            password=password,
+            table_name=table_name,
+        )
 
     def expand(self, pcoll):
-        return pcoll | Read(_RelationalDBSource(self._uri, self._table_name))
+        return pcoll | Read(_RelationalDBSource(self._db_args))
 
 
 class _RelationalDBSource(BoundedSource):
-    def __init__(self, uri, table_name):
-        self._uri = uri
-        self._table_name = table_name
+    def __init__(self, db_args):
+        self._table_name = db_args.pop('table_name')
+        self._db_args = db_args
 
     def read(self, range_tracker):
         # FIXME handle concurrent read?
-        db = SqlAlchemyDB(self._uri, self._table_name)
+        db = SqlAlchemyDB(**self._db_args)
         db.start_session()
-        for record in db.read():
+        for record in db.read(self._table_name):
             yield record
         db.close_session()
 
@@ -35,22 +51,39 @@ class _RelationalDBSource(BoundedSource):
 
 
 class WriteToRelationalDB(PTransform):
-
-    def __init__(self, uri, table_name, **kwargs):
+    def __init__(
+        self,
+        table_name,
+        drivername,
+        host=None,
+        port=None,
+        database=None,
+        username=None,
+        password=None,
+        create_db_if_missing=False,
+        create_table_if_missing=False,
+        **kwargs
+    ):
         super(WriteToRelationalDB, self).__init__(**kwargs)
-        self._uri = uri
-        self._table_name = table_name
+        self._db_args = dict(
+            host=host,
+            port=port,
+            drivername=drivername,
+            database=database,
+            username=username,
+            password=password,
+            table_name=table_name,
+            create_db_if_missing=create_db_if_missing,
+            create_table_if_missing=create_table_if_missing,
+        )
 
     def expand(self, pcoll):
-        return (
-            pcoll | Write(_RelationalDBSink(self._uri, self._table_name)))
+        return (pcoll | Write(_RelationalDBSink(self._db_args)))
 
 
 class _RelationalDBSink(Sink):
-
-    def __init__(self, uri, table_name):
-        self._uri = uri
-        self._table_name = table_name
+    def __init__(self, db_args):
+        self._db_args = db_args
 
     def initialize_write(self):
         init_results = None
@@ -58,13 +91,7 @@ class _RelationalDBSink(Sink):
         # FIXME
 
     def open_writer(self, init_result, uid):
-        print('init_results: {}, uid: {}'.format(init_result, uid))
-        return _RelationalDBWriter(
-            init_result,
-            uid,
-            self._uri,
-            self._table_name
-        )
+        return _RelationalDBWriter(init_result, uid, self._db_args)
 
     def pre_finalize(self, init_result, writer_results):
         pre_finalize_result = None
@@ -72,23 +99,20 @@ class _RelationalDBSink(Sink):
         # FIXME
 
     def finalize_write(self, init_result, writer_results, pre_finalize_result):
-        print(
-            'init_results: {}, write_results: {}, pre_finalize_result:{}'
-            ''.format(init_result, writer_results, pre_finalize_result)
-        )
+        pass
         # FIXME
 
 
 class _RelationalDBWriter(Writer):
-
-    def __init__(self, init_results, uid, uri, table_name):
+    def __init__(self, init_results, uid, db_args):
         self._uid = uid
-        self._db = SqlAlchemyDB(uri, table_name)
+        self._table_name = db_args.pop('table_name')
+        self._db = SqlAlchemyDB(**db_args)
         self._db.start_session()
 
     def write(self, record):
         assert isinstance(record, dict)
-        self._db.write_record(record)
+        self._db.write_record(self._table_name, record)
 
     def close(self):
         self._db.close_session()
