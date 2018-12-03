@@ -100,7 +100,7 @@ class SqlAlchemyDB(object):
             sqlalchemy_table = Table(
                 name,
                 metadata,
-                *self._columns_from_sample(record)
+                *self._columns_from_sample_record(record)
             )
             metadata.create_all()
             table_class = self._create_table_class(sqlalchemy_table)
@@ -113,7 +113,7 @@ class SqlAlchemyDB(object):
 
         return TableClass
 
-    def _columns_from_sample(self, record):
+    def _columns_from_sample_record(self, record):
         return (
             [
                 Column(self._get_idx_name(record), Integer, primary_key=True)

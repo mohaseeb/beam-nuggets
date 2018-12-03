@@ -1,4 +1,6 @@
-A collection of transforms for the Apache beam python SDK.
+A collection of random transforms that I use on my Apache beam python 
+pipelines. Many are simple (or trivial) transforms. The most useful ones are 
+those for reading/writing from/to relational databases.
 # !!WORK IN PROGRESS!!
 # Installation
 ```bash
@@ -54,8 +56,8 @@ with beam.Pipeline(options=PipelineOptions()) as p:
 ```
 
 These transforms uses SqlAlchemy, and hence can be used to read/write from/to
-any database supported by SqlAlchemy. These transforms are tested against 
-below databases:
+any relational database (sql database) supported by SqlAlchemy. These 
+transforms has been tested against below databases:
 * Sqlite
 <!--* postgres-->
 <!--* mysql-->
@@ -74,13 +76,48 @@ with beam.Pipeline(options=PipelineOptions()) as p:
 
 ```
 ## Others
-* ...
+* SelectFromNestedDict
+```python
+import apache_beam as beam
+from apache_beam.options.pipeline_options import PipelineOptions
+
+from beam_nuggets.transforms import SelectFromNestedDict
+
+inputs = [
+    {
+        'name': {'first': 'Star', 'second': 'Light'},
+        'address': {'st': 'Jupiter', 'flat': 3},
+        'email': 's@l.no'
+    },
+    {
+        'name': {'first': 'Mark', 'second': 'Sight'},
+        'address': {'st': 'Loon', 'flat': 5},
+        'email': 'm@s.no'
+    }
+]
+with beam.Pipeline(options=PipelineOptions()) as p:
+    nested = p | "Reading nested dicts" >> beam.Create(inputs)
+    transformed = nested | "filtering" >> beam.ParDo(SelectFromNestedDict(
+        keys=['name.first', 'address.st', 'email'],
+        # deepest_key_as_name=True,
+    ))
+    transformed | 'Writing to stdout' >> beam.Map(print)
+
+# output: 
+# {'address_st': 'Jupiter', 'name_first': 'Star', 'email': 's@l.no'}
+# {'address_st': 'Loon', 'name_first': 'Mark', 'email': 'm@s.no'}
+# or (if deepest_key_as_name is set to True)
+# {'st': 'Jupiter', 'email': 's@l.no', 'first': 'Star'}
+# {'st': 'Loon', 'email': 'm@s.no', 'first': 'Mark'}
+```
+* 
 # TODO
-* csv_to_sqlite.py in GCP
-* WriteToCsv
 * Cleanup and DOCs for all transforms
-* DOCs DOCs DOCs
+* WriteToCsv
+* csv_to_sqlite.py in GCP
 * More examples (write to postgres)
+* WriteToRelationalDB, log when db or table is created
+* WriteToRelationalDB, extend the automatic column type inference logic.
 * WriteToRelationalDB Support specifying primary key(s) when writing to new 
 table
 * Investigate using ParDo instead of Source/Sink for RelationalDB Read/Write (
