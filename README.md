@@ -110,7 +110,8 @@ with beam.Pipeline(options=PipelineOptions()) as p:
 # {'st': 'Jupiter', 'email': 's@l.no', 'first': 'Star'}
 # {'st': 'Loon', 'email': 'm@s.no', 'first': 'Mark'}
 ```
-* 
+* ParseJson
+* AssignUniqueId
 # TODO
 * Cleanup and DOCs for all transforms
 * WriteToCsv
