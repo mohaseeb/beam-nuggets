@@ -50,7 +50,7 @@ with beam.Pipeline(options=PipelineOptions()) as p:
         {'name': 'Jan', 'num': 1},
         {'name': 'Feb', 'num': 2},
     ])
-    months | 'Writing to Sqlite table' >> WriteToRelationalDB(
+    months | 'Writing to DB' >> WriteToRelationalDB(
         drivername='postgresql',
         host='localhost',
         port=5432,
@@ -65,9 +65,9 @@ with beam.Pipeline(options=PipelineOptions()) as p:
 
 These transforms uses SqlAlchemy, and hence can be used to read/write from/to
 any relational database (sql database) supported by SqlAlchemy. These 
-transforms has been tested against below databases:
+transforms has been tested (brief tests) on below databases:
 * Sqlite
-<!--* postgres-->
+* PostgreSQL
 <!--* mysql-->
 ### Read from CSV
 * ReadFromCsv
@@ -125,6 +125,7 @@ with beam.Pipeline(options=PipelineOptions()) as p:
 * WriteToCsv
 * run examples on GCP
 * More examples (write to postgres)
+* unit tests
 * Sql queries support in ReadToRelationalDB
 * Check JdbcIO for inspiration for WriteToRelationalDB/ReadToRelationalDB
 * WriteToRelationalDB, log when db or table is created
