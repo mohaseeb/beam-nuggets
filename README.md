@@ -23,12 +23,16 @@ from apache_beam.options.pipeline_options import PipelineOptions
 from beam_nuggets.io import ReadFromRelationalDB
 
 with beam.Pipeline(options=PipelineOptions()) as p:
-    students = p | "Reading students records" >> ReadFromRelationalDB(
-        drivername='sqlite',
-        database='/tmp/csv_to_sqlite_dummy.sqlite',
-        table_name='students',
+    records = p | "Reading records from db" >> ReadFromRelationalDB(
+        drivername='postgresql',
+        host='localhost',
+        port=5432,
+        username='postgres',
+        password='password',
+        database='calendar',
+        table_name='months',
     )
-    students | 'Writing to stdout' >> beam.Map(lambda r: print(r))
+    records | 'Writing to stdout' >> beam.Map(print)
 ```
 * WriteToRelationalDB
 <!--write to sql database-->
@@ -42,13 +46,17 @@ from apache_beam.options.pipeline_options import PipelineOptions
 from beam_nuggets.io import WriteToRelationalDB
 
 with beam.Pipeline(options=PipelineOptions()) as p:
-    students = p | "Reading students records" >> beam.Create([
+    months = p | "Reading month records" >> beam.Create([
         {'name': 'Jan', 'num': 1},
         {'name': 'Feb', 'num': 2},
     ])
-    students | 'Writing to Sqlite table' >> WriteToRelationalDB(
-        drivername='sqlite',
-        database='/tmp/csv_to_sqlite_dummy22.sqlite',
+    months | 'Writing to Sqlite table' >> WriteToRelationalDB(
+        drivername='postgresql',
+        host='localhost',
+        port=5432,
+        username='postgres',
+        password='password',
+        database='calendar',
         table_name='months',
         create_db_if_missing=True,
         create_table_if_missing=True,
@@ -112,11 +120,13 @@ with beam.Pipeline(options=PipelineOptions()) as p:
 ```
 * ParseJson
 * AssignUniqueId
-# TODO
+# TODO 
 * Cleanup and DOCs for all transforms
 * WriteToCsv
-* csv_to_sqlite.py in GCP
+* run examples on GCP
 * More examples (write to postgres)
+* Sql queries support in ReadToRelationalDB
+* Check JdbcIO for inspiration for WriteToRelationalDB/ReadToRelationalDB
 * WriteToRelationalDB, log when db or table is created
 * WriteToRelationalDB, extend the automatic column type inference logic.
 * WriteToRelationalDB Support specifying primary key(s) when writing to new 
