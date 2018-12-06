@@ -2,6 +2,7 @@ A collection of random transforms that I use on my Apache beam python
 pipelines. Many are simple (or trivial) transforms. The most useful ones are 
 those for reading/writing from/to relational databases.
 # !!WORK IN PROGRESS!!
+See TODO at the bottom.
 # Installation
 ```bash
 git clone git@github.com:mohaseeb/beam_nuggets.git
