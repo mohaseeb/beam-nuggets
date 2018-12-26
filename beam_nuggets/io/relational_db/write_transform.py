@@ -1,53 +1,9 @@
 from __future__ import division, print_function
 
 from apache_beam import PTransform
-from apache_beam.io.iobase import BoundedSource, Read, Sink, Writer, Write
+from apache_beam.io.iobase import Sink, Writer, Write
 
 from sqlalchemy_db import SqlAlchemyDB
-
-
-class ReadFromRelationalDB(PTransform):
-    def __init__(
-        self,
-        table_name,
-        drivername,
-        host=None,
-        port=None,
-        database=None,
-        username=None,
-        password=None,
-        **kwargs
-    ):
-        super(ReadFromRelationalDB, self).__init__(**kwargs)
-        self._db_args = dict(
-            host=host,
-            port=port,
-            drivername=drivername,
-            database=database,
-            username=username,
-            password=password,
-            table_name=table_name,
-        )
-
-    def expand(self, pcoll):
-        return pcoll | Read(_RelationalDBSource(self._db_args))
-
-
-class _RelationalDBSource(BoundedSource):
-    def __init__(self, db_args):
-        self._table_name = db_args.pop('table_name')
-        self._db_args = db_args
-
-    def read(self, range_tracker):
-        # FIXME handle concurrent read?
-        db = SqlAlchemyDB(**self._db_args)
-        db.start_session()
-        for record in db.read(self._table_name):
-            yield record
-        db.close_session()
-
-    def get_range_tracker(self, start_position, stop_position):
-        pass
 
 
 class WriteToRelationalDB(PTransform):
