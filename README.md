@@ -127,10 +127,10 @@ with beam.Pipeline(options=PipelineOptions()) as p:
 * Check JdbcIO for inspiration for WriteToRelationalDB/ReadToRelationalDB
 * unit tests
 * Enable WriteToRelationalDB user to fully configure new Tables creation
-* WriteToRelationalDB Support specifying primary key(s) when writing to new 
-table
+* convienience shortucts when creating new tables
+    - WriteToRelationalDB Support specifying primary key(s) when writing to new table
+    - WriteToRelationalDB, extend the automatic column type inference.
 * Sql queries support in ReadToRelationalDB
-* WriteToRelationalDB, extend the automatic column type inference.
 * more nuggets: WriteToCsv
 * Cleanup and DOCs for all transforms
 * upload to pypi
