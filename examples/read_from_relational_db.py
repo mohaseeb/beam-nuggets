@@ -6,9 +6,9 @@ from apache_beam.options.pipeline_options import PipelineOptions
 from beam_nuggets.io import ReadFromRelationalDB
 
 with beam.Pipeline(options=PipelineOptions()) as p:
-    records = p | "Reading records from db" >> ReadFromRelationalDB(
+    months = p | "Reading records from db" >> ReadFromRelationalDB(
         drivername='sqlite',
-        database='/tmp/csv_to_sqlite_dummy.sqlite',
-        table_name='students',
+        database='/tmp/months_db.sqlite',
+        table_name='months',
     )
-    records | 'Writing to stdout' >> beam.Map(print)
+    months | 'Writing to stdout' >> beam.Map(print)

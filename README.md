@@ -119,19 +119,20 @@ with beam.Pipeline(options=PipelineOptions()) as p:
 # {'st': 'Jupiter', 'email': 's@l.no', 'first': 'Star'}
 # {'st': 'Loon', 'email': 'm@s.no', 'first': 'Mark'}
 ```
-* ParseJson
-* AssignUniqueId
-# TODO 
-* Cleanup and DOCs for all transforms
-* WriteToCsv
-* run examples on GCP
-* More examples (write to postgres)
-* unit tests
-* Sql queries support in ReadToRelationalDB
+* Summarize the investigation of using Source/Sink Vs ParDo for IO 
 * Check JdbcIO for inspiration for WriteToRelationalDB/ReadToRelationalDB
-* WriteToRelationalDB, log when db or table is created
-* WriteToRelationalDB, extend the automatic column type inference logic.
+* unit tests
+* All WriteToRelationalDB user to fully configure new Tables
 * WriteToRelationalDB Support specifying primary key(s) when writing to new 
 table
-* Investigate using ParDo instead of Source/Sink for RelationalDB Read/Write (
-as recommended by beam team)
+* Sql queries support in ReadToRelationalDB
+* WriteToRelationalDB, extend the automatic column type inference.
+* more nuggets: WriteToCsv
+* Cleanup and DOCs for all transforms
+* upload to pypi
+* Example how to run on GCP
+* integration tests
+* DB transforms failures handling
+* DB transforms for unbounded sources (e.g. keep sessions alive)
+* more nuggets: Elasticsearch, Mongo 
+* WriteToRelationalDB, logging
