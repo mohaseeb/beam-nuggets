@@ -1,7 +1,6 @@
 from __future__ import division, print_function
 
-from apache_beam import PTransform
-from apache_beam.io.iobase import Sink, Writer, Write
+from apache_beam import PTransform, DoFn, ParDo
 
 from sqlalchemy_db import SqlAlchemyDB
 
@@ -18,9 +17,10 @@ class WriteToRelationalDB(PTransform):
         password=None,
         create_db_if_missing=False,
         create_table_if_missing=False,
+        *args,
         **kwargs
     ):
-        super(WriteToRelationalDB, self).__init__(**kwargs)
+        super(WriteToRelationalDB, self).__init__(*args, **kwargs)
         self._db_args = dict(
             host=host,
             port=port,
@@ -34,44 +34,22 @@ class WriteToRelationalDB(PTransform):
         )
 
     def expand(self, pcoll):
-        return (pcoll | Write(_RelationalDBSink(self._db_args)))
+        return pcoll | ParDo(_WriteToRelationalDBFn(self._db_args))
 
 
-class _RelationalDBSink(Sink):
-    def __init__(self, db_args):
-        self._db_args = db_args
+class _WriteToRelationalDBFn(DoFn):
+    def __init__(self, db_args, *args, **kwargs):
+        super(_WriteToRelationalDBFn, self).__init__(*args, **kwargs)
+        self._db_args = dict(db_args)
+        self._table_name = self._db_args.pop('table_name')
 
-    def initialize_write(self):
-        init_results = None
-        return init_results
-        # FIXME
-
-    def open_writer(self, init_result, uid):
-        return _RelationalDBWriter(init_result, uid, self._db_args)
-
-    def pre_finalize(self, init_result, writer_results):
-        pre_finalize_result = None
-        return pre_finalize_result
-        # FIXME
-
-    def finalize_write(self, init_result, writer_results, pre_finalize_result):
-        pass
-        # FIXME
-
-
-class _RelationalDBWriter(Writer):
-    def __init__(self, init_results, uid, db_args):
-        self._uid = uid
-        self._table_name = db_args.pop('table_name')
-        self._db = SqlAlchemyDB(**db_args)
+    def start_bundle(self):
+        self._db = SqlAlchemyDB(**self._db_args)
         self._db.start_session()
 
-    def write(self, record):
-        assert isinstance(record, dict)
-        self._db.write_record(self._table_name, record)
+    def process(self, element):
+        assert isinstance(element, dict)
+        self._db.write_record(self._table_name, element)
 
-    def close(self):
+    def finish_bundle(self):
         self._db.close_session()
-        writes_results = self._uid
-        return writes_results
-        # FIXME
