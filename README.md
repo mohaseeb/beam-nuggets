@@ -119,6 +119,10 @@ with beam.Pipeline(options=PipelineOptions()) as p:
 # {'st': 'Jupiter', 'email': 's@l.no', 'first': 'Star'}
 # {'st': 'Loon', 'email': 'm@s.no', 'first': 'Mark'}
 ```
+* ParseJson
+* AssignUniqueId
+
+# TODO 
 * Summarize the investigation of using Source/Sink Vs ParDo for IO 
 * Check JdbcIO for inspiration for WriteToRelationalDB/ReadToRelationalDB
 * unit tests
