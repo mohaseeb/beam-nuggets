@@ -126,7 +126,7 @@ with beam.Pipeline(options=PipelineOptions()) as p:
 * Summarize the investigation of using Source/Sink Vs ParDo for IO 
 * Check JdbcIO for inspiration for WriteToRelationalDB/ReadToRelationalDB
 * unit tests
-* All WriteToRelationalDB user to fully configure new Tables
+* Enable WriteToRelationalDB user to fully configure new Tables creation
 * WriteToRelationalDB Support specifying primary key(s) when writing to new 
 table
 * Sql queries support in ReadToRelationalDB
