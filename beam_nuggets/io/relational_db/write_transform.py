@@ -17,6 +17,7 @@ class WriteToRelationalDB(PTransform):
         password=None,
         create_db_if_missing=False,
         create_table_if_missing=False,
+        primary_key_columns=None,
         *args,
         **kwargs
     ):
@@ -29,6 +30,7 @@ class WriteToRelationalDB(PTransform):
             username=username,
             password=password,
             table_name=table_name,
+            primary_key_columns=primary_key_columns,
             create_db_if_missing=create_db_if_missing,
             create_table_if_missing=create_table_if_missing,
         )

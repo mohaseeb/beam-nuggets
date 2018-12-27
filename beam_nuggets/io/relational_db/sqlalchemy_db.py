@@ -21,6 +21,7 @@ class SqlAlchemyDB(object):
         database=None,
         username=None,
         password=None,
+        primary_key_columns=None,
         create_db_if_missing=False,
         create_table_if_missing=False
     ):
@@ -34,6 +35,8 @@ class SqlAlchemyDB(object):
         ))
         self._create_table_if_missing = create_table_if_missing
         self._create_db_if_missing = create_db_if_missing
+
+        self._primary_key_columns = primary_key_columns or []
 
         self._SessionClass = sessionmaker(bind=create_engine(self._uri))
         self._session = None  # will be set in self.start_session()
@@ -114,24 +117,42 @@ class SqlAlchemyDB(object):
         return TableClass
 
     def _columns_from_sample_record(self, record):
-        return (
-            [
-                Column(self._get_idx_name(record), Integer, primary_key=True)
-            ] +
-            [
-                Column(key, self._db_type_from_value(value))
-                for key, value in record.iteritems()
-            ]
-        )
+
+        if len(self._primary_key_columns) == 0:
+            columns = [
+                          Column(
+                              self._get_non_repeated_name(record),
+                              Integer,
+                              primary_key=True
+                          )
+                      ] + [
+                          Column(key, self.infer_db_type(value))
+                          for key, value in record.iteritems()
+                      ]
+        else:
+            columns = [
+                          Column(
+                              col,
+                              self.infer_db_type(record[col]),
+                              primary_key=True
+                          )
+                          for col in self._primary_key_columns
+                      ] + [
+                          Column(key, self.infer_db_type(value))
+                          for key, value in record.iteritems()
+                          if key not in self._primary_key_columns
+                      ]
+
+        return columns
 
     @staticmethod
-    def _get_idx_name(record):
+    def _get_non_repeated_name(record):
         idx_col = 'id'
         while idx_col in record.keys():
             idx_col += '_'
         return idx_col
 
-    def _db_type_from_value(self, val):
+    def infer_db_type(self, val):
         return self.PYTHON_TYPE_TO_DB_TYPE.get(type(val), String)
 
     PYTHON_TYPE_TO_DB_TYPE = {
