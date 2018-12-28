@@ -11,8 +11,7 @@ class TransformBaseTest(unittest.TestCase):
         test_db_cls = TestDatabase
         self.db_params = dict(
             drivername='sqlite',
-            # database='', #  In memory sqllite DB
-            database='/tmp/beam_nuggets_unittest_db.sqlite',
+            database='/tmp/delete_me_beam_nuggets_unittest.sqlite',
         )
         self.db = test_db_cls(self.db_params)
 
@@ -22,5 +21,5 @@ class TransformBaseTest(unittest.TestCase):
 
     def tearDown(self):
         # clean DB resource
-        self.db.destroy_db()
+        self.db.destroy_db()  # will, as well, delete created sqllite db file
         self.db = None
