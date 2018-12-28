@@ -124,10 +124,9 @@ with beam.Pipeline(options=PipelineOptions()) as p:
 
 # TODO 
 =======
-* rename to beam-nuggets
+* unit tests
 * Summarize the investigation of using Source/Sink Vs ParDo for IO 
 * Check JdbcIO for inspiration for WriteToRelationalDB/ReadToRelationalDB
-* unit tests
 * Enable WriteToRelationalDB user to fully configure new Tables creation
 * convienience shortucts when creating new tables
     - WriteToRelationalDB Support specifying primary key(s) when writing to new table
