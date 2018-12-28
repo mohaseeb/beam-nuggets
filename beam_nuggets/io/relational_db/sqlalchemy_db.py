@@ -36,7 +36,7 @@ class SqlAlchemyDB(object):
         self._create_table_if_missing = create_table_if_missing
         self._create_db_if_missing = create_db_if_missing
 
-        self._primary_key_columns = primary_key_columns or []
+        self._primary_key_column_names = primary_key_columns or []
 
         self._SessionClass = sessionmaker(bind=create_engine(self._uri))
         self._session = None  # will be set in self.start_session()
@@ -47,6 +47,10 @@ class SqlAlchemyDB(object):
         if self._create_db_if_missing:
             self._create_db_if_not_exists()
         self._session = self._SessionClass()
+
+    def _create_db_if_not_exists(self):
+        if not database_exists(self._uri):
+            create_database(self._uri)
 
     def close_session(self):
         self._session.close()
@@ -62,10 +66,18 @@ class SqlAlchemyDB(object):
         table.write_record(self._session, record_dict)
 
     def _open_table_for_read(self, name):
-        return self._open_table(name, self._load_table)
+        return self._open_table(name=name, get_table_f=load_table)
 
     def _open_table_for_write(self, name, record):
-        return self._open_table(name, self._create_table, record=record)
+        return self._open_table(
+            name=name,
+            get_table_f=create_table,
+            create_table_if_missing=self._create_table_if_missing,
+            create_columns_f=lambda: _columns_from_sample_record(
+                record=record,
+                primary_key_column_names=self._primary_key_column_names
+            )
+        )
 
     def _open_table(self, name, get_table_f, **kwargs):
         table = self._name_to_table.get(name, None)
@@ -76,93 +88,78 @@ class SqlAlchemyDB(object):
             table = self._name_to_table[name]
         return table
 
-    @staticmethod
-    def _get_table(name, get_table_f, **kwargs):
-        table_class = get_table_f(name, **kwargs)
+    def _get_table(self, name, get_table_f, **kwargs):
+        table_class = get_table_f(self._session, name, **kwargs)
         if table_class:
             table = _Table(table_class=table_class, name=name)
         else:
             raise SqlAlchemyDbException('Failed to get table {}'.format(name))
         return table
 
-    def _load_table(self, name):
-        table_class = None
-        engine = self._session.bind
-        if engine.dialect.has_table(engine, name):
-            metadata = MetaData(bind=engine)
-            table_class = self._create_table_class(
-                Table(name, metadata, autoload=True)
-            )
-        return table_class
 
-    def _create_table(self, name, record):
-        table_class = self._load_table(name)
-        if not table_class and self._create_table_if_missing:
-            engine = self._session.bind
-            metadata = MetaData(bind=engine)
-            sqlalchemy_table = Table(
-                name,
-                metadata,
-                *self._columns_from_sample_record(record)
-            )
-            metadata.create_all()
-            table_class = self._create_table_class(sqlalchemy_table)
-        return table_class
+def load_table(session, name):
+    table_class = None
+    engine = session.bind
+    if engine.dialect.has_table(engine, name):
+        metadata = MetaData(bind=engine)
+        table_class = create_table_class(Table(name, metadata, autoload=True))
+    return table_class
 
-    @staticmethod
-    def _create_table_class(sqlalchemy_table):
-        class TableClass(declarative_base()):
-            __table__ = sqlalchemy_table
 
-        return TableClass
+def create_table(
+    session,
+    name,
+    create_table_if_missing,
+    create_columns_f
+):
+    table_class = load_table(session, name)
+    if not table_class and create_table_if_missing:
+        engine = session.bind
+        metadata = MetaData(bind=engine)
+        sqlalchemy_table = Table(name, metadata, *create_columns_f())
+        metadata.create_all()
+        table_class = create_table_class(sqlalchemy_table)
+    return table_class
 
-    def _columns_from_sample_record(self, record):
 
-        if len(self._primary_key_columns) == 0:
-            columns = [
-                          Column(
-                              self._get_non_repeated_name(record),
-                              Integer,
-                              primary_key=True
-                          )
-                      ] + [
-                          Column(key, self.infer_db_type(value))
-                          for key, value in record.iteritems()
-                      ]
-        else:
-            columns = [
-                          Column(
-                              col,
-                              self.infer_db_type(record[col]),
-                              primary_key=True
-                          )
-                          for col in self._primary_key_columns
-                      ] + [
-                          Column(key, self.infer_db_type(value))
-                          for key, value in record.iteritems()
-                          if key not in self._primary_key_columns
-                      ]
+def create_table_class(sqlalchemy_table):
+    class TableClass(declarative_base()):
+        __table__ = sqlalchemy_table
 
-        return columns
+    return TableClass
 
-    @staticmethod
-    def _get_non_repeated_name(record):
-        idx_col = 'id'
-        while idx_col in record.keys():
-            idx_col += '_'
-        return idx_col
 
-    def infer_db_type(self, val):
-        return self.PYTHON_TYPE_TO_DB_TYPE.get(type(val), String)
+def _columns_from_sample_record(record, primary_key_column_names):
+    if len(primary_key_column_names) == 0:
+        pri_col_name = 'id'
+        while pri_col_name in record.keys():
+            pri_col_name += '_'
+        primary_key_columns = [Column(pri_col_name, Integer, primary_key=True)]
+        other_columns = [
+            Column(col, infer_db_type(value))
+            for col, value in record.iteritems()
+        ]
+    else:
+        primary_key_columns = [
+            Column(col, infer_db_type(record[col]), primary_key=True)
+            for col in primary_key_column_names
+        ]
+        other_columns = [
+            Column(col, infer_db_type(value))
+            for col, value in record.iteritems()
+            if col not in primary_key_column_names
+        ]
+    return primary_key_columns + other_columns
 
-    PYTHON_TYPE_TO_DB_TYPE = {
-        int: Integer,
-        str: String,
-    }
 
-    def _create_db_if_not_exists(self):
-        if not database_exists(self._uri):
-            create_database(self._uri)
+def infer_db_type(val):
+    return PYTHON_TYPE_TO_DB_TYPE.get(type(val), String)
+
+
+PYTHON_TYPE_TO_DB_TYPE = {
+    int: Integer,
+    str: String,
+}
 
 
 class SqlAlchemyDbException(Exception):
@@ -173,7 +170,7 @@ class _Table(object):
     def __init__(self, table_class, name):
         self._Class = table_class
         self.name = name
-        self._column_names = self._get_column_names(table_class)
+        self._column_names = get_column_names_from_table(table_class)
 
     def records(self, session):
         for record in session.query(self._Class):
@@ -194,6 +191,6 @@ class _Table(object):
     def _from_db_record(self, db_record):
         return {col: getattr(db_record, col) for col in self._column_names}
 
-    @staticmethod
-    def _get_column_names(table_class):
-        return [col.name for col in table_class.__table__.columns]
+
+def get_column_names_from_table(table_class):
+    return [col.name for col in table_class.__table__.columns]
