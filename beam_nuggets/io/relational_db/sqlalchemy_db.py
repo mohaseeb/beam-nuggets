@@ -44,13 +44,9 @@ class SqlAlchemyDB(object):
         self._name_to_table = {}
 
     def start_session(self):
-        if self._create_db_if_missing:
-            self._create_db_if_not_exists()
-        self._session = self._SessionClass()
-
-    def _create_db_if_not_exists(self):
-        if not database_exists(self._uri):
+        if self._create_db_if_missing and not database_exists(self._uri):
             create_database(self._uri)
+        self._session = self._SessionClass()
 
     def close_session(self):
         self._session.close()
@@ -62,11 +58,18 @@ class SqlAlchemyDB(object):
             yield record
 
     def write_record(self, table_name, record_dict):
+        """
+        https://docs.sqlalchemy.org/en/latest/dialects/postgresql.html#insert-on-conflict-upsert
+        https://docs.sqlalchemy.org/en/latest/dialects/mysql.html#mysql-insert-on-duplicate-key-update
+        """
         table = self._open_table_for_write(table_name, record_dict)
         table.write_record(self._session, record_dict)
 
     def _open_table_for_read(self, name):
-        return self._open_table(name=name, get_table_f=load_table)
+        return self._open_table(
+            name=name,
+            get_table_f=load_table
+        )
 
     def _open_table_for_write(self, name, record):
         return self._open_table(
@@ -106,12 +109,7 @@ def load_table(session, name):
     return table_class
 
 
-def create_table(
-    session,
-    name,
-    create_table_if_missing,
-    create_columns_f
-):
+def create_table(session, name, create_table_if_missing, create_columns_f):
     table_class = load_table(session, name)
     if not table_class and create_table_if_missing:
         engine = session.bind

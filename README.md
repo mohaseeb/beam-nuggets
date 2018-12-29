@@ -123,12 +123,10 @@ with beam.Pipeline(options=PipelineOptions()) as p:
 * AssignUniqueId
 
 # TODO 
-=======
-* unit tests
 * Summarize the investigation of using Source/Sink Vs ParDo for IO 
-* Check JdbcIO for inspiration for WriteToRelationalDB/ReadToRelationalDB
 * Enable WriteToRelationalDB user to fully configure new Tables creation
-* convienience shortucts when creating new tables
+* unit tests
+* convenience shortcuts for creating new tables
     - WriteToRelationalDB Support specifying primary key(s) when writing to new table
     - WriteToRelationalDB, extend the automatic column type inference.
 * Sql queries support in ReadToRelationalDB

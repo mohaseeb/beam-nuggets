@@ -43,6 +43,10 @@ class _ReadFromRelationalDBFn(DoFn):
         db_args = element
         db = SqlAlchemyDB(**db_args)
         db.start_session()
-        for record in db.read(table_name):
-            yield record
-        db.close_session()
+        try:
+            for record in db.read(table_name):
+                yield record
+        except:
+            raise
+        finally:
+            db.close_session()
