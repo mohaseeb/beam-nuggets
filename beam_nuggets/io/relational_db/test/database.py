@@ -2,8 +2,7 @@ from __future__ import division, print_function
 
 from contextlib import contextmanager
 
-from sqlalchemy import create_engine, Integer, String, Column
-from sqlalchemy.engine.url import URL
+from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy_utils import create_database, drop_database
 
@@ -13,16 +12,17 @@ from beam_nuggets.io.relational_db.sqlalchemy_db import (
     get_column_names_from_table
 )
 
+
 class TestDatabase(object):
-    def __init__(self, db_params):
-        self._uri = URL(**db_params)
-        self._SessionClass = sessionmaker(bind=create_engine(self._uri))
+    def __init__(self, db_config):
+        self._url = db_config.url
+        self._SessionClass = sessionmaker(bind=create_engine(self._url))
 
     def init_db(self):
-        create_database(self._uri)
+        create_database(self._url)
 
     def destroy_db(self):
-        drop_database(self._uri)  # will also remove the sqlite file
+        drop_database(self._url)  # will also remove the sqlite file
 
     def create_table(self, name, create_table_if_missing, get_columns_f):
         # create the table

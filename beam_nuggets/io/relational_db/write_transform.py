@@ -8,13 +8,8 @@ from sqlalchemy_db import SqlAlchemyDB
 class WriteToRelationalDB(PTransform):
     def __init__(
         self,
+        db_config,
         table_name,
-        drivername,
-        host=None,
-        port=None,
-        database=None,
-        username=None,
-        password=None,
         create_db_if_missing=False,
         create_table_if_missing=False,
         primary_key_columns=None,
@@ -22,13 +17,8 @@ class WriteToRelationalDB(PTransform):
         **kwargs
     ):
         super(WriteToRelationalDB, self).__init__(*args, **kwargs)
-        self._db_args = dict(
-            host=host,
-            port=port,
-            drivername=drivername,
-            database=database,
-            username=username,
-            password=password,
+        self._write_args = dict(
+            db_config=db_config,
             table_name=table_name,
             primary_key_columns=primary_key_columns,
             create_db_if_missing=create_db_if_missing,
@@ -36,13 +26,13 @@ class WriteToRelationalDB(PTransform):
         )
 
     def expand(self, pcoll):
-        return pcoll | ParDo(_WriteToRelationalDBFn(self._db_args))
+        return pcoll | ParDo(_WriteToRelationalDBFn(self._write_args))
 
 
 class _WriteToRelationalDBFn(DoFn):
-    def __init__(self, db_args, *args, **kwargs):
+    def __init__(self, write_args, *args, **kwargs):
         super(_WriteToRelationalDBFn, self).__init__(*args, **kwargs)
-        self._db_args = dict(db_args)
+        self._db_args = dict(write_args)
         self._table_name = self._db_args.pop('table_name')
 
     def start_bundle(self):

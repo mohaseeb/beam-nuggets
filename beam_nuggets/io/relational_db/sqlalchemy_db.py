@@ -7,12 +7,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy_utils import create_database, database_exists
 
 
-class SqlAlchemyDB(object):
-    """
-    TDOD
-    https://docs.sqlalchemy.org/en/latest/core/engines.html#database-urls
-    """
-
+class RelationalDBConfiguration(object):
     def __init__(
         self,
         drivername,
@@ -21,31 +16,51 @@ class SqlAlchemyDB(object):
         database=None,
         username=None,
         password=None,
-        primary_key_columns=None,
-        create_db_if_missing=False,
-        create_table_if_missing=False
     ):
-        self._uri = str(URL(
+        self.url = URL(
             drivername=drivername,
             username=username,
             password=password,
             host=host,
             port=port,
             database=database
-        ))
+        )
+
+
+class SqlAlchemyDB(object):
+    """
+    TDOD
+    https://docs.sqlalchemy.org/en/latest/core/engines.html#database-urls
+    """
+
+    def __init__(
+        self,
+        db_config,
+        primary_key_columns=None,
+        create_db_if_missing=False,
+        create_table_if_missing=False
+    ):
+        """
+        Args:
+            db_config (RelationalDBConfiguration):
+            primary_key_columns (list):
+            create_db_if_missing (bool):
+            create_table_if_missing (bool):
+        """
+        self._url = db_config.url
         self._create_table_if_missing = create_table_if_missing
         self._create_db_if_missing = create_db_if_missing
 
         self._primary_key_column_names = primary_key_columns or []
 
-        self._SessionClass = sessionmaker(bind=create_engine(self._uri))
+        self._SessionClass = sessionmaker(bind=create_engine(self._url))
         self._session = None  # will be set in self.start_session()
 
         self._name_to_table = {}
 
     def start_session(self):
-        if self._create_db_if_missing and not database_exists(self._uri):
-            create_database(self._uri)
+        if self._create_db_if_missing and not database_exists(self._url):
+            create_database(self._url)
         self._session = self._SessionClass()
 
     def close_session(self):
@@ -59,8 +74,10 @@ class SqlAlchemyDB(object):
 
     def write_record(self, table_name, record_dict):
         """
-        https://docs.sqlalchemy.org/en/latest/dialects/postgresql.html#insert-on-conflict-upsert
-        https://docs.sqlalchemy.org/en/latest/dialects/mysql.html#mysql-insert-on-duplicate-key-update
+        https://docs.sqlalchemy.org/en/latest/dialects/postgresql.html
+        #insert-on-conflict-upsert
+        https://docs.sqlalchemy.org/en/latest/dialects/mysql.html#mysql
+        -insert-on-duplicate-key-update
         """
         table = self._open_table_for_write(table_name, record_dict)
         table.write_record(self._session, record_dict)

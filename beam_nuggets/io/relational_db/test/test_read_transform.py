@@ -22,8 +22,8 @@ class TestReadTransform(TransformBaseTest):
         with TestPipeline() as p:
             assert_that(
                 p | "Reading records from db" >> ReadFromRelationalDB(
-                    table_name=self.table_name,
-                    **self.db_params
+                    db_config=self.db_config,
+                    table_name=self.table_name
                 ),
                 equal_to(self.table_rows)
             )

@@ -20,11 +20,11 @@ class TestWriteTransform(TransformBaseTest):
         with TestPipeline() as p:
             months = p | "Reading month records" >> beam.Create(self.records)
             months | 'Writing to Sqlite table' >> WriteToRelationalDB(
+                db_config=self.db_config,
                 table_name=self.table_name,
                 create_db_if_missing=True,
                 create_table_if_missing=True,
-                primary_key_columns=['num'],
-                **self.db_params
+                primary_key_columns=['num']
             )
 
         # retrieve the written rows
