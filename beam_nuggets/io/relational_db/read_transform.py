@@ -5,44 +5,32 @@ from apache_beam import PTransform, DoFn, ParDo, Create
 from .sqlalchemy_db import SqlAlchemyDB
 
 
-class ReadFromRelationalDB(PTransform):
-    def __init__(
-        self,
-        table_name,
-        drivername,
-        host=None,
-        port=None,
-        database=None,
-        username=None,
-        password=None,
-        *args,
-        **kwargs  # TODO check missing *args
-    ):
-        super(ReadFromRelationalDB, self).__init__(*args, **kwargs)
-        self._db_args = dict(
-            host=host,
-            port=port,
-            drivername=drivername,
-            database=database,
-            username=username,
-            password=password,
-            table_name=table_name,
+class Read(PTransform):
+    def __init__(self, source_config, table_name, *args, **kwargs):
+        super(Read, self).__init__(*args, **kwargs)
+        self._read_args = dict(
+            source_config=source_config,
+            table_name=table_name
         )
 
     def expand(self, pcoll):
         return (
             pcoll
-            | Create([self._db_args])
+            | Create([self._read_args])
             | ParDo(_ReadFromRelationalDBFn())
         )
 
 
 class _ReadFromRelationalDBFn(DoFn):
     def process(self, element):
-        table_name = element.pop('table_name')
-        db_args = element
+        db_args = dict(element)
+        table_name = db_args.pop('table_name')
         db = SqlAlchemyDB(**db_args)
         db.start_session()
-        for record in db.read(table_name):
-            yield record
-        db.close_session()
+        try:
+            for record in db.read(table_name):
+                yield record
+        except:
+            raise
+        finally:
+            db.close_session()

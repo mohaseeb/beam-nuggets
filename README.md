@@ -12,7 +12,7 @@ pip install .
 # Supported transforms
 ## IO
 ### Read and write from and to relational databases  
-* ReadFromRelationalDB
+* Read
 <!--read from sql database-->
 <!--read from postgres postgresql-->
 <!--read from mysql-->
@@ -21,21 +21,24 @@ pip install .
 import apache_beam as beam
 from apache_beam.options.pipeline_options import PipelineOptions
 
-from beam_nuggets.io import ReadFromRelationalDB
+from beam_nuggets.io import relational_db
 
 with beam.Pipeline(options=PipelineOptions()) as p:
-    records = p | "Reading records from db" >> ReadFromRelationalDB(
+    source_config = relational_db.SourceConfiguration(
         drivername='postgresql',
         host='localhost',
         port=5432,
         username='postgres',
         password='password',
         database='calendar',
+    )
+    records = p | "Reading records from db" >> relational_db.Read(
+        source_config=source_config,
         table_name='months',
     )
     records | 'Writing to stdout' >> beam.Map(print)
 ```
-* WriteToRelationalDB
+* Write
 <!--write to sql database-->
 <!--write to postgres postgresql-->
 <!--write to mysql-->
@@ -44,23 +47,29 @@ with beam.Pipeline(options=PipelineOptions()) as p:
 import apache_beam as beam
 from apache_beam.options.pipeline_options import PipelineOptions
 
-from beam_nuggets.io import WriteToRelationalDB
+from beam_nuggets.io import relational_db
 
 with beam.Pipeline(options=PipelineOptions()) as p:
     months = p | "Reading month records" >> beam.Create([
         {'name': 'Jan', 'num': 1},
         {'name': 'Feb', 'num': 2},
     ])
-    months | 'Writing to DB' >> WriteToRelationalDB(
+    source_config = relational_db.SourceConfiguration(
         drivername='postgresql',
         host='localhost',
         port=5432,
         username='postgres',
         password='password',
         database='calendar',
-        table_name='months',
-        create_db_if_missing=True,
-        create_table_if_missing=True,
+        create_if_missing=True,
+    )
+    table_config = relational_db.TableConfiguration(
+        name='months',
+        create_if_missing=True
+    )
+    months | 'Writing to DB' >> relational_db.Write(
+        source_config=source_config,
+        table_config=table_config
     )
 ```
 
@@ -123,21 +132,22 @@ with beam.Pipeline(options=PipelineOptions()) as p:
 * AssignUniqueId
 
 # TODO 
-=======
-* unit tests
-* Summarize the investigation of using Source/Sink Vs ParDo for IO 
-* Check JdbcIO for inspiration for WriteToRelationalDB/ReadToRelationalDB
-* Enable WriteToRelationalDB user to fully configure new Tables creation
-* convienience shortucts when creating new tables
-    - WriteToRelationalDB Support specifying primary key(s) when writing to new table
+* convenience shortcuts for creating new tables
     - WriteToRelationalDB, extend the automatic column type inference.
+* Idempotency in WriteToRelationalDB
+* Summarize the investigation of using Source/Sink Vs ParDo for IO
+    - send to beam mailing list about the "ParDo -> GroupByKey -> ParDo" 
+      read pattern.
 * Sql queries support in ReadToRelationalDB
-* more nuggets: WriteToCsv
 * Cleanup and DOCs for all transforms
 * upload to pypi
+* more nuggets: WriteToCsv
 * Example how to run on GCP
 * integration tests
 * DB transforms failures handling
 * DB transforms for unbounded sources (e.g. keep sessions alive)
 * more nuggets: Elasticsearch, Mongo 
 * WriteToRelationalDB, logging
+
+# Licence
+MIT

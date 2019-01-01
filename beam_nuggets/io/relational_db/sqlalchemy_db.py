@@ -7,12 +7,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy_utils import create_database, database_exists
 
 
-class SqlAlchemyDB(object):
-    """
-    TDOD
-    https://docs.sqlalchemy.org/en/latest/core/engines.html#database-urls
-    """
-
+class SourceConfiguration(object):
     def __init__(
         self,
         drivername,
@@ -21,36 +16,67 @@ class SqlAlchemyDB(object):
         database=None,
         username=None,
         password=None,
-        primary_key_columns=None,
-        create_db_if_missing=False,
-        create_table_if_missing=False
+        create_if_missing=False,
     ):
-        self._uri = str(URL(
+        self.url = URL(
             drivername=drivername,
             username=username,
             password=password,
             host=host,
             port=port,
             database=database
-        ))
-        self._create_table_if_missing = create_table_if_missing
-        self._create_db_if_missing = create_db_if_missing
+        )
+        self.create_if_missing = create_if_missing
 
-        self._primary_key_column_names = primary_key_columns or []
 
-        self._SessionClass = sessionmaker(bind=create_engine(self._uri))
+class TableConfiguration(object):
+    def __init__(
+        self,
+        name,
+        define_table_f=None,
+        create_if_missing=False,
+        primary_key_columns=None,
+    ):
+        """
+
+        Args:
+            name:
+            define_table_f:
+                https://docs.sqlalchemy.org/en/latest/core/metadata.html
+                https://docs.sqlalchemy.org/en/latest/orm/extensions
+                /declarative/table_config.html
+            create_if_missing:
+            primary_key_columns:
+        """
+        self.name = name
+        self.define_table_f = define_table_f
+        self.create_table_if_missing = create_if_missing
+        self.primary_key_column_names = primary_key_columns or []
+
+
+class SqlAlchemyDB(object):
+    """
+    TDOD
+    """
+
+    def __init__(self, source_config):
+        """
+        Args:
+            source_config (SourceConfiguration):
+        """
+        self._source = source_config
+
+        self._SessionClass = sessionmaker(bind=create_engine(self._source.url))
         self._session = None  # will be set in self.start_session()
 
-        self._name_to_table = {}
+        self._name_to_table = {}  # tables metadata cache
 
     def start_session(self):
-        if self._create_db_if_missing:
-            self._create_db_if_not_exists()
+        create_if_missing = self._source.create_if_missing
+        database_is_missing = lambda: not database_exists(self._source.url)
+        if create_if_missing and database_is_missing():
+            create_database(self._source.url)
         self._session = self._SessionClass()
-
-    def _create_db_if_not_exists(self):
-        if not database_exists(self._uri):
-            create_database(self._uri)
 
     def close_session(self):
         self._session.close()
@@ -61,35 +87,41 @@ class SqlAlchemyDB(object):
         for record in table.records(self._session):
             yield record
 
-    def write_record(self, table_name, record_dict):
-        table = self._open_table_for_write(table_name, record_dict)
+    def write_record(self, table_config, record_dict):
+        """
+        https://docs.sqlalchemy.org/en/latest/dialects/postgresql.html
+        #insert-on-conflict-upsert
+        https://docs.sqlalchemy.org/en/latest/dialects/mysql.html#mysql
+        -insert-on-duplicate-key-update
+        """
+        table = self._open_table_for_write(table_config, record_dict)
         table.write_record(self._session, record_dict)
 
     def _open_table_for_read(self, name):
-        return self._open_table(name=name, get_table_f=load_table)
-
-    def _open_table_for_write(self, name, record):
         return self._open_table(
             name=name,
-            get_table_f=create_table,
-            create_table_if_missing=self._create_table_if_missing,
-            create_columns_f=lambda: _columns_from_sample_record(
-                record=record,
-                primary_key_column_names=self._primary_key_column_names
-            )
+            get_table_f=load_table
         )
 
-    def _open_table(self, name, get_table_f, **kwargs):
+    def _open_table_for_write(self, table_config, record):
+        return self._open_table(
+            name=table_config.name,
+            get_table_f=create_table,
+            table_config=table_config,
+            record=record
+        )
+
+    def _open_table(self, name, get_table_f, **get_table_f_params):
         table = self._name_to_table.get(name, None)
         if not table:
             self._name_to_table[name] = (
-                self._get_table(name, get_table_f, **kwargs)
+                self._get_table(name, get_table_f, **get_table_f_params)
             )
             table = self._name_to_table[name]
         return table
 
-    def _get_table(self, name, get_table_f, **kwargs):
-        table_class = get_table_f(self._session, name, **kwargs)
+    def _get_table(self, name, get_table_f, **get_table_f_params):
+        table_class = get_table_f(self._session, name, **get_table_f_params)
         if table_class:
             table = _Table(table_class=table_class, name=name)
         else:
@@ -106,19 +138,24 @@ def load_table(session, name):
     return table_class
 
 
-def create_table(
-    session,
-    name,
-    create_table_if_missing,
-    create_columns_f
-):
+def create_table(session, name, table_config, record):
+    # Attempt to load from the DB
     table_class = load_table(session, name)
-    if not table_class and create_table_if_missing:
-        engine = session.bind
-        metadata = MetaData(bind=engine)
-        sqlalchemy_table = Table(name, metadata, *create_columns_f())
+
+    if not table_class and table_config.create_table_if_missing:
+        define_table_f = (
+            table_config.define_table_f or
+            _get_default_define_f(
+                record=record,
+                name=name,
+                primary_key_column_names=table_config.primary_key_column_names,
+            )
+        )
+        metadata = MetaData(bind=session.bind)
+        sqlalchemy_table = define_table_f(metadata)
         metadata.create_all()
         table_class = create_table_class(sqlalchemy_table)
+
     return table_class
 
 
@@ -129,17 +166,19 @@ def create_table_class(sqlalchemy_table):
     return TableClass
 
 
+def _get_default_define_f(record, name, primary_key_column_names):
+    def define_table(metadata):
+        columns = _columns_from_sample_record(
+            record=record,
+            primary_key_column_names=primary_key_column_names
+        )
+        return Table(name, metadata, *columns)
+
+    return define_table
+
+
 def _columns_from_sample_record(record, primary_key_column_names):
-    if len(primary_key_column_names) == 0:
-        pri_col_name = 'id'
-        while pri_col_name in record.keys():
-            pri_col_name += '_'
-        primary_key_columns = [Column(pri_col_name, Integer, primary_key=True)]
-        other_columns = [
-            Column(col, infer_db_type(value))
-            for col, value in record.iteritems()
-        ]
-    else:
+    if len(primary_key_column_names) > 0:
         primary_key_columns = [
             Column(col, infer_db_type(record[col]), primary_key=True)
             for col in primary_key_column_names
@@ -148,6 +187,15 @@ def _columns_from_sample_record(record, primary_key_column_names):
             Column(col, infer_db_type(value))
             for col, value in record.iteritems()
             if col not in primary_key_column_names
+        ]
+    else:
+        pri_col_name = 'id'
+        while pri_col_name in record.keys():
+            pri_col_name += '_'
+        primary_key_columns = [Column(pri_col_name, Integer, primary_key=True)]
+        other_columns = [
+            Column(col, infer_db_type(value))
+            for col, value in record.iteritems()
         ]
     return primary_key_columns + other_columns
 
