@@ -47,12 +47,15 @@ class TestDatabase(object):
     def read_rows(self, table_name):
         with self.session_scope() as session:
             TableCls = load_table(session, table_name)
-            column_names = get_column_names_from_table(TableCls)
+            if TableCls:
+                column_names = get_column_names_from_table(TableCls)
 
-            def to_dict(db_row):
-                return {col: getattr(db_row, col) for col in column_names}
+                def to_dict(db_row):
+                    return {col: getattr(db_row, col) for col in column_names}
 
-            rows = [to_dict(db_row) for db_row in session.query(TableCls)]
+                rows = [to_dict(db_row) for db_row in session.query(TableCls)]
+            else:
+                rows = []
         return rows
 
     @contextmanager
