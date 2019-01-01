@@ -148,3 +148,6 @@ with beam.Pipeline(options=PipelineOptions()) as p:
 * DB transforms for unbounded sources (e.g. keep sessions alive)
 * more nuggets: Elasticsearch, Mongo 
 * WriteToRelationalDB, logging
+
+# Licence
+MIT
