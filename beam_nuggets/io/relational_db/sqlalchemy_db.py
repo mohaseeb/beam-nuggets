@@ -33,10 +33,12 @@ class TableConfiguration(object):
     def __init__(
         self,
         name,
+        define_table_f=None,
         create_table_if_missing=False,
         primary_key_columns=None,
     ):
         self.name = name
+        self.define_table_f = define_table_f
         self.create_table_if_missing = create_table_if_missing
         self.primary_key_column_names = primary_key_columns or []
 
@@ -94,24 +96,21 @@ class SqlAlchemyDB(object):
         return self._open_table(
             name=table_config.name,
             get_table_f=create_table,
-            create_table_if_missing=table_config.create_table_if_missing,
-            create_columns_f=lambda: _columns_from_sample_record(
-                record=record,
-                primary_key_column_names=table_config.primary_key_column_names
-            )
+            table_config=table_config,
+            record=record
         )
 
-    def _open_table(self, name, get_table_f, **kwargs):
+    def _open_table(self, name, get_table_f, **get_table_f_params):
         table = self._name_to_table.get(name, None)
         if not table:
             self._name_to_table[name] = (
-                self._get_table(name, get_table_f, **kwargs)
+                self._get_table(name, get_table_f, **get_table_f_params)
             )
             table = self._name_to_table[name]
         return table
 
-    def _get_table(self, name, get_table_f, **kwargs):
-        table_class = get_table_f(self._session, name, **kwargs)
+    def _get_table(self, name, get_table_f, **get_table_f_params):
+        table_class = get_table_f(self._session, name, **get_table_f_params)
         if table_class:
             table = _Table(table_class=table_class, name=name)
         else:
@@ -128,14 +127,24 @@ def load_table(session, name):
     return table_class
 
 
-def create_table(session, name, create_table_if_missing, create_columns_f):
+def create_table(session, name, table_config, record):
+    # Attempt to load from the DB
     table_class = load_table(session, name)
-    if not table_class and create_table_if_missing:
-        engine = session.bind
-        metadata = MetaData(bind=engine)
-        sqlalchemy_table = Table(name, metadata, *create_columns_f())
+
+    if not table_class and table_config.create_table_if_missing:
+        define_table_f = (
+            table_config.define_table_f or
+            _get_default_define_f(
+                record=record,
+                name=name,
+                primary_key_column_names=table_config.primary_key_column_names,
+            )
+        )
+        metadata = MetaData(bind=session.bind)
+        sqlalchemy_table = define_table_f(metadata)
         metadata.create_all()
         table_class = create_table_class(sqlalchemy_table)
+
     return table_class
 
 
@@ -146,17 +155,19 @@ def create_table_class(sqlalchemy_table):
     return TableClass
 
 
+def _get_default_define_f(record, name, primary_key_column_names):
+    def define_table(metadata):
+        columns = _columns_from_sample_record(
+            record=record,
+            primary_key_column_names=primary_key_column_names
+        )
+        return Table(name, metadata, *columns)
+
+    return define_table
+
+
 def _columns_from_sample_record(record, primary_key_column_names):
-    if len(primary_key_column_names) == 0:
-        pri_col_name = 'id'
-        while pri_col_name in record.keys():
-            pri_col_name += '_'
-        primary_key_columns = [Column(pri_col_name, Integer, primary_key=True)]
-        other_columns = [
-            Column(col, infer_db_type(value))
-            for col, value in record.iteritems()
-        ]
-    else:
+    if len(primary_key_column_names) > 0:
         primary_key_columns = [
             Column(col, infer_db_type(record[col]), primary_key=True)
             for col in primary_key_column_names
@@ -165,6 +176,15 @@ def _columns_from_sample_record(record, primary_key_column_names):
             Column(col, infer_db_type(value))
             for col, value in record.iteritems()
             if col not in primary_key_column_names
+        ]
+    else:
+        pri_col_name = 'id'
+        while pri_col_name in record.keys():
+            pri_col_name += '_'
+        primary_key_columns = [Column(pri_col_name, Integer, primary_key=True)]
+        other_columns = [
+            Column(col, infer_db_type(value))
+            for col, value in record.iteritems()
         ]
     return primary_key_columns + other_columns
 

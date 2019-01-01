@@ -123,16 +123,19 @@ with beam.Pipeline(options=PipelineOptions()) as p:
 * AssignUniqueId
 
 # TODO 
-* Summarize the investigation of using Source/Sink Vs ParDo for IO 
 * Enable WriteToRelationalDB user to fully configure new Tables creation
-* unit tests
 * convenience shortcuts for creating new tables
     - WriteToRelationalDB Support specifying primary key(s) when writing to new table
     - WriteToRelationalDB, extend the automatic column type inference.
+* Idempotency in WriteToRelationalDB
+* unit tests
+* Summarize the investigation of using Source/Sink Vs ParDo for IO
+    - send to beam mailing list about the "ParDo -> GroupByKey -> ParDo" 
+      read pattern.
 * Sql queries support in ReadToRelationalDB
-* more nuggets: WriteToCsv
 * Cleanup and DOCs for all transforms
 * upload to pypi
+* more nuggets: WriteToCsv
 * Example how to run on GCP
 * integration tests
 * DB transforms failures handling

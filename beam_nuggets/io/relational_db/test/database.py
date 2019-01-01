@@ -9,7 +9,8 @@ from sqlalchemy_utils import create_database, drop_database
 from beam_nuggets.io.relational_db.sqlalchemy_db import (
     create_table,
     load_table,
-    get_column_names_from_table
+    get_column_names_from_table,
+    TableConfiguration
 )
 
 
@@ -24,14 +25,18 @@ class TestDatabase(object):
     def destroy_db(self):
         drop_database(self._url)  # will also remove the sqlite file
 
-    def create_table(self, name, create_table_if_missing, get_columns_f):
+    def create_table(self, name, create_table_if_missing, define_table_f):
         # create the table
         with self.session_scope() as session:
             create_table(
                 session=session,
                 name=name,
-                create_table_if_missing=create_table_if_missing,
-                create_columns_f=get_columns_f
+                table_config=TableConfiguration(
+                    name=name,
+                    define_table_f=define_table_f,
+                    create_table_if_missing=create_table_if_missing
+                ),
+                record=None
             )
 
     def write_rows(self, table_name, rows):

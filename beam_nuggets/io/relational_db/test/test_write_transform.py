@@ -36,6 +36,15 @@ class TestWriteTransform(TransformBaseTest):
         # compare
         assert_equal(table_rows, self.records)
 
+    def test_write_custom_table_definition(self):
+        pass
+
+    def test_write_to_existing_table(self):
+        pass
+
+    def test_write_no_primary_key(self):
+        pass
+
     @staticmethod
     def get_test_records_and_table_name():
         table_name = 'months'
