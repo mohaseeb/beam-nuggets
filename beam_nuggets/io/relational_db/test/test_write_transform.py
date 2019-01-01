@@ -5,6 +5,7 @@ import unittest
 import apache_beam as beam
 from apache_beam.testing.test_pipeline import TestPipeline
 from nose.tools import assert_equal, assert_not_equal
+from sqlalchemy import DateTime
 
 from beam_nuggets.io import relational_db
 from .test_base import TransformBaseTest
@@ -102,15 +103,9 @@ class TestWriteTransform(TransformBaseTest):
             create_if_missing=False
         )
 
-        records = [
-            {'name': 'Jan', 'num': 1},
-            {'name': 'Feb', 'num': 2},
-            {'name': 'Mar', 'num': 3},
-            {'name': 'Apr', 'num': 4},
-        ]
         part1_size = 2
-        part1_records = records[:part1_size]
-        part2_records = records[part1_size:]
+        part1_records = self.records[:part1_size]
+        part2_records = self.records[part1_size:]
 
         # write part1 to the DB
         part1_table_rows = self.execute_pipeline(
@@ -130,6 +125,48 @@ class TestWriteTransform(TransformBaseTest):
         # Note, above assumes row are returned in the same order as they were
         # written (i.e. first written first returned)
 
+    def test_auto_column_type_inference(self):
+        import pandas as pd
+        from sqlalchemy import Integer, Float, String
+        NAME = 'name'
+        NUM = 'num'
+        TIME_STAMP = 'time_stamp'
+        records = [
+            {NAME: name, NUM: num, TIME_STAMP: ts}
+            for name, num, ts in [
+                ['Jan', 1, pd.Timestamp('now')],
+                ['Feb', 2, pd.Timestamp('now')]
+            ]
+        ]
+        expected_column_types = [
+            (NAME, String),
+            (NUM, Float),
+            (TIME_STAMP, DateTime),
+            ('id', Integer)  # Auto created  when no primary key is specified
+        ]
+
+        table_config = relational_db.TableConfiguration(
+            name=self.table_name,
+            create_if_missing=True
+        )
+
+        # write the records using the pipeline
+        _ = self.execute_pipeline(
+            source_config=self.source_config,
+            table_config=table_config,
+            records=records
+        )
+
+        # load created table metadata
+        table = self.db.load_table_class(self.table_name).__table__
+        columns = [col for col in table.columns]
+        get_column = lambda name: filter(lambda c: c.name == name, columns)[0]
+
+        # verify inferred column types is as expected
+        for col_name, expec_col_type in expected_column_types:
+            inferred_col_type = get_column(col_name).type
+            assert_equal(isinstance(inferred_col_type, expec_col_type), True)
+
     def create_table(self):
         table_name = 'months_table'
 
@@ -141,7 +178,6 @@ class TestWriteTransform(TransformBaseTest):
                 Column('num', Integer)
             )
 
-        # create test table
         self.db.create_table(
             name=table_name,
             define_table_f=define_table,
@@ -156,6 +192,9 @@ class TestWriteTransform(TransformBaseTest):
         records = [
             {'name': 'Jan', 'num': 1},
             {'name': 'Feb', 'num': 2},
+            {'name': 'Mar', 'num': 3},
+            {'name': 'Apr', 'num': 4},
+            {'name': 'May', 'num': 5},
         ]
         return records, table_name
 

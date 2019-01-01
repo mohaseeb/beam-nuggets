@@ -39,6 +39,10 @@ class TestDatabase(object):
                 record=None
             )
 
+    def load_table_class(self, table_name):
+        with self.session_scope() as session:
+            return load_table(session, table_name)
+
     def write_rows(self, table_name, rows):
         with self.session_scope() as session:
             TableCls = load_table(session, table_name)

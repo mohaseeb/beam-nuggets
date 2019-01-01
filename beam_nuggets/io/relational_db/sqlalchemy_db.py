@@ -1,6 +1,17 @@
 from __future__ import division, print_function
 
-from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String
+import datetime
+
+import pandas as pd
+from sqlalchemy import (
+    create_engine, MetaData, Table, Column,
+    Integer,
+    String,
+    Float,
+    Boolean,
+    DateTime,
+    Date
+)
 from sqlalchemy.engine.url import URL
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
@@ -200,16 +211,6 @@ def _columns_from_sample_record(record, primary_key_column_names):
     return primary_key_columns + other_columns
 
 
-def infer_db_type(val):
-    return PYTHON_TYPE_TO_DB_TYPE.get(type(val), String)
-
-
-PYTHON_TYPE_TO_DB_TYPE = {
-    int: Integer,
-    str: String,
-}
-
-
 class SqlAlchemyDbException(Exception):
     pass
 
@@ -242,3 +243,27 @@ class _Table(object):
 
 def get_column_names_from_table(table_class):
     return [col.name for col in table_class.__table__.columns]
+
+
+def infer_db_type(val):
+    for matches_type_f, db_type in PYTHON_TO_DB_TYPE:
+        if matches_type_f(val):
+            return db_type
+    return String
+
+
+def is_number(x):
+    try:
+        _ = x + 1
+    except:
+        return False
+    return not hasattr(x, '__len__')
+
+
+PYTHON_TO_DB_TYPE = [
+    # Order matters!
+    (lambda x: isinstance(x, bool), Boolean),
+    (is_number, Float),
+    (lambda x: isinstance(x, (pd.Timestamp, datetime.datetime)), DateTime),
+    (lambda x: isinstance(x, datetime.date), Date),
+]
