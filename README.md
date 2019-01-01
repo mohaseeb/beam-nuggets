@@ -5,8 +5,8 @@ those for reading/writing from/to relational databases.
 See TODO at the bottom.
 # Installation
 ```bash
-git clone git@github.com:mohaseeb/beam_nuggets.git
-cd beam_nuggets
+git clone git@github.com:mohaseeb/beam-nuggets.git
+cd beam-nuggets
 pip install .
 ```
 # Supported transforms
