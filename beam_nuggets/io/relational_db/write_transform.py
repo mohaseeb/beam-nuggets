@@ -5,9 +5,9 @@ from apache_beam import PTransform, DoFn, ParDo
 from sqlalchemy_db import SqlAlchemyDB
 
 
-class WriteToRelationalDB(PTransform):
+class Write(PTransform):
     def __init__(self, source_config, table_config, *args, **kwargs):
-        super(WriteToRelationalDB, self).__init__(*args, **kwargs)
+        super(Write, self).__init__(*args, **kwargs)
         self.source_config = source_config
         self.table_config = table_config
 

@@ -5,9 +5,9 @@ from apache_beam import PTransform, DoFn, ParDo, Create
 from .sqlalchemy_db import SqlAlchemyDB
 
 
-class ReadFromRelationalDB(PTransform):
+class Read(PTransform):
     def __init__(self, source_config, table_name, *args, **kwargs):
-        super(ReadFromRelationalDB, self).__init__(*args, **kwargs)
+        super(Read, self).__init__(*args, **kwargs)
         self._read_args = dict(
             source_config=source_config,
             table_name=table_name

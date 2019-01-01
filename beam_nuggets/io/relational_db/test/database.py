@@ -34,7 +34,7 @@ class TestDatabase(object):
                 table_config=TableConfiguration(
                     name=name,
                     define_table_f=define_table_f,
-                    create_table_if_missing=create_table_if_missing
+                    create_if_missing=create_table_if_missing
                 ),
                 record=None
             )

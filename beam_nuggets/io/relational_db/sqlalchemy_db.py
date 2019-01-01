@@ -34,12 +34,23 @@ class TableConfiguration(object):
         self,
         name,
         define_table_f=None,
-        create_table_if_missing=False,
+        create_if_missing=False,
         primary_key_columns=None,
     ):
+        """
+
+        Args:
+            name:
+            define_table_f:
+                https://docs.sqlalchemy.org/en/latest/core/metadata.html
+                https://docs.sqlalchemy.org/en/latest/orm/extensions
+                /declarative/table_config.html
+            create_if_missing:
+            primary_key_columns:
+        """
         self.name = name
         self.define_table_f = define_table_f
-        self.create_table_if_missing = create_table_if_missing
+        self.create_table_if_missing = create_if_missing
         self.primary_key_column_names = primary_key_columns or []
 
 

@@ -5,7 +5,7 @@ import unittest
 from apache_beam.testing.test_pipeline import TestPipeline
 from apache_beam.testing.util import assert_that, equal_to
 
-from beam_nuggets.io import ReadFromRelationalDB
+from beam_nuggets.io import relational_db
 from .test_base import TransformBaseTest
 
 
@@ -21,7 +21,7 @@ class TestReadTransform(TransformBaseTest):
         # create read pipeline, execute it and compare retrieved to actual rows
         with TestPipeline() as p:
             assert_that(
-                p | "Reading records from db" >> ReadFromRelationalDB(
+                p | "Reading records from db" >> relational_db.Read(
                     source_config=self.source_config,
                     table_name=self.table_name
                 ),

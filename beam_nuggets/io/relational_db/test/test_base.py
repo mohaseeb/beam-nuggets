@@ -2,7 +2,7 @@ from __future__ import division, print_function
 
 import unittest
 
-from beam_nuggets.io.relational_db.sqlalchemy_db import SourceConfiguration
+from beam_nuggets.io import relational_db
 from .database import TestDatabase
 
 
@@ -11,7 +11,7 @@ class TransformBaseTest(unittest.TestCase):
         super(TransformBaseTest, self).__init__(*args, **kwargs)
         test_db_cls = TestDatabase
 
-        self.source_config = SourceConfiguration(
+        self.source_config = relational_db.SourceConfiguration(
             drivername='sqlite',
             database='/tmp/delete_me_beam_nuggets_unittest.sqlite',
             create_if_missing=True,

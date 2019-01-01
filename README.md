@@ -21,16 +21,19 @@ pip install .
 import apache_beam as beam
 from apache_beam.options.pipeline_options import PipelineOptions
 
-from beam_nuggets.io import ReadFromRelationalDB
+from beam_nuggets.io import relational_db
 
 with beam.Pipeline(options=PipelineOptions()) as p:
-    records = p | "Reading records from db" >> ReadFromRelationalDB(
+    source_config = relational_db.SourceConfiguration(
         drivername='postgresql',
         host='localhost',
         port=5432,
         username='postgres',
         password='password',
         database='calendar',
+    )
+    records = p | "Reading records from db" >> relational_db.Read(
+        source_config=source_config,
         table_name='months',
     )
     records | 'Writing to stdout' >> beam.Map(print)
@@ -44,23 +47,29 @@ with beam.Pipeline(options=PipelineOptions()) as p:
 import apache_beam as beam
 from apache_beam.options.pipeline_options import PipelineOptions
 
-from beam_nuggets.io import WriteToRelationalDB
+from beam_nuggets.io import relational_db
 
 with beam.Pipeline(options=PipelineOptions()) as p:
     months = p | "Reading month records" >> beam.Create([
         {'name': 'Jan', 'num': 1},
         {'name': 'Feb', 'num': 2},
     ])
-    months | 'Writing to DB' >> WriteToRelationalDB(
+    source_config = relational_db.SourceConfiguration(
         drivername='postgresql',
         host='localhost',
         port=5432,
         username='postgres',
         password='password',
         database='calendar',
-        table_name='months',
-        create_db_if_missing=True,
-        create_table_if_missing=True,
+        create_if_missing=True,
+    )
+    table_config = relational_db.TableConfiguration(
+        name='months',
+        create_if_missing=True
+    )
+    months | 'Writing to DB' >> relational_db.Write(
+        source_config=source_config,
+        table_config=table_config
     )
 ```
 
@@ -123,12 +132,9 @@ with beam.Pipeline(options=PipelineOptions()) as p:
 * AssignUniqueId
 
 # TODO 
-* Enable WriteToRelationalDB user to fully configure new Tables creation
 * convenience shortcuts for creating new tables
-    - WriteToRelationalDB Support specifying primary key(s) when writing to new table
     - WriteToRelationalDB, extend the automatic column type inference.
 * Idempotency in WriteToRelationalDB
-* unit tests
 * Summarize the investigation of using Source/Sink Vs ParDo for IO
     - send to beam mailing list about the "ParDo -> GroupByKey -> ParDo" 
       read pattern.

@@ -6,7 +6,7 @@ import apache_beam as beam
 from apache_beam.testing.test_pipeline import TestPipeline
 from nose.tools import assert_equal, assert_not_equal
 
-from beam_nuggets.io import WriteToRelationalDB, TableConfiguration
+from beam_nuggets.io import relational_db
 from .test_base import TransformBaseTest
 
 
@@ -19,7 +19,7 @@ class TestWriteTransform(TransformBaseTest):
     def execute_pipeline(self, source_config, table_config, records):
         with TestPipeline() as p:
             months = p | "Reading records" >> beam.Create(records)
-            months | 'Writing to table' >> WriteToRelationalDB(
+            months | 'Writing to table' >> relational_db.Write(
                 source_config=source_config,
                 table_config=table_config
             )
@@ -28,9 +28,9 @@ class TestWriteTransform(TransformBaseTest):
         return self.db.read_rows(table_config.name)
 
     def test_write(self):
-        table_config = TableConfiguration(
+        table_config = relational_db.TableConfiguration(
             name=self.table_name,
-            create_table_if_missing=True,
+            create_if_missing=True,
             primary_key_columns=['num']
         )
 
@@ -45,9 +45,9 @@ class TestWriteTransform(TransformBaseTest):
         assert_equal(table_rows, self.records)
 
     def test_write_no_primary_key(self):
-        table_config = TableConfiguration(
+        table_config = relational_db.TableConfiguration(
             name=self.table_name,
-            create_table_if_missing=True
+            create_if_missing=True
         )
 
         # execute the write pipeline and retrieve the table rows
@@ -75,10 +75,10 @@ class TestWriteTransform(TransformBaseTest):
                 Column('num', Integer)
             )
 
-        table_config = TableConfiguration(
+        table_config = relational_db.TableConfiguration(
             name=user_defined_table,
             define_table_f=define_table,
-            create_table_if_missing=True,
+            create_if_missing=True,
         )
 
         # execute the write pipeline and retrieve the table rows
@@ -97,9 +97,9 @@ class TestWriteTransform(TransformBaseTest):
     def test_write_to_existing_table(self):
         table_name = self.create_table()
 
-        table_config = TableConfiguration(
+        table_config = relational_db.TableConfiguration(
             name=table_name,
-            create_table_if_missing=False
+            create_if_missing=False
         )
 
         records = [
