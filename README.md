@@ -12,7 +12,7 @@ pip install .
 # Supported transforms
 ## IO
 ### Read and write from and to relational databases  
-* ReadFromRelationalDB
+* Read
 <!--read from sql database-->
 <!--read from postgres postgresql-->
 <!--read from mysql-->
@@ -38,7 +38,7 @@ with beam.Pipeline(options=PipelineOptions()) as p:
     )
     records | 'Writing to stdout' >> beam.Map(print)
 ```
-* WriteToRelationalDB
+* Write
 <!--write to sql database-->
 <!--write to postgres postgresql-->
 <!--write to mysql-->
