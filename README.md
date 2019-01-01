@@ -132,8 +132,6 @@ with beam.Pipeline(options=PipelineOptions()) as p:
 * AssignUniqueId
 
 # TODO 
-* convenience shortcuts for creating new tables
-    - WriteToRelationalDB, extend the automatic column type inference.
 * Idempotency in WriteToRelationalDB
 * Summarize the investigation of using Source/Sink Vs ParDo for IO
     - send to beam mailing list about the "ParDo -> GroupByKey -> ParDo" 
