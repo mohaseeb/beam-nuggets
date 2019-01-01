@@ -7,7 +7,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy_utils import create_database, database_exists
 
 
-class RelationalDBConfiguration(object):
+class SourceConfiguration(object):
     def __init__(
         self,
         drivername,
@@ -16,6 +16,7 @@ class RelationalDBConfiguration(object):
         database=None,
         username=None,
         password=None,
+        create_if_missing=False,
     ):
         self.url = URL(
             drivername=drivername,
@@ -25,42 +26,43 @@ class RelationalDBConfiguration(object):
             port=port,
             database=database
         )
+        self.create_if_missing = create_if_missing
+
+
+class TableConfiguration(object):
+    def __init__(
+        self,
+        name,
+        create_table_if_missing=False,
+        primary_key_columns=None,
+    ):
+        self.name = name
+        self.create_table_if_missing = create_table_if_missing
+        self.primary_key_column_names = primary_key_columns or []
 
 
 class SqlAlchemyDB(object):
     """
     TDOD
-    https://docs.sqlalchemy.org/en/latest/core/engines.html#database-urls
     """
 
-    def __init__(
-        self,
-        db_config,
-        primary_key_columns=None,
-        create_db_if_missing=False,
-        create_table_if_missing=False
-    ):
+    def __init__(self, source_config):
         """
         Args:
-            db_config (RelationalDBConfiguration):
-            primary_key_columns (list):
-            create_db_if_missing (bool):
-            create_table_if_missing (bool):
+            source_config (SourceConfiguration):
         """
-        self._url = db_config.url
-        self._create_table_if_missing = create_table_if_missing
-        self._create_db_if_missing = create_db_if_missing
+        self._source = source_config
 
-        self._primary_key_column_names = primary_key_columns or []
-
-        self._SessionClass = sessionmaker(bind=create_engine(self._url))
+        self._SessionClass = sessionmaker(bind=create_engine(self._source.url))
         self._session = None  # will be set in self.start_session()
 
-        self._name_to_table = {}
+        self._name_to_table = {}  # tables metadata cache
 
     def start_session(self):
-        if self._create_db_if_missing and not database_exists(self._url):
-            create_database(self._url)
+        create_if_missing = self._source.create_if_missing
+        database_is_missing = lambda: not database_exists(self._source.url)
+        if create_if_missing and database_is_missing():
+            create_database(self._source.url)
         self._session = self._SessionClass()
 
     def close_session(self):
@@ -72,14 +74,14 @@ class SqlAlchemyDB(object):
         for record in table.records(self._session):
             yield record
 
-    def write_record(self, table_name, record_dict):
+    def write_record(self, table_config, record_dict):
         """
         https://docs.sqlalchemy.org/en/latest/dialects/postgresql.html
         #insert-on-conflict-upsert
         https://docs.sqlalchemy.org/en/latest/dialects/mysql.html#mysql
         -insert-on-duplicate-key-update
         """
-        table = self._open_table_for_write(table_name, record_dict)
+        table = self._open_table_for_write(table_config, record_dict)
         table.write_record(self._session, record_dict)
 
     def _open_table_for_read(self, name):
@@ -88,14 +90,14 @@ class SqlAlchemyDB(object):
             get_table_f=load_table
         )
 
-    def _open_table_for_write(self, name, record):
+    def _open_table_for_write(self, table_config, record):
         return self._open_table(
-            name=name,
+            name=table_config.name,
             get_table_f=create_table,
-            create_table_if_missing=self._create_table_if_missing,
+            create_table_if_missing=table_config.create_table_if_missing,
             create_columns_f=lambda: _columns_from_sample_record(
                 record=record,
-                primary_key_column_names=self._primary_key_column_names
+                primary_key_column_names=table_config.primary_key_column_names
             )
         )
 

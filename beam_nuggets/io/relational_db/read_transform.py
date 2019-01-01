@@ -6,9 +6,12 @@ from .sqlalchemy_db import SqlAlchemyDB
 
 
 class ReadFromRelationalDB(PTransform):
-    def __init__(self, db_config, table_name, *args, **kwargs):
+    def __init__(self, source_config, table_name, *args, **kwargs):
         super(ReadFromRelationalDB, self).__init__(*args, **kwargs)
-        self._read_args = dict(db_config=db_config, table_name=table_name)
+        self._read_args = dict(
+            source_config=source_config,
+            table_name=table_name
+        )
 
     def expand(self, pcoll):
         return (

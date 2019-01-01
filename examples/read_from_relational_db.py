@@ -3,11 +3,11 @@ from __future__ import division, print_function
 import apache_beam as beam
 from apache_beam.options.pipeline_options import PipelineOptions
 
-from beam_nuggets.io import ReadFromRelationalDB, RelationalDBConfiguration
+from beam_nuggets.io import ReadFromRelationalDB, SourceConfiguration
 
 with beam.Pipeline(options=PipelineOptions()) as p:
     months = p | "Reading records from db" >> ReadFromRelationalDB(
-        db_config=RelationalDBConfiguration(
+        source_config=SourceConfiguration(
             drivername='sqlite',
             database='/tmp/months_db.sqlite'
         ),

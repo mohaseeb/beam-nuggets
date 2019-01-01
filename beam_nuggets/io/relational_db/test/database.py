@@ -14,8 +14,8 @@ from beam_nuggets.io.relational_db.sqlalchemy_db import (
 
 
 class TestDatabase(object):
-    def __init__(self, db_config):
-        self._url = db_config.url
+    def __init__(self, source_config):
+        self._url = source_config.url
         self._SessionClass = sessionmaker(bind=create_engine(self._url))
 
     def init_db(self):
