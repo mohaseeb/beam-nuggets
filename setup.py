@@ -7,7 +7,7 @@ REQUIRED_TEST_PACKAGES = [
 ]
 setup(
     name='beam-nuggets',
-    version='0.5.0.dev1',
+    version='0.5.0',
     install_requires=[
         'numpy>=1.15.4,<2.0.0',
         'pandas>=0.23.4,<0.24'
