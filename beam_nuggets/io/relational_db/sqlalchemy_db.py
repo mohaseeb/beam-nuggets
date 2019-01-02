@@ -2,7 +2,6 @@ from __future__ import division, print_function
 
 import datetime
 
-import pandas as pd
 from sqlalchemy import (
     create_engine, MetaData, Table, Column,
     Integer,
@@ -100,8 +99,10 @@ class SqlAlchemyDB(object):
 
     def write_record(self, table_config, record_dict):
         """
-        https://docs.sqlalchemy.org/en/latest/dialects/postgresql.html#insert-on-conflict-upsert
-        https://docs.sqlalchemy.org/en/latest/dialects/mysql.html#mysql-insert-on-duplicate-key-update
+        https://docs.sqlalchemy.org/en/latest/dialects/postgresql.html
+        #insert-on-conflict-upsert
+        https://docs.sqlalchemy.org/en/latest/dialects/mysql.html#mysql
+        -insert-on-duplicate-key-update
         """
         table = self._open_table_for_write(table_config, record_dict)
         table.write_record(self._session, record_dict)
@@ -244,8 +245,8 @@ def get_column_names_from_table(table_class):
 
 
 def infer_db_type(val):
-    for matches_type_f, db_type in PYTHON_TO_DB_TYPE:
-        if matches_type_f(val):
+    for is_type_f, db_type in PYTHON_TO_DB_TYPE:
+        if is_type_f(val):
             return db_type
     return String
 
@@ -258,10 +259,16 @@ def is_number(x):
     return not hasattr(x, '__len__')
 
 
+def is_pandas_timestamp(x):
+    type_name = str(type(x))
+    return 'pandas' in type_name and 'Timestamp' in type_name
+
+
 PYTHON_TO_DB_TYPE = [
     # Order matters!
     (lambda x: isinstance(x, bool), Boolean),
     (is_number, Float),
-    (lambda x: isinstance(x, (pd.Timestamp, datetime.datetime)), DateTime),
+    (lambda x: isinstance(x, datetime.datetime), DateTime),
+    (is_pandas_timestamp, DateTime),
     (lambda x: isinstance(x, datetime.date), Date),
 ]

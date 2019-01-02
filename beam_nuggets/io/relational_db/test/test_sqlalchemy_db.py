@@ -1,25 +1,18 @@
 from __future__ import division, print_function
 
 import datetime
+import unittest
 
 import numpy as np
-
 import pandas as pd
 from nose.tools import assert_equal
 from sqlalchemy import (
-    create_engine, MetaData, Table, Column,
     String,
     Float,
     Boolean,
     DateTime,
     Date
 )
-from sqlalchemy.engine.url import URL
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy_utils import create_database, database_exists
-
-import unittest
 
 from beam_nuggets.io.relational_db.sqlalchemy_db import infer_db_type
 
