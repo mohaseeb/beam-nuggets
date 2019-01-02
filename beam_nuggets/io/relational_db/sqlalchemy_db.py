@@ -100,10 +100,8 @@ class SqlAlchemyDB(object):
 
     def write_record(self, table_config, record_dict):
         """
-        https://docs.sqlalchemy.org/en/latest/dialects/postgresql.html
-        #insert-on-conflict-upsert
-        https://docs.sqlalchemy.org/en/latest/dialects/mysql.html#mysql
-        -insert-on-duplicate-key-update
+        https://docs.sqlalchemy.org/en/latest/dialects/postgresql.html#insert-on-conflict-upsert
+        https://docs.sqlalchemy.org/en/latest/dialects/mysql.html#mysql-insert-on-duplicate-key-update
         """
         table = self._open_table_for_write(table_config, record_dict)
         table.write_record(self._session, record_dict)
