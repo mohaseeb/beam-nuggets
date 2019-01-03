@@ -167,6 +167,39 @@ class TestWriteTransform(TransformBaseTest):
             inferred_col_type = get_column(col_name).type
             assert_equal(isinstance(inferred_col_type, expec_col_type), True)
 
+    def test_write_to_postgres_with_upsert(self):
+        source_config = self.postgres_source_config
+        if not source_config:
+            raise unittest.SkipTest(
+                '"{}" should run against postgres instance'.format(self.id())
+            )
+
+        table_config = relational_db.TableConfiguration(
+            name=self.table_name,
+            create_if_missing=True,
+            primary_key_columns=['num']
+        )
+
+        # execute the write pipeline and retrieve the table rows
+        table_rows = self.execute_pipeline(
+            source_config=source_config,
+            table_config=table_config,
+            records=self.records
+        )
+
+        # compare
+        assert_equal(table_rows, self.records)
+
+        # re-write the same records
+        table_rows_after_rewrite = self.execute_pipeline(
+            source_config=source_config,
+            table_config=table_config,
+            records=self.records
+        )
+
+        # verify the table records are the same
+        assert_equal(table_rows_after_rewrite, table_rows)
+
     def create_table(self):
         table_name = 'months_table'
 

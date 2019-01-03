@@ -9,31 +9,36 @@ from .database import TestDatabase
 
 
 class TransformBaseTest(unittest.TestCase):
-    db_instance = None
+    postgres_instance = None
+    postgres_source_config = None
+    source_config = None  # default one
 
     @classmethod
     def setUpClass(cls):
-        cls.db_instance = cls.connect_to_postgresql()
-        if cls.db_instance:
-            port = cls.db_instance.settings['port']
-            cls.source_config = cls.get_postgres_source_config(port=port)
-        else:
-            cls.source_config = cls.get_sqlite_source_config()
+        cls.postgres_source_config = cls.get_postgres_source_config()
+
+        cls.source_config = (
+            cls.postgres_source_config or
+            cls.get_sqlite_source_config()
+        )
+
         print(
-            '\nrunning tests against temp db instance: {}'
-            ''.format(cls.source_config.url)
+            '\nrunning {} tests against temp db instance: {}'
+            ''.format(cls.__name__, cls.source_config.url)
         )
 
     @classmethod
-    def get_postgres_source_config(cls, port):
-        return relational_db.SourceConfiguration(
-            drivername='postgresql',
-            host='localhost',
-            port=port,
-            username='postgres',
-            database='beam_nuggets_test_db',
-            create_if_missing=True,
-        )
+    def get_postgres_source_config(cls):
+        cls.postgres_instance = cls.connect_to_postgresql()
+        if cls.postgres_instance:
+            return relational_db.SourceConfiguration(
+                drivername='postgresql',
+                host='localhost',
+                port=cls.postgres_instance.settings['port'],
+                username='postgres',
+                database='beam_nuggets_test_db',
+                create_if_missing=True,
+            )
 
     @classmethod
     def get_sqlite_source_config(cls):
@@ -62,8 +67,8 @@ class TransformBaseTest(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        if cls.db_instance:
-            cls.db_instance.stop()
+        if cls.postgres_instance:
+            cls.postgres_instance.stop()
 
     def setUp(self):
 

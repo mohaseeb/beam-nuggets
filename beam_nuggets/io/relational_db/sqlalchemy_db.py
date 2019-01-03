@@ -9,8 +9,11 @@ from sqlalchemy import (
     Float,
     Boolean,
     DateTime,
-    Date
+    Date,
+    insert as generic_insert
 )
+from sqlalchemy.dialects.mysql import insert as mysql_insert
+from sqlalchemy.dialects.postgresql import insert as postgres_insert
 from sqlalchemy.engine.url import URL
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
@@ -46,6 +49,7 @@ class TableConfiguration(object):
         define_table_f=None,
         create_if_missing=False,
         primary_key_columns=None,
+        create_insert_f=None
     ):
         """
 
@@ -55,6 +59,8 @@ class TableConfiguration(object):
                 https://docs.sqlalchemy.org/en/latest/core/metadata.html
                 https://docs.sqlalchemy.org/en/latest/orm/extensions
                 /declarative/table_config.html
+                https://docs.sqlalchemy.org/en/latest/core/tutorial.html
+                #define-and-create-tables
             create_if_missing:
             primary_key_columns:
         """
@@ -62,6 +68,7 @@ class TableConfiguration(object):
         self.define_table_f = define_table_f
         self.create_table_if_missing = create_if_missing
         self.primary_key_column_names = primary_key_columns or []
+        self.create_insert_f = create_insert_f
 
 
 class SqlAlchemyDB(object):
@@ -105,7 +112,22 @@ class SqlAlchemyDB(object):
         -insert-on-duplicate-key-update
         """
         table = self._open_table_for_write(table_config, record_dict)
-        table.write_record(self._session, record_dict)
+        table.write_record(
+            session=self._session,
+            create_insert_f=self._get_create_insert_f(table_config),
+            record_dict=record_dict
+        )
+
+    def _get_create_insert_f(self, table_config):
+        create_insert_f = table_config.create_insert_f
+        if not create_insert_f:
+            if 'postgresql' in self._source.url.drivername:
+                create_insert_f = create_upsert_postgres
+            elif 'mysql' in self._source.url.drivername:
+                create_insert_f = create_upsert_mysql
+            else:
+                create_insert_f = create_insert
+        return create_insert_f
 
     def _open_table_for_read(self, name):
         return self._open_table(
@@ -137,6 +159,41 @@ class SqlAlchemyDB(object):
         else:
             raise SqlAlchemyDbException('Failed to get table {}'.format(name))
         return table
+
+
+class SqlAlchemyDbException(Exception):
+    pass
+
+
+class _Table(object):
+    def __init__(self, table_class, name):
+        self._Class = table_class
+        self._sqlalchemy_table = table_class.__table__
+        self.name = name
+        self._column_names = get_column_names_from_table(table_class)
+
+    def records(self, session):
+        for record in session.query(self._Class):
+            yield self._from_db_record(record)
+
+    def write_record(self, session, create_insert_f, record_dict):
+        try:
+            insert_stmt = create_insert_f(
+                table=self._sqlalchemy_table,
+                record=record_dict
+            )
+            session.execute(insert_stmt)
+            session.commit()
+        except:
+            session.rollback()
+            session.close()
+            raise
+
+    def _to_db_record(self, record_dict):
+        return self._Class(**record_dict)
+
+    def _from_db_record(self, db_record):
+        return {col: getattr(db_record, col) for col in self._column_names}
 
 
 def load_table(session, name):
@@ -210,34 +267,31 @@ def _columns_from_sample_record(record, primary_key_column_names):
     return primary_key_columns + other_columns
 
 
-class SqlAlchemyDbException(Exception):
-    pass
+def create_insert(table, record):
+    """
+    https://docs.sqlalchemy.org/en/latest/core/dml.html
+    https://docs.sqlalchemy.org/en/latest/core/tutorial.html#insert-expressions
+    """
+    return generic_insert(table).values(record)
 
 
-class _Table(object):
-    def __init__(self, table_class, name):
-        self._Class = table_class
-        self.name = name
-        self._column_names = get_column_names_from_table(table_class)
+def create_upsert_postgres(table, record):
+    """
+    https://docs.sqlalchemy.org/en/latest/dialects/postgresql.html#insert-on-conflict-upsert
+    """
+    insert_stmt = postgres_insert(table).values(record)
+    return insert_stmt.on_conflict_do_update(
+        index_elements=[col for col in table.primary_key],
+        set_=record
+    )
 
-    def records(self, session):
-        for record in session.query(self._Class):
-            yield self._from_db_record(record)
 
-    def write_record(self, session, record_dict):
-        try:
-            session.add(self._to_db_record(record_dict))
-            session.commit()
-        except:
-            session.rollback()
-            session.close()
-            raise
-
-    def _to_db_record(self, record_dict):
-        return self._Class(**record_dict)
-
-    def _from_db_record(self, db_record):
-        return {col: getattr(db_record, col) for col in self._column_names}
+def create_upsert_mysql(table, record):
+    """
+    https://docs.sqlalchemy.org/en/latest/dialects/mysql.html#mysql-insert-on-duplicate-key-update
+    """
+    insert_stmt = mysql_insert(table).values(record)
+    return insert_stmt.on_duplicate_key_update(record)
 
 
 def get_column_names_from_table(table_class):
@@ -248,10 +302,13 @@ def infer_db_type(val):
     for is_type_f, db_type in PYTHON_TO_DB_TYPE:
         if is_type_f(val):
             return db_type
+    # FIXME: Users familiar with the syntax of CREATE TABLE may notice that the
+    #  VARCHAR columns were generated without a length; on SQLite and
+    #  PostgreSQL, this is a valid datatype, but on others, it\'s not allowed.
     return String
 
 
-def is_number(x):
+def _is_number(x):
     try:
         _ = x + 1
     except:
@@ -259,7 +316,7 @@ def is_number(x):
     return not hasattr(x, '__len__')
 
 
-def is_pandas_timestamp(x):
+def _is_pandas_timestamp(x):
     type_name = str(type(x))
     return 'pandas' in type_name and 'Timestamp' in type_name
 
@@ -267,8 +324,8 @@ def is_pandas_timestamp(x):
 PYTHON_TO_DB_TYPE = [
     # Order matters!
     (lambda x: isinstance(x, bool), Boolean),
-    (is_number, Float),
+    (_is_number, Float),
     (lambda x: isinstance(x, datetime.datetime), DateTime),
-    (is_pandas_timestamp, DateTime),
+    (_is_pandas_timestamp, DateTime),
     (lambda x: isinstance(x, datetime.date), Date),
 ]
