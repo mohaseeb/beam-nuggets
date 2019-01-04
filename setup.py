@@ -10,6 +10,10 @@ REQUIRED_TEST_PACKAGES = [
     'pandas>=0.23.4,<0.24'
 ]
 
+REQUIRED_DOCUMENTATION = [
+    'Sphinx>=1.8.3,<2.0.0'
+]
+
 setup(
     name='beam-nuggets',
     version='0.6.0.dev1',
@@ -22,6 +26,6 @@ setup(
         'PyMySQL>=0.9.3,<2.0.0'
         # FIXME what about the other DBs supported by sqlalchemy
     ],
-    extras_require={'dev': REQUIRED_TEST_PACKAGES},
+    extras_require={'dev': REQUIRED_TEST_PACKAGES + REQUIRED_DOCUMENTATION},
     packages=find_packages(exclude=("test", "tests"))
 )
