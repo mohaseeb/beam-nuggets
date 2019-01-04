@@ -26,18 +26,23 @@ class SqlAlchemyDBTest(unittest.TestCase):
             (True, Boolean),
             (datetime.date.today(), Date),
             (datetime.datetime.today(), DateTime),
-            (pd.Timestamp('now'), DateTime),
             ('sss', String),
             (None, String),
         ]
 
         for value, expected_db_type in value_to_expected_db_type:
-            inferred_type = infer_db_type(value)
+            inferred_type = infer_db_type(value, 'postgresql')
             assert_equal(
                 expected_db_type,
                 inferred_type,
                 'expected: {}, got: {}'.format(expected_db_type, inferred_type)
             )
+            # inferred_type = infer_db_type(value, 'mysql')
+            # assert_equal(
+            #     expected_db_type,
+            #     inferred_type,
+            #     'expected: {}, got: {}'.format(expected_db_type, inferred_type)
+            # )
 
 
 if __name__ == '__main__':

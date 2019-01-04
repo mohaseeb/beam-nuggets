@@ -216,6 +216,7 @@ def create_table(session, name, table_config, record):
                 record=record,
                 name=name,
                 primary_key_column_names=table_config.primary_key_column_names,
+                drivername=session.bind.url.drivername,
             )
         )
         metadata = MetaData(bind=session.bind)
@@ -233,25 +234,28 @@ def create_table_class(sqlalchemy_table):
     return TableClass
 
 
-def _get_default_define_f(record, name, primary_key_column_names):
+def _get_default_define_f(record, name, primary_key_column_names, drivername):
     def define_table(metadata):
         columns = _columns_from_sample_record(
             record=record,
-            primary_key_column_names=primary_key_column_names
+            primary_key_column_names=primary_key_column_names,
+            drivername=drivername
         )
         return Table(name, metadata, *columns)
 
     return define_table
 
 
-def _columns_from_sample_record(record, primary_key_column_names):
+def _columns_from_sample_record(record, primary_key_column_names, drivername):
     if len(primary_key_column_names) > 0:
         primary_key_columns = [
-            Column(col, infer_db_type(record[col]), primary_key=True)
+            Column(
+                col, infer_db_type(record[col], drivername), primary_key=True
+            )
             for col in primary_key_column_names
         ]
         other_columns = [
-            Column(col, infer_db_type(value))
+            Column(col, infer_db_type(value, drivername))
             for col, value in record.iteritems()
             if col not in primary_key_column_names
         ]
@@ -261,7 +265,7 @@ def _columns_from_sample_record(record, primary_key_column_names):
             pri_col_name += '_'
         primary_key_columns = [Column(pri_col_name, Integer, primary_key=True)]
         other_columns = [
-            Column(col, infer_db_type(value))
+            Column(col, infer_db_type(value, drivername))
             for col, value in record.iteritems()
         ]
     return primary_key_columns + other_columns
@@ -277,7 +281,8 @@ def create_insert(table, record):
 
 def create_upsert_postgres(table, record):
     """
-    https://docs.sqlalchemy.org/en/latest/dialects/postgresql.html#insert-on-conflict-upsert
+    https://docs.sqlalchemy.org/en/latest/dialects/postgresql.html#insert-on
+    -conflict-upsert
     """
     insert_stmt = postgres_insert(table).values(record)
     return insert_stmt.on_conflict_do_update(
@@ -288,24 +293,31 @@ def create_upsert_postgres(table, record):
 
 def create_upsert_mysql(table, record):
     """
-    https://docs.sqlalchemy.org/en/latest/dialects/mysql.html#mysql-insert-on-duplicate-key-update
+    https://docs.sqlalchemy.org/en/latest/dialects/mysql.html#mysql-insert
+    -on-duplicate-key-update
     """
     insert_stmt = mysql_insert(table).values(record)
-    return insert_stmt.on_duplicate_key_update(record)
+    return insert_stmt.on_duplicate_key_update(**record)
+    # passing dict, i.e. ...update(record), isn't working
 
 
 def get_column_names_from_table(table_class):
     return [col.name for col in table_class.__table__.columns]
 
 
-def infer_db_type(val):
+def infer_db_type(val, drivername):
     for is_type_f, db_type in PYTHON_TO_DB_TYPE:
         if is_type_f(val):
             return db_type
-    # FIXME: Users familiar with the syntax of CREATE TABLE may notice that the
-    #  VARCHAR columns were generated without a length; on SQLite and
-    #  PostgreSQL, this is a valid datatype, but on others, it\'s not allowed.
-    return String
+    return String if _does_support_varchar(drivername) else String(100)
+    # FIXME: Users familiar with the syntax of CREATE TABLE may notice
+    #  that the VARCHAR columns were generated without a length; on
+    #  SQLite and PostgreSQL, this is a valid datatype, but on others,
+    #  it\'s not allowed.
+
+
+def _does_support_varchar(drivername):
+    return 'postgresql' in drivername or 'sqlite' in drivername
 
 
 def _is_number(x):
@@ -316,16 +328,10 @@ def _is_number(x):
     return not hasattr(x, '__len__')
 
 
-def _is_pandas_timestamp(x):
-    type_name = str(type(x))
-    return 'pandas' in type_name and 'Timestamp' in type_name
-
-
 PYTHON_TO_DB_TYPE = [
     # Order matters!
     (lambda x: isinstance(x, bool), Boolean),
     (_is_number, Float),
     (lambda x: isinstance(x, datetime.datetime), DateTime),
-    (_is_pandas_timestamp, DateTime),
     (lambda x: isinstance(x, datetime.date), Date),
 ]

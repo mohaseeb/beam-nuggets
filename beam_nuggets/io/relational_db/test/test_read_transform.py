@@ -38,7 +38,7 @@ class TestReadTransform(TransformBaseTest):
             return Table(
                 table_name, metadata,
                 Column(ID, Integer, primary_key=True),
-                Column(NAME, String),
+                Column(NAME, String(100)),
                 Column(AGE, Integer)
             )
 

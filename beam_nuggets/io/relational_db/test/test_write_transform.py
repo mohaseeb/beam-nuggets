@@ -1,5 +1,6 @@
 from __future__ import division, print_function
 
+import datetime
 import unittest
 
 import apache_beam as beam
@@ -9,6 +10,10 @@ from sqlalchemy import DateTime
 
 from beam_nuggets.io import relational_db
 from .test_base import TransformBaseTest
+
+
+def sort(ls, key):
+    return sorted(ls, key=lambda item: item[key])
 
 
 class TestWriteTransform(TransformBaseTest):
@@ -43,7 +48,7 @@ class TestWriteTransform(TransformBaseTest):
         )
 
         # compare
-        assert_equal(table_rows, self.records)
+        assert_equal(sort(table_rows, 'num'), sort(self.records, 'num'))
 
     def test_write_no_primary_key(self):
         table_config = relational_db.TableConfiguration(
@@ -62,7 +67,7 @@ class TestWriteTransform(TransformBaseTest):
         expected_table_rows = [dict(record) for record in self.records]
         _ = [rec.update(id=i + 1) for i, rec in enumerate(expected_table_rows)]
 
-        assert_equal(table_rows, expected_table_rows)
+        assert_equal(sort(table_rows, 'num'), sort(expected_table_rows, 'num'))
 
     def test_write_to_user_defined_table(self):
         user_defined_table = 'my_table'
@@ -72,7 +77,7 @@ class TestWriteTransform(TransformBaseTest):
             from sqlalchemy import Table, Column, Integer, String
             return Table(
                 user_defined_table, metadata,
-                Column('name', String, primary_key=True),
+                Column('name', String(50), primary_key=True),
                 Column('num', Integer)
             )
 
@@ -93,7 +98,7 @@ class TestWriteTransform(TransformBaseTest):
         assert_equal(len(self.db.read_rows(self.table_name)), 0)
 
         # and all written to the user defined table
-        assert_equal(table_rows, self.records)
+        assert_equal(sort(table_rows, 'name'), sort(self.records, 'name'))
 
     def test_write_to_existing_table(self):
         table_name = self.create_table()
@@ -113,7 +118,7 @@ class TestWriteTransform(TransformBaseTest):
             table_config=table_config,
             records=part1_records
         )
-        assert_equal(part1_table_rows, part1_records)
+        assert_equal(sort(part1_table_rows, 'num'), sort(part1_records, 'num'))
 
         # write part2 to the DB
         part2_table_rows = self.execute_pipeline(
@@ -121,7 +126,10 @@ class TestWriteTransform(TransformBaseTest):
             table_config=table_config,
             records=part2_records
         )
-        assert_equal(part2_table_rows, part1_records + part2_records)
+        assert_equal(
+            sort(part2_table_rows, 'num'),
+            sort(part1_records + part2_records, 'num')
+        )
         # Note, above assumes row are returned in the same order as they were
         # written (i.e. first written first returned)
 
@@ -134,8 +142,8 @@ class TestWriteTransform(TransformBaseTest):
         records = [
             {NAME: name, NUM: num, TIME_STAMP: ts}
             for name, num, ts in [
-                ['Jan', 1, pd.Timestamp('now')],
-                ['Feb', 2, pd.Timestamp('now')]
+                ['Jan', 1, datetime.datetime.now()],
+                ['Feb', 2, datetime.datetime.now()]
             ]
         ]
         expected_column_types = [
@@ -168,11 +176,26 @@ class TestWriteTransform(TransformBaseTest):
             assert_equal(isinstance(inferred_col_type, expec_col_type), True)
 
     def test_write_to_postgres_with_upsert(self):
-        source_config = self.postgres_source_config
-        if not source_config:
+        if not self.postgres_source_config:
             raise unittest.SkipTest(
                 '"{}" should run against postgres instance'.format(self.id())
             )
+        self.evaluate_upsert(self.postgres_source_config)
+
+    def test_write_to_mysql_with_upsert(self):
+        if not self.mysql_source_config:
+            raise unittest.SkipTest(
+                '"{}" should run against mysql instance'.format(self.id())
+            )
+        self.evaluate_upsert(self.mysql_source_config)
+
+    def evaluate_upsert(self, source_config):
+        # reconfigure the db for this TC (as the db configured in setup
+        # used the default source config, which might be different from the
+        # one used in this TC).
+        self.destroy_db(self.db)
+        self.db = self.configure_db(source_config)
+
 
         table_config = relational_db.TableConfiguration(
             name=self.table_name,
@@ -207,7 +230,7 @@ class TestWriteTransform(TransformBaseTest):
             from sqlalchemy import Table, Column, Integer, String
             return Table(
                 table_name, metadata,
-                Column('name', String, primary_key=True),
+                Column('name', String(50), primary_key=True),
                 Column('num', Integer)
             )
 
