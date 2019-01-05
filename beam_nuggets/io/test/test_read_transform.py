@@ -29,12 +29,12 @@ class TestReadTransform(TransformBaseTest):
             )
 
     def create_and_populate_test_table(self, n_rows=10):
-        from sqlalchemy import Table, Integer, String, Column
         # test table schema and data
         table_name = 'students'
         ID, NAME, AGE = 'id', 'name', 'age'
 
         def define_table(metadata):
+            from sqlalchemy import Table, Integer, String, Column
             return Table(
                 table_name, metadata,
                 Column(ID, Integer, primary_key=True),

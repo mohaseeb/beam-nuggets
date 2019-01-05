@@ -144,7 +144,14 @@
            <div itemprop="articleBody">
             
   <h1>Source code for beam_nuggets.io.relational_db</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span>
+<span></span><span class="sd">&quot;&quot;&quot;:class:`~apache_beam.transforms.ptransform.PTransform`s for reading from</span>
+<span class="sd">and writing to relational databases. SQLAlchemy_ is used for interfacing the</span>
+<span class="sd">databases.</span>
+
+<span class="sd">.. _SQLAlchemy: https://www.sqlalchemy.org/</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span>
 
 <span class="kn">from</span> <span class="nn">apache_beam</span> <span class="k">import</span> <span class="n">PTransform</span><span class="p">,</span> <span class="n">Create</span><span class="p">,</span> <span class="n">ParDo</span><span class="p">,</span> <span class="n">DoFn</span>
 
@@ -154,11 +161,56 @@
     <span class="n">TableConfiguration</span>
 <span class="p">)</span>
 
+<span class="c1"># It is intended SourceConfiguration and TableConfiguration are imported</span>
+<span class="c1"># from this module by the library users. Below is to make sure they&#39;ve been</span>
+<span class="c1"># imported to this module.</span>
 <span class="k">assert</span> <span class="n">SourceConfiguration</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
 <span class="k">assert</span> <span class="n">TableConfiguration</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
 
 
 <div class="viewcode-block" id="Read"><a class="viewcode-back" href="../../../beam_nuggets.io.relational_db.html#beam_nuggets.io.relational_db.Read">[docs]</a><span class="k">class</span> <span class="nc">Read</span><span class="p">(</span><span class="n">PTransform</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A :class:`~apache_beam.transforms.ptransform.PTransform` for reading</span>
+<span class="sd">    tables on relational databases.</span>
+
+<span class="sd">    It outputs a :class:`~apache_beam.pvalue.PCollection` of</span>
+<span class="sd">    ``dict:s``, each corresponding to a row in the target database table.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        source_config (SourceConfiguration): specifies the target database.</span>
+<span class="sd">        table_name (str): the name of the table to be read.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        Reading from a table on a postgres database. ::</span>
+
+<span class="sd">            import apache_beam as beam</span>
+<span class="sd">            from apache_beam.options.pipeline_options import PipelineOptions</span>
+<span class="sd">            from beam_nuggets.io import relational_db</span>
+
+<span class="sd">            source_config = relational_db.SourceConfiguration(</span>
+<span class="sd">                drivername=&#39;postgresql&#39;,</span>
+<span class="sd">                host=&#39;localhost&#39;,</span>
+<span class="sd">                port=5432,</span>
+<span class="sd">                username=&#39;postgres&#39;,</span>
+<span class="sd">                password=&#39;password&#39;,</span>
+<span class="sd">                database=&#39;calendar&#39;,</span>
+<span class="sd">            )</span>
+<span class="sd">            table_name = &#39;months&#39;</span>
+
+<span class="sd">            with beam.Pipeline(options=PipelineOptions()) as p:</span>
+<span class="sd">                records = p | &quot;Reading records from db&quot; &gt;&gt; relational_db.Read(</span>
+<span class="sd">                    source_config=source_config,</span>
+<span class="sd">                    table_name=table_name,</span>
+<span class="sd">                )</span>
+<span class="sd">                records | &#39;Writing to stdout&#39; &gt;&gt; beam.Map(print)</span>
+
+<span class="sd">        The output will be something like ::</span>
+
+<span class="sd">            {&#39;name&#39;: &#39;Jan&#39;, &#39;num&#39;: 1}</span>
+<span class="sd">            {&#39;name&#39;: &#39;Feb&#39;, &#39;num&#39;: 2}</span>
+
+<span class="sd">        Where &quot;name&quot; and &quot;num&quot; are the column names.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_config</span><span class="p">,</span> <span class="n">table_name</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">Read</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_read_args</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
@@ -190,6 +242,56 @@
 
 
 <div class="viewcode-block" id="Write"><a class="viewcode-back" href="../../../beam_nuggets.io.relational_db.html#beam_nuggets.io.relational_db.Write">[docs]</a><span class="k">class</span> <span class="nc">Write</span><span class="p">(</span><span class="n">PTransform</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A :class:`~apache_beam.transforms.ptransform.PTransform` for writing</span>
+<span class="sd">    to tables on relational databases.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        source_config (SourceConfiguration): specifies the target database. If</span>
+<span class="sd">            ``source_config.create_if_missing`` is set to True, the target</span>
+<span class="sd">            database will be created if it was missing.</span>
+<span class="sd">        table_config (TableConfiguration): specifies the target table, as well</span>
+<span class="sd">            as other optional parameters:</span>
+<span class="sd">              - option for specifying custom insert statements.</span>
+<span class="sd">              - options for creating the target table if it was missing.</span>
+<span class="sd">            See :class:`~beam_nuggets.io.relational_db_api.TableConfiguration`</span>
+<span class="sd">            for details.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        Writing to postgres database table. ::</span>
+
+<span class="sd">            import apache_beam as beam</span>
+<span class="sd">            from apache_beam.options.pipeline_options import PipelineOptions</span>
+<span class="sd">            from beam_nuggets.io import relational_db</span>
+
+<span class="sd">            records = [</span>
+<span class="sd">                {&#39;name&#39;: &#39;Jan&#39;, &#39;num&#39;: 1},</span>
+<span class="sd">                {&#39;name&#39;: &#39;Feb&#39;, &#39;num&#39;: 2},</span>
+<span class="sd">            ]</span>
+
+<span class="sd">            source_config = relational_db.SourceConfiguration(</span>
+<span class="sd">                drivername=&#39;postgresql&#39;,</span>
+<span class="sd">                host=&#39;localhost&#39;,</span>
+<span class="sd">                port=5432,</span>
+<span class="sd">                username=&#39;postgres&#39;,</span>
+<span class="sd">                password=&#39;password&#39;,</span>
+<span class="sd">                database=&#39;calendar&#39;,</span>
+<span class="sd">            )</span>
+
+<span class="sd">            table_config = relational_db.TableConfiguration(</span>
+<span class="sd">                name=&#39;months&#39;,</span>
+<span class="sd">                create_if_missing=True,</span>
+<span class="sd">                primary_key_columns=[&#39;num&#39;]</span>
+<span class="sd">            )</span>
+
+<span class="sd">            with beam.Pipeline(options=PipelineOptions()) as p:</span>
+<span class="sd">                months = p | &quot;Reading month records&quot; &gt;&gt; beam.Create(records)</span>
+<span class="sd">                months | &#39;Writing to DB table&#39; &gt;&gt; relational_db.Write(</span>
+<span class="sd">                    source_config=source_config,</span>
+<span class="sd">                    table_config=table_config</span>
+<span class="sd">                )</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_config</span><span class="p">,</span> <span class="n">table_config</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">Write</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">source_config</span> <span class="o">=</span> <span class="n">source_config</span>

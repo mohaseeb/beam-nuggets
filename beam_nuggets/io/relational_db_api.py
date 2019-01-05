@@ -1,3 +1,4 @@
+"""Wrapper of SqlAlchemy code used for reading from and writing to databases"""
 from __future__ import division, print_function
 
 import datetime
@@ -21,6 +22,76 @@ from sqlalchemy_utils import create_database, database_exists
 
 
 class SourceConfiguration(object):
+    """Holds parameters for accessing a database.
+
+    User to pass database access parameters to
+    :class:`~beam_nuggets.io.relational_db_api.SqlAlchemyDB`.
+
+    ``SourceConfiguration.url`` provides the database url used by SqlAlchemy to
+    connect to the database.
+
+    Args:
+        drivername (str): name of the database backend. It specifies the
+            target database type and the driver (DBAPI) used
+            by SqlAlchemy to communicate with database. The following
+            drivernames are supported by and tested on beam-nuggets:
+              - mysql+pymysql: for MySQL (pymysql is the driver name).
+              - postgresql: for PostgreSQL (default driver psycopg2 is used).
+              - sqlite: for SQLite.
+            Additional drivers can be used after installing their
+            corresponding python libraries. Refer to `SqlAlchemy dialects`_
+            for more information on the supported databases and the
+            corresponding drivers.
+        host (str): database host name or IP.
+        port (int): database port number.
+        database (str): database name.
+        username (str): database username.
+        password (str): database password.
+        create_if_missing (bool): If set to True, it instructs to create a
+            missing database before writing to it.
+
+    Examples:
+        MySQL database ::
+
+            from beam_nuggets.io import relational_db
+            src_cnf = relational_db.SourceConfiguration(
+                drivername='mysql+pymysql',
+                host='localhost',
+                port=37311,
+                username='root',
+                database='test',
+                create_if_missing=True,
+            )
+            print(src_cnf.url)
+            # mysql+pymysql://root@localhost:37311/test
+
+        PostgreSQL database ::
+
+            from beam_nuggets.io import relational_db
+            src_cnf = relational_db.SourceConfiguration(
+                drivername='postgresql',
+                host='localhost',
+                port=42139,
+                username='postgres',
+                password='pass',
+                database='test'
+            )
+            print(src_cnf.url)
+            # postgresql://postgres:pass@localhost:42139/test
+
+        SQLite database ::
+
+            from beam_nuggets.io import relational_db
+            src_cnf = relational_db.SourceConfiguration(
+                drivername='sqlite',
+                database='/tmp/test_db.sqlite'
+            )
+            print(src_cnf.url)
+            # sqlite:////tmp/test_db.sqlite
+
+    .. _SqlAlchemy dialects: https://docs.sqlalchemy.org/en/latest/dialects/
+    """
+
     def __init__(
         self,
         drivername,
@@ -43,6 +114,105 @@ class SourceConfiguration(object):
 
 
 class TableConfiguration(object):
+    """Holds parameters for a database table.
+    Used to pass table parameters to :class:`SqlAlchemyDB`.
+
+    Args:
+        name (str): the table name.
+        create_insert_f (function): a function that takes as input an
+            SqlAlchemy table and a row record, and returns an statement for
+            inserting the record into the table. The function doesn't
+            execute the insert statement. If not specified, the following
+            default implementations are used:
+              - :func:`create_upsert_mysql` for MySQL tables.
+              - :func:`create_upsert_postgres` for PostgreSQL tables.
+              - :func:`create_insert` for other databases.
+            As a mechanism to recover from failures, beam runners will
+            attempt to apply a transform multiple times on the same data;
+            because of that it is recommended to implement idempotent writes
+            (e.g. :func:`create_upsert_mysql` and :func:`create_upsert_postgres`)
+            to avoid data inconsistency issues arising from this beam behavior.
+            The function has the following signature:
+            (``sqlalchemy.sql.schema.Table``, ``dict``) -> ``sqlalchemy.sql.dml.Insert``.
+        create_if_missing (bool): if set to True and the table is missing
+            :class:`SqlAlchemyDB` will create the table. See below notes on new
+            table creation. See below note how this is used when creating
+            new tables.
+        primary_key_columns (list): list of column names to be used as
+            primary key (if multiple columns are specified, a composite key
+            is created), when creating the table. See below notes on new table
+            creation.
+        define_table_f (function): A function for defining an SqlAlchemy
+            table (the function doesn't create the table); the definition is
+            used when creating the table. The function has the following
+            signature: (``Sqlalchemy.Metadata``) -> ``sqlalchemy.Table``. See
+            below notes on how this is used when creating missing tables.
+            See this `define table tutorial`_ for how to implement the
+            function.
+
+    Notes:
+        When attempting to write to a missing database table,
+        :class:`SqlAlchemyDB` will handle the situation based on the values
+        ``create_if_missing``, ``primary_key_columns`` and ``define_table_f``
+        of the passed :class:`TableConfiguration`, as follows:
+          - If the table is missing and ``create_if_missing`` is set to
+          False (default), :class:`SqlAlchemyDB` will raise an exception.
+          - Only when the target table is missing the ``create_if_missing``
+          is set to True, table creation is attempted. This is the assumed
+          state for all the following cases.
+          - If ``define_table_f`` is specified, a new table will be created
+          using the table definition returned by ``define_table_f``,
+          irrespective of ``primary_key_columns``.
+          - If ``primary_key_columns`` is specified and ``define_table_f``
+          is None, a new table will be created using the columns specified
+          in ``primary_key_columns`` as the primary key. The full column
+          list and their types are inferred automatically using the first
+          record to be written. See :func:`infer_db_type` for information on
+          the how the database column types are inferred from the python
+          types. If ``primary_key_columns`` is also None, an auto_increment
+          Integer column will be created and used as primary key this is
+          done as some databases require a primary key to be specified when
+          creating tables.
+
+    Examples:
+        A configuration for creating the table if missing using the specified
+        columns to create the primary key. ::
+
+            from beam_nuggets.io import relational_db
+
+            table_config = relational_db.TableConfiguration(
+                name='students',
+                create_if_missing=True,
+                primary_key_columns=['id']
+            )
+
+
+        A configuration for creating the table if missing using the specified
+        definition. ::
+
+            from sqlalchemy import Table, Integer, String, Column
+            from beam_nuggets.io import relational_db
+
+            table_name = 'students'
+
+            def define_students_table(metadata):
+                return Table(
+                    table_name, metadata,
+                    Column(ID, Integer, primary_key=True),
+                    Column(NAME, String(100)),
+                    Column(AGE, Integer)
+                )
+
+            table_config = relational_db.TableConfiguration(
+                name=table_name,
+                create_if_missing=True,
+                define_table_f=define_students_table
+            )
+
+    .. _define table tutorial:
+       https://docs.sqlalchemy.org/en/latest/core/tutorial.html#define-and-create-tables
+    """
+
     def __init__(
         self,
         name,
@@ -51,19 +221,6 @@ class TableConfiguration(object):
         primary_key_columns=None,
         create_insert_f=None
     ):
-        """
-
-        Args:
-            name:
-            define_table_f:
-                https://docs.sqlalchemy.org/en/latest/core/metadata.html
-                https://docs.sqlalchemy.org/en/latest/orm/extensions
-                /declarative/table_config.html
-                https://docs.sqlalchemy.org/en/latest/core/tutorial.html
-                #define-and-create-tables
-            create_if_missing:
-            primary_key_columns:
-        """
         self.name = name
         self.define_table_f = define_table_f
         self.create_table_if_missing = create_if_missing
@@ -72,15 +229,15 @@ class TableConfiguration(object):
 
 
 class SqlAlchemyDB(object):
-    """
-    TDOD
+    """Provides functionality to read and write from and to relational DBs.
+    It uses SqlAlchemy.
+
+    Args:
+        source_config (SourceConfiguration): Information for accessing the
+            target database.
     """
 
     def __init__(self, source_config):
-        """
-        Args:
-            source_config (SourceConfiguration):
-        """
         self._source = source_config
 
         self._SessionClass = sessionmaker(bind=create_engine(self._source.url))
@@ -105,11 +262,14 @@ class SqlAlchemyDB(object):
             yield record
 
     def write_record(self, table_config, record_dict):
-        """
-        https://docs.sqlalchemy.org/en/latest/dialects/postgresql.html
-        #insert-on-conflict-upsert
-        https://docs.sqlalchemy.org/en/latest/dialects/mysql.html#mysql
-        -insert-on-duplicate-key-update
+        """Writes a single record to the specified table.
+
+        Args:
+            table_config (TableConfiguration): specifies the target table,
+                 how data should inserted and how to create it if it was
+                 missing. See :class:`TableConfiguration` notes on table
+                 creation.
+            record_dict (dict): the record to be written
         """
         table = self._open_table_for_write(table_config, record_dict)
         table.write_record(
@@ -236,6 +396,15 @@ def create_table_class(sqlalchemy_table):
 
 def _get_default_define_f(record, name, primary_key_column_names, drivername):
     def define_table(metadata):
+        """Defines an SqlAlchemy database table and adds it to the specified
+        metadata object.
+
+        Args:
+            metadata (sqlalchemy.Metadata): database metadata.
+
+        Returns:
+            sqlalchemy.Table: A database table added to the passed metadata.
+        """
         columns = _columns_from_sample_record(
             record=record,
             primary_key_column_names=primary_key_column_names,
@@ -272,17 +441,46 @@ def _columns_from_sample_record(record, primary_key_column_names, drivername):
 
 
 def create_insert(table, record):
-    """
-    https://docs.sqlalchemy.org/en/latest/core/dml.html
-    https://docs.sqlalchemy.org/en/latest/core/tutorial.html#insert-expressions
+    """Creates a statement for inserting the passed record to the passed table.
+    The created statement is not executed by this function.
+
+    For information on creating insert and update statements Refer to these
+    SqlAlchemy `documentation`_ and `tutorial`_.
+
+    Args:
+        table (sqlalchemy.sql.schema.Table): database table metadata.
+        record (dict): a data record, corresponding to one row, to be inserted.
+
+    Returns:
+        sqlalchemy.sql.dml.Insert: a statement for inserting the passed
+        record to the specified table.
+
+
+    .. _documentation: https://docs.sqlalchemy.org/en/latest/core/dml.html
+    .. _tutorial: https://docs.sqlalchemy.org/en/latest/core/tutorial.html#insert-expressions
     """
     return generic_insert(table).values(record)
 
 
 def create_upsert_postgres(table, record):
-    """
-    https://docs.sqlalchemy.org/en/latest/dialects/postgresql.html#insert-on
-    -conflict-upsert
+    """Creates a statement for inserting the passed record to the passed
+    table; if the record already exists, the existing record will be updated.
+    This uses PostgreSQL `on_conflict_do_update` (hence upsert), and that
+    why the returned statement is just valid for PostgreSQL tables. Refer to
+    this `SqlAlchemy PostgreSQL documentation`_ for more information.
+
+    The created statement is not executed by this function.
+
+    Args:
+        table (sqlalchemy.sql.schema.Table): database table metadata.
+        record (dict): a data record, corresponding to one row, to be inserted.
+
+    Returns:
+        sqlalchemy.sql.dml.Insert: a statement for inserting the passed
+        record to the specified table.
+
+    .. _SqlAlchemy PostgreSQL documentation:
+       https://docs.sqlalchemy.org/en/latest/dialects/postgresql.html#insert-on-conflict-upsert
     """
     insert_stmt = postgres_insert(table).values(record)
     return insert_stmt.on_conflict_do_update(
@@ -292,9 +490,24 @@ def create_upsert_postgres(table, record):
 
 
 def create_upsert_mysql(table, record):
-    """
-    https://docs.sqlalchemy.org/en/latest/dialects/mysql.html#mysql-insert
-    -on-duplicate-key-update
+    """Creates a statement for inserting the passed record to the passed
+    table; if the record already exists, the existing record will be updated.
+    This uses MySQL `on_duplicate_key_update` (hence upsert), and that
+    why the returned statement is valid only for MySQL tables. Refer to this
+    `SqlAlchemy MySQL documentation`_ for more information.
+
+    The created statement is not executed by this function.
+
+    Args:
+        table (sqlalchemy.sql.schema.Table): database table metadata.
+        record (dict): a data record, corresponding to one row, to be inserted.
+
+    Returns:
+        sqlalchemy.sql.dml.Insert: a statement for inserting the passed
+        record to the specified table.
+
+    .. _SqlAlchemy MySQL documentation:
+       https://docs.sqlalchemy.org/en/latest/dialects/mysql.html#mysql-inser-on-duplicate-key-update
     """
     insert_stmt = mysql_insert(table).values(record)
     return insert_stmt.on_duplicate_key_update(**record)
@@ -306,6 +519,15 @@ def get_column_names_from_table(table_class):
 
 
 def infer_db_type(val, drivername):
+    """
+    TODO
+    Args:
+        val:
+        drivername:
+
+    Returns:
+
+    """
     for is_type_f, db_type in PYTHON_TO_DB_TYPE:
         if is_type_f(val):
             return db_type

@@ -165,10 +165,59 @@
             
   <div class="section" id="module-beam_nuggets.io.relational_db">
 <span id="beam-nuggets-io-relational-db-module"></span><h1>beam_nuggets.io.relational_db module<a class="headerlink" href="#module-beam_nuggets.io.relational_db" title="Permalink to this headline">¶</a></h1>
+<p>:class:<a href="#id1"><span class="problematic" id="id2">`</span></a>~apache_beam.transforms.ptransform.PTransform`s for reading from
+and writing to relational databases. <a class="reference external" href="https://www.sqlalchemy.org/">SQLAlchemy</a> is used for interfacing the
+databases.</p>
 <dl class="class">
 <dt id="beam_nuggets.io.relational_db.Read">
 <em class="property">class </em><code class="descclassname">beam_nuggets.io.relational_db.</code><code class="descname">Read</code><span class="sig-paren">(</span><em>source_config</em>, <em>table_name</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/beam_nuggets/io/relational_db.html#Read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#beam_nuggets.io.relational_db.Read" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">apache_beam.transforms.ptransform.PTransform</span></code></p>
+<p>A <code class="xref py py-class docutils literal notranslate"><span class="pre">PTransform</span></code> for reading
+tables on relational databases.</p>
+<p>It outputs a <code class="xref py py-class docutils literal notranslate"><span class="pre">PCollection</span></code> of
+<code class="docutils literal notranslate"><span class="pre">dict:s</span></code>, each corresponding to a row in the target database table.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>source_config</strong> (<a class="reference internal" href="beam_nuggets.io.relational_db_api.html#beam_nuggets.io.relational_db_api.SourceConfiguration" title="beam_nuggets.io.relational_db_api.SourceConfiguration"><em>SourceConfiguration</em></a>) – specifies the target database.</li>
+<li><strong>table_name</strong> (<em>str</em>) – the name of the table to be read.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<p>Reading from a table on a postgres database.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">apache_beam</span> <span class="k">as</span> <span class="nn">beam</span>
+<span class="kn">from</span> <span class="nn">apache_beam.options.pipeline_options</span> <span class="k">import</span> <span class="n">PipelineOptions</span>
+<span class="kn">from</span> <span class="nn">beam_nuggets.io</span> <span class="k">import</span> <span class="n">relational_db</span>
+
+<span class="n">source_config</span> <span class="o">=</span> <span class="n">relational_db</span><span class="o">.</span><span class="n">SourceConfiguration</span><span class="p">(</span>
+    <span class="n">drivername</span><span class="o">=</span><span class="s1">&#39;postgresql&#39;</span><span class="p">,</span>
+    <span class="n">host</span><span class="o">=</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span>
+    <span class="n">port</span><span class="o">=</span><span class="mi">5432</span><span class="p">,</span>
+    <span class="n">username</span><span class="o">=</span><span class="s1">&#39;postgres&#39;</span><span class="p">,</span>
+    <span class="n">password</span><span class="o">=</span><span class="s1">&#39;password&#39;</span><span class="p">,</span>
+    <span class="n">database</span><span class="o">=</span><span class="s1">&#39;calendar&#39;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">table_name</span> <span class="o">=</span> <span class="s1">&#39;months&#39;</span>
+
+<span class="k">with</span> <span class="n">beam</span><span class="o">.</span><span class="n">Pipeline</span><span class="p">(</span><span class="n">options</span><span class="o">=</span><span class="n">PipelineOptions</span><span class="p">())</span> <span class="k">as</span> <span class="n">p</span><span class="p">:</span>
+    <span class="n">records</span> <span class="o">=</span> <span class="n">p</span> <span class="o">|</span> <span class="s2">&quot;Reading records from db&quot;</span> <span class="o">&gt;&gt;</span> <span class="n">relational_db</span><span class="o">.</span><span class="n">Read</span><span class="p">(</span>
+        <span class="n">source_config</span><span class="o">=</span><span class="n">source_config</span><span class="p">,</span>
+        <span class="n">table_name</span><span class="o">=</span><span class="n">table_name</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">records</span> <span class="o">|</span> <span class="s1">&#39;Writing to stdout&#39;</span> <span class="o">&gt;&gt;</span> <span class="n">beam</span><span class="o">.</span><span class="n">Map</span><span class="p">(</span><span class="nb">print</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The output will be something like</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Jan&#39;</span><span class="p">,</span> <span class="s1">&#39;num&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+<span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Feb&#39;</span><span class="p">,</span> <span class="s1">&#39;num&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>Where “name” and “num” are the column names.</p>
 <dl class="method">
 <dt id="beam_nuggets.io.relational_db.Read.expand">
 <code class="descname">expand</code><span class="sig-paren">(</span><em>pcoll</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/beam_nuggets/io/relational_db.html#Read.expand"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#beam_nuggets.io.relational_db.Read.expand" title="Permalink to this definition">¶</a></dt>
@@ -180,6 +229,66 @@
 <dt id="beam_nuggets.io.relational_db.Write">
 <em class="property">class </em><code class="descclassname">beam_nuggets.io.relational_db.</code><code class="descname">Write</code><span class="sig-paren">(</span><em>source_config</em>, <em>table_config</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/beam_nuggets/io/relational_db.html#Write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#beam_nuggets.io.relational_db.Write" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">apache_beam.transforms.ptransform.PTransform</span></code></p>
+<p>A <code class="xref py py-class docutils literal notranslate"><span class="pre">PTransform</span></code> for writing
+to tables on relational databases.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>source_config</strong> (<a class="reference internal" href="beam_nuggets.io.relational_db_api.html#beam_nuggets.io.relational_db_api.SourceConfiguration" title="beam_nuggets.io.relational_db_api.SourceConfiguration"><em>SourceConfiguration</em></a>) – specifies the target database. If
+<code class="docutils literal notranslate"><span class="pre">source_config.create_if_missing</span></code> is set to True, the target
+database will be created if it was missing.</li>
+<li><strong>table_config</strong> (<a class="reference internal" href="beam_nuggets.io.relational_db_api.html#beam_nuggets.io.relational_db_api.TableConfiguration" title="beam_nuggets.io.relational_db_api.TableConfiguration"><em>TableConfiguration</em></a>) – <p>specifies the target table, as well
+as other optional parameters:</p>
+<blockquote>
+<div><ul>
+<li>option for specifying custom insert statements.</li>
+<li>options for creating the target table if it was missing.</li>
+</ul>
+</div></blockquote>
+<p>See <a class="reference internal" href="beam_nuggets.io.relational_db_api.html#beam_nuggets.io.relational_db_api.TableConfiguration" title="beam_nuggets.io.relational_db_api.TableConfiguration"><code class="xref py py-class docutils literal notranslate"><span class="pre">TableConfiguration</span></code></a>
+for details.</p>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<p>Writing to postgres database table.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">apache_beam</span> <span class="k">as</span> <span class="nn">beam</span>
+<span class="kn">from</span> <span class="nn">apache_beam.options.pipeline_options</span> <span class="k">import</span> <span class="n">PipelineOptions</span>
+<span class="kn">from</span> <span class="nn">beam_nuggets.io</span> <span class="k">import</span> <span class="n">relational_db</span>
+
+<span class="n">records</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Jan&#39;</span><span class="p">,</span> <span class="s1">&#39;num&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
+    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Feb&#39;</span><span class="p">,</span> <span class="s1">&#39;num&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">},</span>
+<span class="p">]</span>
+
+<span class="n">source_config</span> <span class="o">=</span> <span class="n">relational_db</span><span class="o">.</span><span class="n">SourceConfiguration</span><span class="p">(</span>
+    <span class="n">drivername</span><span class="o">=</span><span class="s1">&#39;postgresql&#39;</span><span class="p">,</span>
+    <span class="n">host</span><span class="o">=</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span>
+    <span class="n">port</span><span class="o">=</span><span class="mi">5432</span><span class="p">,</span>
+    <span class="n">username</span><span class="o">=</span><span class="s1">&#39;postgres&#39;</span><span class="p">,</span>
+    <span class="n">password</span><span class="o">=</span><span class="s1">&#39;password&#39;</span><span class="p">,</span>
+    <span class="n">database</span><span class="o">=</span><span class="s1">&#39;calendar&#39;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">table_config</span> <span class="o">=</span> <span class="n">relational_db</span><span class="o">.</span><span class="n">TableConfiguration</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;months&#39;</span><span class="p">,</span>
+    <span class="n">create_if_missing</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">primary_key_columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;num&#39;</span><span class="p">]</span>
+<span class="p">)</span>
+
+<span class="k">with</span> <span class="n">beam</span><span class="o">.</span><span class="n">Pipeline</span><span class="p">(</span><span class="n">options</span><span class="o">=</span><span class="n">PipelineOptions</span><span class="p">())</span> <span class="k">as</span> <span class="n">p</span><span class="p">:</span>
+    <span class="n">months</span> <span class="o">=</span> <span class="n">p</span> <span class="o">|</span> <span class="s2">&quot;Reading month records&quot;</span> <span class="o">&gt;&gt;</span> <span class="n">beam</span><span class="o">.</span><span class="n">Create</span><span class="p">(</span><span class="n">records</span><span class="p">)</span>
+    <span class="n">months</span> <span class="o">|</span> <span class="s1">&#39;Writing to DB table&#39;</span> <span class="o">&gt;&gt;</span> <span class="n">relational_db</span><span class="o">.</span><span class="n">Write</span><span class="p">(</span>
+        <span class="n">source_config</span><span class="o">=</span><span class="n">source_config</span><span class="p">,</span>
+        <span class="n">table_config</span><span class="o">=</span><span class="n">table_config</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
 <dl class="method">
 <dt id="beam_nuggets.io.relational_db.Write.expand">
 <code class="descname">expand</code><span class="sig-paren">(</span><em>pcoll</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/beam_nuggets/io/relational_db.html#Write.expand"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#beam_nuggets.io.relational_db.Write.expand" title="Permalink to this definition">¶</a></dt>

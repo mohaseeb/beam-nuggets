@@ -144,7 +144,8 @@
            <div itemprop="articleBody">
             
   <h1>Source code for beam_nuggets.io.relational_db_api</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span>
+<span></span><span class="sd">&quot;&quot;&quot;Wrapper of SqlAlchemy code used for reading from and writing to databases&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span>
 
 <span class="kn">import</span> <span class="nn">datetime</span>
 
@@ -167,6 +168,76 @@
 
 
 <div class="viewcode-block" id="SourceConfiguration"><a class="viewcode-back" href="../../../beam_nuggets.io.relational_db_api.html#beam_nuggets.io.relational_db_api.SourceConfiguration">[docs]</a><span class="k">class</span> <span class="nc">SourceConfiguration</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Holds parameters for accessing a database.</span>
+
+<span class="sd">    User to pass database access parameters to</span>
+<span class="sd">    :class:`~beam_nuggets.io.relational_db_api.SqlAlchemyDB`.</span>
+
+<span class="sd">    ``SourceConfiguration.url`` provides the database url used by SqlAlchemy to</span>
+<span class="sd">    connect to the database.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        drivername (str): name of the database backend. It specifies the</span>
+<span class="sd">            target database type and the driver (DBAPI) used</span>
+<span class="sd">            by SqlAlchemy to communicate with database. The following</span>
+<span class="sd">            drivernames are supported by and tested on beam-nuggets:</span>
+<span class="sd">              - mysql+pymysql: for MySQL (pymysql is the driver name).</span>
+<span class="sd">              - postgresql: for PostgreSQL (default driver psycopg2 is used).</span>
+<span class="sd">              - sqlite: for SQLite.</span>
+<span class="sd">            Additional drivers can be used after installing their</span>
+<span class="sd">            corresponding python libraries. Refer to `SqlAlchemy dialects`_</span>
+<span class="sd">            for more information on the supported databases and the</span>
+<span class="sd">            corresponding drivers.</span>
+<span class="sd">        host (str): database host name or IP.</span>
+<span class="sd">        port (int): database port number.</span>
+<span class="sd">        database (str): database name.</span>
+<span class="sd">        username (str): database username.</span>
+<span class="sd">        password (str): database password.</span>
+<span class="sd">        create_if_missing (bool): If set to True, it instructs to create a</span>
+<span class="sd">            missing database before writing to it.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        MySQL database ::</span>
+
+<span class="sd">            from beam_nuggets.io import relational_db</span>
+<span class="sd">            src_cnf = relational_db.SourceConfiguration(</span>
+<span class="sd">                drivername=&#39;mysql+pymysql&#39;,</span>
+<span class="sd">                host=&#39;localhost&#39;,</span>
+<span class="sd">                port=37311,</span>
+<span class="sd">                username=&#39;root&#39;,</span>
+<span class="sd">                database=&#39;test&#39;,</span>
+<span class="sd">                create_if_missing=True,</span>
+<span class="sd">            )</span>
+<span class="sd">            print(src_cnf.url)</span>
+<span class="sd">            # mysql+pymysql://root@localhost:37311/test</span>
+
+<span class="sd">        PostgreSQL database ::</span>
+
+<span class="sd">            from beam_nuggets.io import relational_db</span>
+<span class="sd">            src_cnf = relational_db.SourceConfiguration(</span>
+<span class="sd">                drivername=&#39;postgresql&#39;,</span>
+<span class="sd">                host=&#39;localhost&#39;,</span>
+<span class="sd">                port=42139,</span>
+<span class="sd">                username=&#39;postgres&#39;,</span>
+<span class="sd">                password=&#39;pass&#39;,</span>
+<span class="sd">                database=&#39;test&#39;</span>
+<span class="sd">            )</span>
+<span class="sd">            print(src_cnf.url)</span>
+<span class="sd">            # postgresql://postgres:pass@localhost:42139/test</span>
+
+<span class="sd">        SQLite database ::</span>
+
+<span class="sd">            from beam_nuggets.io import relational_db</span>
+<span class="sd">            src_cnf = relational_db.SourceConfiguration(</span>
+<span class="sd">                drivername=&#39;sqlite&#39;,</span>
+<span class="sd">                database=&#39;/tmp/test_db.sqlite&#39;</span>
+<span class="sd">            )</span>
+<span class="sd">            print(src_cnf.url)</span>
+<span class="sd">            # sqlite:////tmp/test_db.sqlite</span>
+
+<span class="sd">    .. _SqlAlchemy dialects: https://docs.sqlalchemy.org/en/latest/dialects/</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">drivername</span><span class="p">,</span>
@@ -189,6 +260,105 @@
 
 
 <div class="viewcode-block" id="TableConfiguration"><a class="viewcode-back" href="../../../beam_nuggets.io.relational_db_api.html#beam_nuggets.io.relational_db_api.TableConfiguration">[docs]</a><span class="k">class</span> <span class="nc">TableConfiguration</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Holds parameters for a database table.</span>
+<span class="sd">    Used to pass table parameters to :class:`SqlAlchemyDB`.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        name (str): the table name.</span>
+<span class="sd">        create_insert_f (function): a function that takes as input an</span>
+<span class="sd">            SqlAlchemy table and a row record, and returns an statement for</span>
+<span class="sd">            inserting the record into the table. The function doesn&#39;t</span>
+<span class="sd">            execute the insert statement. If not specified, the following</span>
+<span class="sd">            default implementations are used:</span>
+<span class="sd">              - :func:`create_upsert_mysql` for MySQL tables.</span>
+<span class="sd">              - :func:`create_upsert_postgres` for PostgreSQL tables.</span>
+<span class="sd">              - :func:`create_insert` for other databases.</span>
+<span class="sd">            As a mechanism to recover from failures, beam runners will</span>
+<span class="sd">            attempt to apply a transform multiple times on the same data;</span>
+<span class="sd">            because of that it is recommended to implement idempotent writes</span>
+<span class="sd">            (e.g. :func:`create_upsert_mysql` and :func:`create_upsert_postgres`)</span>
+<span class="sd">            to avoid data inconsistency issues arising from this beam behavior.</span>
+<span class="sd">            The function has the following signature:</span>
+<span class="sd">            (``sqlalchemy.sql.schema.Table``, ``dict``) -&gt; ``sqlalchemy.sql.dml.Insert``.</span>
+<span class="sd">        create_if_missing (bool): if set to True and the table is missing</span>
+<span class="sd">            :class:`SqlAlchemyDB` will create the table. See below notes on new</span>
+<span class="sd">            table creation. See below note how this is used when creating</span>
+<span class="sd">            new tables.</span>
+<span class="sd">        primary_key_columns (list): list of column names to be used as</span>
+<span class="sd">            primary key (if multiple columns are specified, a composite key</span>
+<span class="sd">            is created), when creating the table. See below notes on new table</span>
+<span class="sd">            creation.</span>
+<span class="sd">        define_table_f (function): A function for defining an SqlAlchemy</span>
+<span class="sd">            table (the function doesn&#39;t create the table); the definition is</span>
+<span class="sd">            used when creating the table. The function has the following</span>
+<span class="sd">            signature: (``Sqlalchemy.Metadata``) -&gt; ``sqlalchemy.Table``. See</span>
+<span class="sd">            below notes on how this is used when creating missing tables.</span>
+<span class="sd">            See this `define table tutorial`_ for how to implement the</span>
+<span class="sd">            function.</span>
+
+<span class="sd">    Notes:</span>
+<span class="sd">        When attempting to write to a missing database table,</span>
+<span class="sd">        :class:`SqlAlchemyDB` will handle the situation based on the values</span>
+<span class="sd">        ``create_if_missing``, ``primary_key_columns`` and ``define_table_f``</span>
+<span class="sd">        of the passed :class:`TableConfiguration`, as follows:</span>
+<span class="sd">          - If the table is missing and ``create_if_missing`` is set to</span>
+<span class="sd">          False (default), :class:`SqlAlchemyDB` will raise an exception.</span>
+<span class="sd">          - Only when the target table is missing the ``create_if_missing``</span>
+<span class="sd">          is set to True, table creation is attempted. This is the assumed</span>
+<span class="sd">          state for all the following cases.</span>
+<span class="sd">          - If ``define_table_f`` is specified, a new table will be created</span>
+<span class="sd">          using the table definition returned by ``define_table_f``,</span>
+<span class="sd">          irrespective of ``primary_key_columns``.</span>
+<span class="sd">          - If ``primary_key_columns`` is specified and ``define_table_f``</span>
+<span class="sd">          is None, a new table will be created using the columns specified</span>
+<span class="sd">          in ``primary_key_columns`` as the primary key. The full column</span>
+<span class="sd">          list and their types are inferred automatically using the first</span>
+<span class="sd">          record to be written. See :func:`infer_db_type` for information on</span>
+<span class="sd">          the how the database column types are inferred from the python</span>
+<span class="sd">          types. If ``primary_key_columns`` is also None, an auto_increment</span>
+<span class="sd">          Integer column will be created and used as primary key this is</span>
+<span class="sd">          done as some databases require a primary key to be specified when</span>
+<span class="sd">          creating tables.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        A config that creates the table if missing, using the specified</span>
+<span class="sd">        columns to create the primary key. ::</span>
+
+<span class="sd">            from beam_nuggets.io import relational_db</span>
+
+<span class="sd">            table_config = relational_db.TableConfiguration(</span>
+<span class="sd">                name=&#39;students&#39;,</span>
+<span class="sd">                create_if_missing=True,</span>
+<span class="sd">                primary_key_columns=[&#39;id&#39;]</span>
+<span class="sd">            )</span>
+
+
+<span class="sd">        A config that creates the table if missing using the specified</span>
+<span class="sd">        definition. ::</span>
+
+<span class="sd">            from sqlalchemy import Table, Integer, String, Column</span>
+<span class="sd">            from beam_nuggets.io import relational_db</span>
+
+<span class="sd">            table_name = &#39;students&#39;</span>
+
+<span class="sd">            def define_students_table(metadata):</span>
+<span class="sd">                return Table(</span>
+<span class="sd">                    table_name, metadata,</span>
+<span class="sd">                    Column(ID, Integer, primary_key=True),</span>
+<span class="sd">                    Column(NAME, String(100)),</span>
+<span class="sd">                    Column(AGE, Integer)</span>
+<span class="sd">                )</span>
+
+<span class="sd">            table_config = relational_db.TableConfiguration(</span>
+<span class="sd">                name=table_name,</span>
+<span class="sd">                create_if_missing=True,</span>
+<span class="sd">                define_table_f=define_students_table</span>
+<span class="sd">            )</span>
+
+<span class="sd">    .. _define table tutorial:</span>
+<span class="sd">       https://docs.sqlalchemy.org/en/latest/core/tutorial.html#define-and-create-tables</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">name</span><span class="p">,</span>
@@ -197,19 +367,6 @@
         <span class="n">primary_key_columns</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">create_insert_f</span><span class="o">=</span><span class="kc">None</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            name:</span>
-<span class="sd">            define_table_f:</span>
-<span class="sd">                https://docs.sqlalchemy.org/en/latest/core/metadata.html</span>
-<span class="sd">                https://docs.sqlalchemy.org/en/latest/orm/extensions</span>
-<span class="sd">                /declarative/table_config.html</span>
-<span class="sd">                https://docs.sqlalchemy.org/en/latest/core/tutorial.html</span>
-<span class="sd">                #define-and-create-tables</span>
-<span class="sd">            create_if_missing:</span>
-<span class="sd">            primary_key_columns:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">define_table_f</span> <span class="o">=</span> <span class="n">define_table_f</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">create_table_if_missing</span> <span class="o">=</span> <span class="n">create_if_missing</span>
@@ -218,15 +375,15 @@
 
 
 <div class="viewcode-block" id="SqlAlchemyDB"><a class="viewcode-back" href="../../../beam_nuggets.io.relational_db_api.html#beam_nuggets.io.relational_db_api.SqlAlchemyDB">[docs]</a><span class="k">class</span> <span class="nc">SqlAlchemyDB</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    TDOD</span>
+    <span class="sd">&quot;&quot;&quot;Provides functionality to read and write from and to relational DBs.</span>
+<span class="sd">    It uses SqlAlchemy.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        source_config (SourceConfiguration): Information for accessing the</span>
+<span class="sd">            target database.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_config</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Args:</span>
-<span class="sd">            source_config (SourceConfiguration):</span>
-<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_source</span> <span class="o">=</span> <span class="n">source_config</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_SessionClass</span> <span class="o">=</span> <span class="n">sessionmaker</span><span class="p">(</span><span class="n">bind</span><span class="o">=</span><span class="n">create_engine</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_source</span><span class="o">.</span><span class="n">url</span><span class="p">))</span>
@@ -251,11 +408,14 @@
             <span class="k">yield</span> <span class="n">record</span></div>
 
 <div class="viewcode-block" id="SqlAlchemyDB.write_record"><a class="viewcode-back" href="../../../beam_nuggets.io.relational_db_api.html#beam_nuggets.io.relational_db_api.SqlAlchemyDB.write_record">[docs]</a>    <span class="k">def</span> <span class="nf">write_record</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table_config</span><span class="p">,</span> <span class="n">record_dict</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        https://docs.sqlalchemy.org/en/latest/dialects/postgresql.html</span>
-<span class="sd">        #insert-on-conflict-upsert</span>
-<span class="sd">        https://docs.sqlalchemy.org/en/latest/dialects/mysql.html#mysql</span>
-<span class="sd">        -insert-on-duplicate-key-update</span>
+        <span class="sd">&quot;&quot;&quot;Writes a single record to the specified table.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            table_config (TableConfiguration): specifies the target table,</span>
+<span class="sd">                 how data should inserted and how to create it if it was</span>
+<span class="sd">                 missing. See :class:`TableConfiguration` notes on table</span>
+<span class="sd">                 creation.</span>
+<span class="sd">            record_dict (dict): the record to be written</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_open_table_for_write</span><span class="p">(</span><span class="n">table_config</span><span class="p">,</span> <span class="n">record_dict</span><span class="p">)</span>
         <span class="n">table</span><span class="o">.</span><span class="n">write_record</span><span class="p">(</span>
@@ -382,6 +542,15 @@
 
 <span class="k">def</span> <span class="nf">_get_default_define_f</span><span class="p">(</span><span class="n">record</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">primary_key_column_names</span><span class="p">,</span> <span class="n">drivername</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">define_table</span><span class="p">(</span><span class="n">metadata</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Defines an SqlAlchemy database table and adds it to the specified</span>
+<span class="sd">        metadata object.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            metadata (sqlalchemy.Metadata): database metadata.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            sqlalchemy.Table: A database table added to the passed metadata.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">columns</span> <span class="o">=</span> <span class="n">_columns_from_sample_record</span><span class="p">(</span>
             <span class="n">record</span><span class="o">=</span><span class="n">record</span><span class="p">,</span>
             <span class="n">primary_key_column_names</span><span class="o">=</span><span class="n">primary_key_column_names</span><span class="p">,</span>
@@ -418,17 +587,46 @@
 
 
 <div class="viewcode-block" id="create_insert"><a class="viewcode-back" href="../../../beam_nuggets.io.relational_db_api.html#beam_nuggets.io.relational_db_api.create_insert">[docs]</a><span class="k">def</span> <span class="nf">create_insert</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">record</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    https://docs.sqlalchemy.org/en/latest/core/dml.html</span>
-<span class="sd">    https://docs.sqlalchemy.org/en/latest/core/tutorial.html#insert-expressions</span>
+    <span class="sd">&quot;&quot;&quot;Creates a statement for inserting the passed record to the passed table.</span>
+<span class="sd">    The created statement is not executed by this function.</span>
+
+<span class="sd">    For information on creating insert and update statements Refer to these</span>
+<span class="sd">    SqlAlchemy `documentation`_ and `tutorial`_.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        table (sqlalchemy.sql.schema.Table): database table metadata.</span>
+<span class="sd">        record (dict): a data record, corresponding to one row, to be inserted.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        sqlalchemy.sql.dml.Insert: a statement for inserting the passed</span>
+<span class="sd">        record to the specified table.</span>
+
+
+<span class="sd">    .. _documentation: https://docs.sqlalchemy.org/en/latest/core/dml.html</span>
+<span class="sd">    .. _tutorial: https://docs.sqlalchemy.org/en/latest/core/tutorial.html#insert-expressions</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">generic_insert</span><span class="p">(</span><span class="n">table</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="n">record</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="create_upsert_postgres"><a class="viewcode-back" href="../../../beam_nuggets.io.relational_db_api.html#beam_nuggets.io.relational_db_api.create_upsert_postgres">[docs]</a><span class="k">def</span> <span class="nf">create_upsert_postgres</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">record</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    https://docs.sqlalchemy.org/en/latest/dialects/postgresql.html#insert-on</span>
-<span class="sd">    -conflict-upsert</span>
+    <span class="sd">&quot;&quot;&quot;Creates a statement for inserting the passed record to the passed</span>
+<span class="sd">    table; if the record already exists, the existing record will be updated.</span>
+<span class="sd">    This uses PostgreSQL `on_conflict_do_update` (hence upsert), and that</span>
+<span class="sd">    why the returned statement is just valid for PostgreSQL tables. Refer to</span>
+<span class="sd">    this `SqlAlchemy PostgreSQL documentation`_ for more information.</span>
+
+<span class="sd">    The created statement is not executed by this function.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        table (sqlalchemy.sql.schema.Table): database table metadata.</span>
+<span class="sd">        record (dict): a data record, corresponding to one row, to be inserted.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        sqlalchemy.sql.dml.Insert: a statement for inserting the passed</span>
+<span class="sd">        record to the specified table.</span>
+
+<span class="sd">    .. _SqlAlchemy PostgreSQL documentation:</span>
+<span class="sd">       https://docs.sqlalchemy.org/en/latest/dialects/postgresql.html#insert-on-conflict-upsert</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">insert_stmt</span> <span class="o">=</span> <span class="n">postgres_insert</span><span class="p">(</span><span class="n">table</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">insert_stmt</span><span class="o">.</span><span class="n">on_conflict_do_update</span><span class="p">(</span>
@@ -438,9 +636,24 @@
 
 
 <div class="viewcode-block" id="create_upsert_mysql"><a class="viewcode-back" href="../../../beam_nuggets.io.relational_db_api.html#beam_nuggets.io.relational_db_api.create_upsert_mysql">[docs]</a><span class="k">def</span> <span class="nf">create_upsert_mysql</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">record</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    https://docs.sqlalchemy.org/en/latest/dialects/mysql.html#mysql-insert</span>
-<span class="sd">    -on-duplicate-key-update</span>
+    <span class="sd">&quot;&quot;&quot;Creates a statement for inserting the passed record to the passed</span>
+<span class="sd">    table; if the record already exists, the existing record will be updated.</span>
+<span class="sd">    This uses MySQL `on_duplicate_key_update` (hence upsert), and that</span>
+<span class="sd">    why the returned statement is valid only for MySQL tables. Refer to this</span>
+<span class="sd">    `SqlAlchemy MySQL documentation`_ for more information.</span>
+
+<span class="sd">    The created statement is not executed by this function.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        table (sqlalchemy.sql.schema.Table): database table metadata.</span>
+<span class="sd">        record (dict): a data record, corresponding to one row, to be inserted.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        sqlalchemy.sql.dml.Insert: a statement for inserting the passed</span>
+<span class="sd">        record to the specified table.</span>
+
+<span class="sd">    .. _SqlAlchemy MySQL documentation:</span>
+<span class="sd">       https://docs.sqlalchemy.org/en/latest/dialects/mysql.html#mysql-inser-on-duplicate-key-update</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">insert_stmt</span> <span class="o">=</span> <span class="n">mysql_insert</span><span class="p">(</span><span class="n">table</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">insert_stmt</span><span class="o">.</span><span class="n">on_duplicate_key_update</span><span class="p">(</span><span class="o">**</span><span class="n">record</span><span class="p">)</span></div>
@@ -452,6 +665,15 @@
 
 
 <div class="viewcode-block" id="infer_db_type"><a class="viewcode-back" href="../../../beam_nuggets.io.relational_db_api.html#beam_nuggets.io.relational_db_api.infer_db_type">[docs]</a><span class="k">def</span> <span class="nf">infer_db_type</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">drivername</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    TODO</span>
+<span class="sd">    Args:</span>
+<span class="sd">        val:</span>
+<span class="sd">        drivername:</span>
+
+<span class="sd">    Returns:</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">for</span> <span class="n">is_type_f</span><span class="p">,</span> <span class="n">db_type</span> <span class="ow">in</span> <span class="n">PYTHON_TO_DB_TYPE</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">is_type_f</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">db_type</span>
