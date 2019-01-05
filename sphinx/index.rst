@@ -6,7 +6,7 @@ Welcome to beam-nuggets' documentation!
    :caption: Contents:
 
    get_started
-   modules
+   beam_nuggets
 
 
 Indices and tables

@@ -5,7 +5,7 @@ import unittest
 import testing.mysqld
 import testing.postgresql
 
-from beam_nuggets.io import relational_db
+from beam_nuggets.io.relational_db import SourceConfiguration
 from .database import TestDatabase
 
 
@@ -36,7 +36,7 @@ class TransformBaseTest(unittest.TestCase):
 
     @classmethod
     def get_sqlite_source_config(cls):
-        return relational_db.SourceConfiguration(
+        return SourceConfiguration(
             drivername='sqlite',
             database='/tmp/delete_me_beam_nuggets_unittest.sqlite',
             create_if_missing=True,
@@ -46,7 +46,7 @@ class TransformBaseTest(unittest.TestCase):
     def get_postgres_source_config(cls):
         cls.postgres_instance = cls.connect_to_postgresql()
         if cls.postgres_instance:
-            return relational_db.SourceConfiguration(
+            return SourceConfiguration(
                 drivername='postgresql',
                 host='localhost',
                 port=cls.postgres_instance.settings['port'],
@@ -76,7 +76,7 @@ class TransformBaseTest(unittest.TestCase):
     def get_mysql_source_config(cls):
         cls.mysql_instance = cls.connect_to_mysql()
         if cls.mysql_instance:
-            return relational_db.SourceConfiguration(
+            return SourceConfiguration(
                 drivername='mysql+pymysql',
                 host='localhost',
                 port=cls.mysql_instance.my_cnf['port'],

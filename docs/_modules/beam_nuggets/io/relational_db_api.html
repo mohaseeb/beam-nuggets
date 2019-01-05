@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>beam_nuggets.io.relational_db.sqlalchemy_db &mdash; beam-nuggets 0.1.0 documentation</title>
+  <title>beam_nuggets.io.relational_db_api &mdash; beam-nuggets 0.1.0 documentation</title>
   
 
   
@@ -24,13 +24,13 @@
 
   
 
-  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
-    <link rel="index" title="Index" href="../../../../genindex.html" />
-    <link rel="search" title="Search" href="../../../../search.html" /> 
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
 
   
-  <script src="../../../../_static/js/modernizr.min.js"></script>
+  <script src="../../../_static/js/modernizr.min.js"></script>
 
 </head>
 
@@ -46,7 +46,7 @@
           
 
           
-            <a href="../../../../index.html" class="icon icon-home"> beam-nuggets
+            <a href="../../../index.html" class="icon icon-home"> beam-nuggets
           
 
           
@@ -59,7 +59,7 @@
 
           
 <div role="search">
-  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
@@ -78,9 +78,9 @@
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../../get_started.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../get_started.html#usage">Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">beam_nuggets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../get_started.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../get_started.html#usage">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../beam_nuggets.html">beam_nuggets package</a></li>
 </ul>
 
             
@@ -95,7 +95,7 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../../../index.html">beam-nuggets</a>
+          <a href="../../../index.html">beam-nuggets</a>
         
       </nav>
 
@@ -124,11 +124,11 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
         
-          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
         
-      <li>beam_nuggets.io.relational_db.sqlalchemy_db</li>
+      <li>beam_nuggets.io.relational_db_api</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -143,7 +143,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for beam_nuggets.io.relational_db.sqlalchemy_db</h1><div class="highlight"><pre>
+  <h1>Source code for beam_nuggets.io.relational_db_api</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span>
 
 <span class="kn">import</span> <span class="nn">datetime</span>
@@ -166,7 +166,7 @@
 <span class="kn">from</span> <span class="nn">sqlalchemy_utils</span> <span class="k">import</span> <span class="n">create_database</span><span class="p">,</span> <span class="n">database_exists</span>
 
 
-<div class="viewcode-block" id="SourceConfiguration"><a class="viewcode-back" href="../../../../beam_nuggets.io.relational_db.html#beam_nuggets.io.relational_db.sqlalchemy_db.SourceConfiguration">[docs]</a><span class="k">class</span> <span class="nc">SourceConfiguration</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="SourceConfiguration"><a class="viewcode-back" href="../../../beam_nuggets.io.relational_db_api.html#beam_nuggets.io.relational_db_api.SourceConfiguration">[docs]</a><span class="k">class</span> <span class="nc">SourceConfiguration</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">drivername</span><span class="p">,</span>
@@ -188,7 +188,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">create_if_missing</span> <span class="o">=</span> <span class="n">create_if_missing</span></div>
 
 
-<div class="viewcode-block" id="TableConfiguration"><a class="viewcode-back" href="../../../../beam_nuggets.io.relational_db.html#beam_nuggets.io.relational_db.sqlalchemy_db.TableConfiguration">[docs]</a><span class="k">class</span> <span class="nc">TableConfiguration</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="TableConfiguration"><a class="viewcode-back" href="../../../beam_nuggets.io.relational_db_api.html#beam_nuggets.io.relational_db_api.TableConfiguration">[docs]</a><span class="k">class</span> <span class="nc">TableConfiguration</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">name</span><span class="p">,</span>
@@ -217,7 +217,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">create_insert_f</span> <span class="o">=</span> <span class="n">create_insert_f</span></div>
 
 
-<div class="viewcode-block" id="SqlAlchemyDB"><a class="viewcode-back" href="../../../../beam_nuggets.io.relational_db.html#beam_nuggets.io.relational_db.sqlalchemy_db.SqlAlchemyDB">[docs]</a><span class="k">class</span> <span class="nc">SqlAlchemyDB</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="SqlAlchemyDB"><a class="viewcode-back" href="../../../beam_nuggets.io.relational_db_api.html#beam_nuggets.io.relational_db_api.SqlAlchemyDB">[docs]</a><span class="k">class</span> <span class="nc">SqlAlchemyDB</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    TDOD</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -234,23 +234,23 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_name_to_table</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># tables metadata cache</span>
 
-<div class="viewcode-block" id="SqlAlchemyDB.start_session"><a class="viewcode-back" href="../../../../beam_nuggets.io.relational_db.html#beam_nuggets.io.relational_db.sqlalchemy_db.SqlAlchemyDB.start_session">[docs]</a>    <span class="k">def</span> <span class="nf">start_session</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="SqlAlchemyDB.start_session"><a class="viewcode-back" href="../../../beam_nuggets.io.relational_db_api.html#beam_nuggets.io.relational_db_api.SqlAlchemyDB.start_session">[docs]</a>    <span class="k">def</span> <span class="nf">start_session</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">create_if_missing</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source</span><span class="o">.</span><span class="n">create_if_missing</span>
         <span class="n">database_is_missing</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="ow">not</span> <span class="n">database_exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_source</span><span class="o">.</span><span class="n">url</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">create_if_missing</span> <span class="ow">and</span> <span class="n">database_is_missing</span><span class="p">():</span>
             <span class="n">create_database</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_source</span><span class="o">.</span><span class="n">url</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_session</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_SessionClass</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="SqlAlchemyDB.close_session"><a class="viewcode-back" href="../../../../beam_nuggets.io.relational_db.html#beam_nuggets.io.relational_db.sqlalchemy_db.SqlAlchemyDB.close_session">[docs]</a>    <span class="k">def</span> <span class="nf">close_session</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="SqlAlchemyDB.close_session"><a class="viewcode-back" href="../../../beam_nuggets.io.relational_db_api.html#beam_nuggets.io.relational_db_api.SqlAlchemyDB.close_session">[docs]</a>    <span class="k">def</span> <span class="nf">close_session</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_session</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_session</span> <span class="o">=</span> <span class="kc">None</span></div>
 
-<div class="viewcode-block" id="SqlAlchemyDB.read"><a class="viewcode-back" href="../../../../beam_nuggets.io.relational_db.html#beam_nuggets.io.relational_db.sqlalchemy_db.SqlAlchemyDB.read">[docs]</a>    <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table_name</span><span class="p">):</span>
+<div class="viewcode-block" id="SqlAlchemyDB.read"><a class="viewcode-back" href="../../../beam_nuggets.io.relational_db_api.html#beam_nuggets.io.relational_db_api.SqlAlchemyDB.read">[docs]</a>    <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table_name</span><span class="p">):</span>
         <span class="n">table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_open_table_for_read</span><span class="p">(</span><span class="n">table_name</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">table</span><span class="o">.</span><span class="n">records</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_session</span><span class="p">):</span>
             <span class="k">yield</span> <span class="n">record</span></div>
 
-<div class="viewcode-block" id="SqlAlchemyDB.write_record"><a class="viewcode-back" href="../../../../beam_nuggets.io.relational_db.html#beam_nuggets.io.relational_db.sqlalchemy_db.SqlAlchemyDB.write_record">[docs]</a>    <span class="k">def</span> <span class="nf">write_record</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table_config</span><span class="p">,</span> <span class="n">record_dict</span><span class="p">):</span>
+<div class="viewcode-block" id="SqlAlchemyDB.write_record"><a class="viewcode-back" href="../../../beam_nuggets.io.relational_db_api.html#beam_nuggets.io.relational_db_api.SqlAlchemyDB.write_record">[docs]</a>    <span class="k">def</span> <span class="nf">write_record</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table_config</span><span class="p">,</span> <span class="n">record_dict</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        https://docs.sqlalchemy.org/en/latest/dialects/postgresql.html</span>
 <span class="sd">        #insert-on-conflict-upsert</span>
@@ -307,7 +307,7 @@
         <span class="k">return</span> <span class="n">table</span></div>
 
 
-<div class="viewcode-block" id="SqlAlchemyDbException"><a class="viewcode-back" href="../../../../beam_nuggets.io.relational_db.html#beam_nuggets.io.relational_db.sqlalchemy_db.SqlAlchemyDbException">[docs]</a><span class="k">class</span> <span class="nc">SqlAlchemyDbException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<div class="viewcode-block" id="SqlAlchemyDbException"><a class="viewcode-back" href="../../../beam_nuggets.io.relational_db_api.html#beam_nuggets.io.relational_db_api.SqlAlchemyDbException">[docs]</a><span class="k">class</span> <span class="nc">SqlAlchemyDbException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
     <span class="k">pass</span></div>
 
 
@@ -342,7 +342,7 @@
         <span class="k">return</span> <span class="p">{</span><span class="n">col</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">db_record</span><span class="p">,</span> <span class="n">col</span><span class="p">)</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_column_names</span><span class="p">}</span>
 
 
-<div class="viewcode-block" id="load_table"><a class="viewcode-back" href="../../../../beam_nuggets.io.relational_db.html#beam_nuggets.io.relational_db.sqlalchemy_db.load_table">[docs]</a><span class="k">def</span> <span class="nf">load_table</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+<div class="viewcode-block" id="load_table"><a class="viewcode-back" href="../../../beam_nuggets.io.relational_db_api.html#beam_nuggets.io.relational_db_api.load_table">[docs]</a><span class="k">def</span> <span class="nf">load_table</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
     <span class="n">table_class</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">engine</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">bind</span>
     <span class="k">if</span> <span class="n">engine</span><span class="o">.</span><span class="n">dialect</span><span class="o">.</span><span class="n">has_table</span><span class="p">(</span><span class="n">engine</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
@@ -351,7 +351,7 @@
     <span class="k">return</span> <span class="n">table_class</span></div>
 
 
-<div class="viewcode-block" id="create_table"><a class="viewcode-back" href="../../../../beam_nuggets.io.relational_db.html#beam_nuggets.io.relational_db.sqlalchemy_db.create_table">[docs]</a><span class="k">def</span> <span class="nf">create_table</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">table_config</span><span class="p">,</span> <span class="n">record</span><span class="p">):</span>
+<div class="viewcode-block" id="create_table"><a class="viewcode-back" href="../../../beam_nuggets.io.relational_db_api.html#beam_nuggets.io.relational_db_api.create_table">[docs]</a><span class="k">def</span> <span class="nf">create_table</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">table_config</span><span class="p">,</span> <span class="n">record</span><span class="p">):</span>
     <span class="c1"># Attempt to load from the DB</span>
     <span class="n">table_class</span> <span class="o">=</span> <span class="n">load_table</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
 
@@ -373,7 +373,7 @@
     <span class="k">return</span> <span class="n">table_class</span></div>
 
 
-<div class="viewcode-block" id="create_table_class"><a class="viewcode-back" href="../../../../beam_nuggets.io.relational_db.html#beam_nuggets.io.relational_db.sqlalchemy_db.create_table_class">[docs]</a><span class="k">def</span> <span class="nf">create_table_class</span><span class="p">(</span><span class="n">sqlalchemy_table</span><span class="p">):</span>
+<div class="viewcode-block" id="create_table_class"><a class="viewcode-back" href="../../../beam_nuggets.io.relational_db_api.html#beam_nuggets.io.relational_db_api.create_table_class">[docs]</a><span class="k">def</span> <span class="nf">create_table_class</span><span class="p">(</span><span class="n">sqlalchemy_table</span><span class="p">):</span>
     <span class="k">class</span> <span class="nc">TableClass</span><span class="p">(</span><span class="n">declarative_base</span><span class="p">()):</span>
         <span class="n">__table__</span> <span class="o">=</span> <span class="n">sqlalchemy_table</span>
 
@@ -417,7 +417,7 @@
     <span class="k">return</span> <span class="n">primary_key_columns</span> <span class="o">+</span> <span class="n">other_columns</span>
 
 
-<div class="viewcode-block" id="create_insert"><a class="viewcode-back" href="../../../../beam_nuggets.io.relational_db.html#beam_nuggets.io.relational_db.sqlalchemy_db.create_insert">[docs]</a><span class="k">def</span> <span class="nf">create_insert</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">record</span><span class="p">):</span>
+<div class="viewcode-block" id="create_insert"><a class="viewcode-back" href="../../../beam_nuggets.io.relational_db_api.html#beam_nuggets.io.relational_db_api.create_insert">[docs]</a><span class="k">def</span> <span class="nf">create_insert</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">record</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    https://docs.sqlalchemy.org/en/latest/core/dml.html</span>
 <span class="sd">    https://docs.sqlalchemy.org/en/latest/core/tutorial.html#insert-expressions</span>
@@ -425,7 +425,7 @@
     <span class="k">return</span> <span class="n">generic_insert</span><span class="p">(</span><span class="n">table</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="n">record</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="create_upsert_postgres"><a class="viewcode-back" href="../../../../beam_nuggets.io.relational_db.html#beam_nuggets.io.relational_db.sqlalchemy_db.create_upsert_postgres">[docs]</a><span class="k">def</span> <span class="nf">create_upsert_postgres</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">record</span><span class="p">):</span>
+<div class="viewcode-block" id="create_upsert_postgres"><a class="viewcode-back" href="../../../beam_nuggets.io.relational_db_api.html#beam_nuggets.io.relational_db_api.create_upsert_postgres">[docs]</a><span class="k">def</span> <span class="nf">create_upsert_postgres</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">record</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    https://docs.sqlalchemy.org/en/latest/dialects/postgresql.html#insert-on</span>
 <span class="sd">    -conflict-upsert</span>
@@ -437,7 +437,7 @@
     <span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="create_upsert_mysql"><a class="viewcode-back" href="../../../../beam_nuggets.io.relational_db.html#beam_nuggets.io.relational_db.sqlalchemy_db.create_upsert_mysql">[docs]</a><span class="k">def</span> <span class="nf">create_upsert_mysql</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">record</span><span class="p">):</span>
+<div class="viewcode-block" id="create_upsert_mysql"><a class="viewcode-back" href="../../../beam_nuggets.io.relational_db_api.html#beam_nuggets.io.relational_db_api.create_upsert_mysql">[docs]</a><span class="k">def</span> <span class="nf">create_upsert_mysql</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">record</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    https://docs.sqlalchemy.org/en/latest/dialects/mysql.html#mysql-insert</span>
 <span class="sd">    -on-duplicate-key-update</span>
@@ -447,11 +447,11 @@
     <span class="c1"># passing dict, i.e. ...update(record), isn&#39;t working</span>
 
 
-<div class="viewcode-block" id="get_column_names_from_table"><a class="viewcode-back" href="../../../../beam_nuggets.io.relational_db.html#beam_nuggets.io.relational_db.sqlalchemy_db.get_column_names_from_table">[docs]</a><span class="k">def</span> <span class="nf">get_column_names_from_table</span><span class="p">(</span><span class="n">table_class</span><span class="p">):</span>
+<div class="viewcode-block" id="get_column_names_from_table"><a class="viewcode-back" href="../../../beam_nuggets.io.relational_db_api.html#beam_nuggets.io.relational_db_api.get_column_names_from_table">[docs]</a><span class="k">def</span> <span class="nf">get_column_names_from_table</span><span class="p">(</span><span class="n">table_class</span><span class="p">):</span>
     <span class="k">return</span> <span class="p">[</span><span class="n">col</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">table_class</span><span class="o">.</span><span class="n">__table__</span><span class="o">.</span><span class="n">columns</span><span class="p">]</span></div>
 
 
-<div class="viewcode-block" id="infer_db_type"><a class="viewcode-back" href="../../../../beam_nuggets.io.relational_db.html#beam_nuggets.io.relational_db.sqlalchemy_db.infer_db_type">[docs]</a><span class="k">def</span> <span class="nf">infer_db_type</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">drivername</span><span class="p">):</span>
+<div class="viewcode-block" id="infer_db_type"><a class="viewcode-back" href="../../../beam_nuggets.io.relational_db_api.html#beam_nuggets.io.relational_db_api.infer_db_type">[docs]</a><span class="k">def</span> <span class="nf">infer_db_type</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">drivername</span><span class="p">):</span>
     <span class="k">for</span> <span class="n">is_type_f</span><span class="p">,</span> <span class="n">db_type</span> <span class="ow">in</span> <span class="n">PYTHON_TO_DB_TYPE</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">is_type_f</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">db_type</span>
@@ -514,16 +514,16 @@
 
     
     
-      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../../../../_static/jquery.js"></script>
-        <script type="text/javascript" src="../../../../_static/underscore.js"></script>
-        <script type="text/javascript" src="../../../../_static/doctools.js"></script>
-        <script type="text/javascript" src="../../../../_static/language_data.js"></script>
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
     
 
   
 
-  <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  <script type="text/javascript" src="../../../_static/js/theme.js"></script>
 
   <script type="text/javascript">
       jQuery(function () {

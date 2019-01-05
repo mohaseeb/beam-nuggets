@@ -6,7 +6,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy_utils import create_database, drop_database
 
-from beam_nuggets.io.relational_db.sqlalchemy_db import (
+from beam_nuggets.io.relational_db_api import (
     create_table,
     load_table,
     get_column_names_from_table,

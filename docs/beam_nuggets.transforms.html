@@ -28,7 +28,8 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="beam_nuggets.io.relational_db package" href="beam_nuggets.io.relational_db.html" /> 
+    <link rel="next" title="beam_nuggets.transforms.json_ module" href="beam_nuggets.transforms.json_.html" />
+    <link rel="prev" title="beam_nuggets.io.relational_db_api module" href="beam_nuggets.io.relational_db_api.html" /> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -81,16 +82,17 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="get_started.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="get_started.html#usage">Usage</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="modules.html">beam_nuggets</a><ul class="current">
-<li class="toctree-l2 current"><a class="reference internal" href="beam_nuggets.html">beam_nuggets package</a><ul class="current">
-<li class="toctree-l3 current"><a class="reference internal" href="beam_nuggets.html#subpackages">Subpackages</a><ul class="current">
-<li class="toctree-l4"><a class="reference internal" href="beam_nuggets.io.html">beam_nuggets.io package</a></li>
-<li class="toctree-l4 current"><a class="current reference internal" href="#">beam_nuggets.transforms package</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="beam_nuggets.html">beam_nuggets package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="beam_nuggets.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="beam_nuggets.io.html">beam_nuggets.io package</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">beam_nuggets.transforms package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-beam_nuggets.transforms">Module contents</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="beam_nuggets.html#module-beam_nuggets">Module contents</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="beam_nuggets.html#module-beam_nuggets">Module contents</a></li>
 </ul>
 </li>
 </ul>
@@ -138,8 +140,6 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-          <li><a href="modules.html">beam_nuggets</a> &raquo;</li>
-        
           <li><a href="beam_nuggets.html">beam_nuggets package</a> &raquo;</li>
         
       <li>beam_nuggets.transforms package</li>
@@ -165,68 +165,13 @@
 <h1>beam_nuggets.transforms package<a class="headerlink" href="#beam-nuggets-transforms-package" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="beam_nuggets.transforms.json_.html">beam_nuggets.transforms.json_ module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="beam_nuggets.transforms.nested_dict.html">beam_nuggets.transforms.nested_dict module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="beam_nuggets.transforms.unique_id.html">beam_nuggets.transforms.unique_id module</a></li>
+</ul>
 </div>
-<div class="section" id="module-beam_nuggets.transforms.json_">
-<span id="beam-nuggets-transforms-json-module"></span><h2>beam_nuggets.transforms.json_ module<a class="headerlink" href="#module-beam_nuggets.transforms.json_" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="beam_nuggets.transforms.json_.ParseJson">
-<em class="property">class </em><code class="descclassname">beam_nuggets.transforms.json_.</code><code class="descname">ParseJson</code><span class="sig-paren">(</span><em>only_keys=None</em>, <em>*unused_args</em>, <em>**unused_kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/beam_nuggets/transforms/json_.html#ParseJson"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#beam_nuggets.transforms.json_.ParseJson" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">apache_beam.transforms.core.DoFn</span></code></p>
-<dl class="method">
-<dt id="beam_nuggets.transforms.json_.ParseJson.process">
-<code class="descname">process</code><span class="sig-paren">(</span><em>element</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/beam_nuggets/transforms/json_.html#ParseJson.process"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#beam_nuggets.transforms.json_.ParseJson.process" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt>Args:</dt>
-<dd>element(dict):</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-</div>
-<div class="section" id="module-beam_nuggets.transforms.nested_dict">
-<span id="beam-nuggets-transforms-nested-dict-module"></span><h2>beam_nuggets.transforms.nested_dict module<a class="headerlink" href="#module-beam_nuggets.transforms.nested_dict" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="beam_nuggets.transforms.nested_dict.SelectFromNestedDict">
-<em class="property">class </em><code class="descclassname">beam_nuggets.transforms.nested_dict.</code><code class="descname">SelectFromNestedDict</code><span class="sig-paren">(</span><em>keys</em>, <em>deepest_key_as_name=False</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/beam_nuggets/transforms/nested_dict.html#SelectFromNestedDict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#beam_nuggets.transforms.nested_dict.SelectFromNestedDict" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">apache_beam.transforms.core.DoFn</span></code></p>
-<dl class="docutils">
-<dt>input:</dt>
-<dd>{‘a’: {‘b’: 3, ‘c’: {‘d’: 2} }}</dd>
-<dt>keys:</dt>
-<dd>[‘a.b’, ‘a.c.d’]</dd>
-<dt>output:</dt>
-<dd>{‘a_b’: 3, ‘a_c_d’: 2} or {‘b’: 3, ‘d’: 2}</dd>
-</dl>
-<dl class="method">
-<dt id="beam_nuggets.transforms.nested_dict.SelectFromNestedDict.process">
-<code class="descname">process</code><span class="sig-paren">(</span><em>element</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/beam_nuggets/transforms/nested_dict.html#SelectFromNestedDict.process"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#beam_nuggets.transforms.nested_dict.SelectFromNestedDict.process" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt>Args:</dt>
-<dd>element(dict):</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-</div>
-<div class="section" id="module-beam_nuggets.transforms.unique_id">
-<span id="beam-nuggets-transforms-unique-id-module"></span><h2>beam_nuggets.transforms.unique_id module<a class="headerlink" href="#module-beam_nuggets.transforms.unique_id" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="beam_nuggets.transforms.unique_id.AssignUniqueId">
-<em class="property">class </em><code class="descclassname">beam_nuggets.transforms.unique_id.</code><code class="descname">AssignUniqueId</code><span class="sig-paren">(</span><em>id_key='id'</em>, <em>*unused_args</em>, <em>**unused_kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/beam_nuggets/transforms/unique_id.html#AssignUniqueId"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#beam_nuggets.transforms.unique_id.AssignUniqueId" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">apache_beam.transforms.core.DoFn</span></code></p>
-<dl class="method">
-<dt id="beam_nuggets.transforms.unique_id.AssignUniqueId.process">
-<code class="descname">process</code><span class="sig-paren">(</span><em>element</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/beam_nuggets/transforms/unique_id.html#AssignUniqueId.process"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#beam_nuggets.transforms.unique_id.AssignUniqueId.process" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt>Args:</dt>
-<dd>element(dict):</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
 </div>
 <div class="section" id="module-beam_nuggets.transforms">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-beam_nuggets.transforms" title="Permalink to this headline">¶</a></h2>
@@ -241,8 +186,10 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
+        <a href="beam_nuggets.transforms.json_.html" class="btn btn-neutral float-right" title="beam_nuggets.transforms.json_ module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
-        <a href="beam_nuggets.io.relational_db.html" class="btn btn-neutral" title="beam_nuggets.io.relational_db package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+        <a href="beam_nuggets.io.relational_db_api.html" class="btn btn-neutral" title="beam_nuggets.io.relational_db_api module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

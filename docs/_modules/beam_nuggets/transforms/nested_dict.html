@@ -80,7 +80,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../get_started.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../get_started.html#usage">Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">beam_nuggets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../beam_nuggets.html">beam_nuggets package</a></li>
 </ul>
 
             
@@ -149,7 +149,7 @@
 <span class="kn">import</span> <span class="nn">apache_beam</span> <span class="k">as</span> <span class="nn">beam</span>
 
 
-<div class="viewcode-block" id="SelectFromNestedDict"><a class="viewcode-back" href="../../../beam_nuggets.transforms.html#beam_nuggets.transforms.nested_dict.SelectFromNestedDict">[docs]</a><span class="k">class</span> <span class="nc">SelectFromNestedDict</span><span class="p">(</span><span class="n">beam</span><span class="o">.</span><span class="n">DoFn</span><span class="p">):</span>
+<div class="viewcode-block" id="SelectFromNestedDict"><a class="viewcode-back" href="../../../beam_nuggets.transforms.nested_dict.html#beam_nuggets.transforms.nested_dict.SelectFromNestedDict">[docs]</a><span class="k">class</span> <span class="nc">SelectFromNestedDict</span><span class="p">(</span><span class="n">beam</span><span class="o">.</span><span class="n">DoFn</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    input:</span>
 <span class="sd">        {&#39;a&#39;: {&#39;b&#39;: 3, &#39;c&#39;: {&#39;d&#39;: 2} }}</span>
@@ -165,7 +165,7 @@
         <span class="nb">super</span><span class="p">(</span><span class="n">SelectFromNestedDict</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_compiled_keys</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compile_keys</span><span class="p">(</span><span class="n">keys</span><span class="p">,</span> <span class="n">deepest_key_as_name</span><span class="p">)</span>
 
-<div class="viewcode-block" id="SelectFromNestedDict.process"><a class="viewcode-back" href="../../../beam_nuggets.transforms.html#beam_nuggets.transforms.nested_dict.SelectFromNestedDict.process">[docs]</a>    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">):</span>
+<div class="viewcode-block" id="SelectFromNestedDict.process"><a class="viewcode-back" href="../../../beam_nuggets.transforms.nested_dict.html#beam_nuggets.transforms.nested_dict.SelectFromNestedDict.process">[docs]</a>    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            element(dict):</span>

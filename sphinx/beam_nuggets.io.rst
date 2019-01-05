@@ -1,24 +1,14 @@
 beam\_nuggets.io package
 ========================
 
-Subpackages
------------
-
-.. toctree::
-
-    beam_nuggets.io.relational_db
-
 Submodules
 ----------
 
-beam\_nuggets.io.csv\_ module
------------------------------
+.. toctree::
 
-.. automodule:: beam_nuggets.io.csv_
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
+   beam_nuggets.io.csv_
+   beam_nuggets.io.relational_db
+   beam_nuggets.io.relational_db_api
 
 Module contents
 ---------------

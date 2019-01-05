@@ -80,7 +80,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../get_started.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../get_started.html#usage">Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">beam_nuggets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../beam_nuggets.html">beam_nuggets package</a></li>
 </ul>
 
             
@@ -149,13 +149,13 @@
 <span class="kn">import</span> <span class="nn">apache_beam</span> <span class="k">as</span> <span class="nn">beam</span>
 
 
-<div class="viewcode-block" id="AssignUniqueId"><a class="viewcode-back" href="../../../beam_nuggets.transforms.html#beam_nuggets.transforms.unique_id.AssignUniqueId">[docs]</a><span class="k">class</span> <span class="nc">AssignUniqueId</span><span class="p">(</span><span class="n">beam</span><span class="o">.</span><span class="n">DoFn</span><span class="p">):</span>
+<div class="viewcode-block" id="AssignUniqueId"><a class="viewcode-back" href="../../../beam_nuggets.transforms.unique_id.html#beam_nuggets.transforms.unique_id.AssignUniqueId">[docs]</a><span class="k">class</span> <span class="nc">AssignUniqueId</span><span class="p">(</span><span class="n">beam</span><span class="o">.</span><span class="n">DoFn</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">id_key</span><span class="o">=</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="o">*</span><span class="n">unused_args</span><span class="p">,</span> <span class="o">**</span><span class="n">unused_kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">AssignUniqueId</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">unused_args</span><span class="p">,</span> <span class="o">**</span><span class="n">unused_kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">id_key</span> <span class="o">=</span> <span class="n">id_key</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">id_counter</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># FIXME likely not enough for parallel jobs</span>
 
-<div class="viewcode-block" id="AssignUniqueId.process"><a class="viewcode-back" href="../../../beam_nuggets.transforms.html#beam_nuggets.transforms.unique_id.AssignUniqueId.process">[docs]</a>    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">):</span>
+<div class="viewcode-block" id="AssignUniqueId.process"><a class="viewcode-back" href="../../../beam_nuggets.transforms.unique_id.html#beam_nuggets.transforms.unique_id.AssignUniqueId.process">[docs]</a>    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            element(dict):</span>

@@ -1,7 +1,7 @@
-beam\_nuggets.io.relational\_db module
+beam\_nuggets.transforms.json\_ module
 ======================================
 
-.. automodule:: beam_nuggets.io.relational_db
+.. automodule:: beam_nuggets.transforms.json_
     :members:
     :undoc-members:
     :show-inheritance:

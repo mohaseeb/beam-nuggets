@@ -80,7 +80,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../get_started.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../get_started.html#usage">Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">beam_nuggets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../beam_nuggets.html">beam_nuggets package</a></li>
 </ul>
 
             
@@ -153,13 +153,13 @@
 <span class="kn">from</span> <span class="nn">apache_beam.io.filebasedsource</span> <span class="k">import</span> <span class="n">FileBasedSource</span>
 
 
-<div class="viewcode-block" id="ReadFromCsv"><a class="viewcode-back" href="../../../beam_nuggets.io.html#beam_nuggets.io.csv_.ReadFromCsv">[docs]</a><span class="k">class</span> <span class="nc">ReadFromCsv</span><span class="p">(</span><span class="n">PTransform</span><span class="p">):</span>
+<div class="viewcode-block" id="ReadFromCsv"><a class="viewcode-back" href="../../../beam_nuggets.io.csv_.html#beam_nuggets.io.csv_.ReadFromCsv">[docs]</a><span class="k">class</span> <span class="nc">ReadFromCsv</span><span class="p">(</span><span class="n">PTransform</span><span class="p">):</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">ReadFromCsv</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_file_name</span> <span class="o">=</span> <span class="n">file_name</span>
 
-<div class="viewcode-block" id="ReadFromCsv.expand"><a class="viewcode-back" href="../../../beam_nuggets.io.html#beam_nuggets.io.csv_.ReadFromCsv.expand">[docs]</a>    <span class="k">def</span> <span class="nf">expand</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pcoll</span><span class="p">):</span>
+<div class="viewcode-block" id="ReadFromCsv.expand"><a class="viewcode-back" href="../../../beam_nuggets.io.csv_.html#beam_nuggets.io.csv_.ReadFromCsv.expand">[docs]</a>    <span class="k">def</span> <span class="nf">expand</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pcoll</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">pcoll</span> <span class="o">|</span> <span class="n">Read</span><span class="p">(</span><span class="n">_CsvSource</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_file_name</span><span class="p">))</span></div></div>
 
 

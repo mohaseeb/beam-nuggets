@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>beam_nuggets.io.relational_db package &mdash; beam-nuggets 0.1.0 documentation</title>
+  <title>beam_nuggets.io.relational_db module &mdash; beam-nuggets 0.1.0 documentation</title>
   
 
   
@@ -28,8 +28,8 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="beam_nuggets.transforms package" href="beam_nuggets.transforms.html" />
-    <link rel="prev" title="beam_nuggets.io package" href="beam_nuggets.io.html" /> 
+    <link rel="next" title="beam_nuggets.io.relational_db_api module" href="beam_nuggets.io.relational_db_api.html" />
+    <link rel="prev" title="beam_nuggets.io.csv_ module" href="beam_nuggets.io.csv_.html" /> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -82,16 +82,17 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="get_started.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="get_started.html#usage">Usage</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="modules.html">beam_nuggets</a><ul class="current">
-<li class="toctree-l2 current"><a class="reference internal" href="beam_nuggets.html">beam_nuggets package</a><ul class="current">
-<li class="toctree-l3 current"><a class="reference internal" href="beam_nuggets.html#subpackages">Subpackages</a><ul class="current">
-<li class="toctree-l4 current"><a class="reference internal" href="beam_nuggets.io.html">beam_nuggets.io package</a></li>
-<li class="toctree-l4"><a class="reference internal" href="beam_nuggets.transforms.html">beam_nuggets.transforms package</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="beam_nuggets.html">beam_nuggets package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="beam_nuggets.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="beam_nuggets.io.html">beam_nuggets.io package</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="beam_nuggets.io.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="beam_nuggets.io.html#module-beam_nuggets.io">Module contents</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="beam_nuggets.html#module-beam_nuggets">Module contents</a></li>
+<li class="toctree-l3"><a class="reference internal" href="beam_nuggets.transforms.html">beam_nuggets.transforms package</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="beam_nuggets.html#module-beam_nuggets">Module contents</a></li>
 </ul>
 </li>
 </ul>
@@ -139,13 +140,11 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-          <li><a href="modules.html">beam_nuggets</a> &raquo;</li>
-        
           <li><a href="beam_nuggets.html">beam_nuggets package</a> &raquo;</li>
         
           <li><a href="beam_nuggets.io.html">beam_nuggets.io package</a> &raquo;</li>
         
-      <li>beam_nuggets.io.relational_db package</li>
+      <li>beam_nuggets.io.relational_db module</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -164,140 +163,30 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="beam-nuggets-io-relational-db-package">
-<h1>beam_nuggets.io.relational_db package<a class="headerlink" href="#beam-nuggets-io-relational-db-package" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
-</div>
-<div class="section" id="module-beam_nuggets.io.relational_db.read_transform">
-<span id="beam-nuggets-io-relational-db-read-transform-module"></span><h2>beam_nuggets.io.relational_db.read_transform module<a class="headerlink" href="#module-beam_nuggets.io.relational_db.read_transform" title="Permalink to this headline">¶</a></h2>
+  <div class="section" id="module-beam_nuggets.io.relational_db">
+<span id="beam-nuggets-io-relational-db-module"></span><h1>beam_nuggets.io.relational_db module<a class="headerlink" href="#module-beam_nuggets.io.relational_db" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
-<dt id="beam_nuggets.io.relational_db.read_transform.Read">
-<em class="property">class </em><code class="descclassname">beam_nuggets.io.relational_db.read_transform.</code><code class="descname">Read</code><span class="sig-paren">(</span><em>source_config</em>, <em>table_name</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/beam_nuggets/io/relational_db/read_transform.html#Read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#beam_nuggets.io.relational_db.read_transform.Read" title="Permalink to this definition">¶</a></dt>
+<dt id="beam_nuggets.io.relational_db.Read">
+<em class="property">class </em><code class="descclassname">beam_nuggets.io.relational_db.</code><code class="descname">Read</code><span class="sig-paren">(</span><em>source_config</em>, <em>table_name</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/beam_nuggets/io/relational_db.html#Read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#beam_nuggets.io.relational_db.Read" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">apache_beam.transforms.ptransform.PTransform</span></code></p>
 <dl class="method">
-<dt id="beam_nuggets.io.relational_db.read_transform.Read.expand">
-<code class="descname">expand</code><span class="sig-paren">(</span><em>pcoll</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/beam_nuggets/io/relational_db/read_transform.html#Read.expand"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#beam_nuggets.io.relational_db.read_transform.Read.expand" title="Permalink to this definition">¶</a></dt>
+<dt id="beam_nuggets.io.relational_db.Read.expand">
+<code class="descname">expand</code><span class="sig-paren">(</span><em>pcoll</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/beam_nuggets/io/relational_db.html#Read.expand"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#beam_nuggets.io.relational_db.Read.expand" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-</dd></dl>
-
-</div>
-<div class="section" id="module-beam_nuggets.io.relational_db.sqlalchemy_db">
-<span id="beam-nuggets-io-relational-db-sqlalchemy-db-module"></span><h2>beam_nuggets.io.relational_db.sqlalchemy_db module<a class="headerlink" href="#module-beam_nuggets.io.relational_db.sqlalchemy_db" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="beam_nuggets.io.relational_db.sqlalchemy_db.SourceConfiguration">
-<em class="property">class </em><code class="descclassname">beam_nuggets.io.relational_db.sqlalchemy_db.</code><code class="descname">SourceConfiguration</code><span class="sig-paren">(</span><em>drivername</em>, <em>host=None</em>, <em>port=None</em>, <em>database=None</em>, <em>username=None</em>, <em>password=None</em>, <em>create_if_missing=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/beam_nuggets/io/relational_db/sqlalchemy_db.html#SourceConfiguration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#beam_nuggets.io.relational_db.sqlalchemy_db.SourceConfiguration" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 </dd></dl>
 
 <dl class="class">
-<dt id="beam_nuggets.io.relational_db.sqlalchemy_db.SqlAlchemyDB">
-<em class="property">class </em><code class="descclassname">beam_nuggets.io.relational_db.sqlalchemy_db.</code><code class="descname">SqlAlchemyDB</code><span class="sig-paren">(</span><em>source_config</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/beam_nuggets/io/relational_db/sqlalchemy_db.html#SqlAlchemyDB"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#beam_nuggets.io.relational_db.sqlalchemy_db.SqlAlchemyDB" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>TDOD</p>
-<dl class="method">
-<dt id="beam_nuggets.io.relational_db.sqlalchemy_db.SqlAlchemyDB.close_session">
-<code class="descname">close_session</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/beam_nuggets/io/relational_db/sqlalchemy_db.html#SqlAlchemyDB.close_session"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#beam_nuggets.io.relational_db.sqlalchemy_db.SqlAlchemyDB.close_session" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="beam_nuggets.io.relational_db.sqlalchemy_db.SqlAlchemyDB.read">
-<code class="descname">read</code><span class="sig-paren">(</span><em>table_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/beam_nuggets/io/relational_db/sqlalchemy_db.html#SqlAlchemyDB.read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#beam_nuggets.io.relational_db.sqlalchemy_db.SqlAlchemyDB.read" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="beam_nuggets.io.relational_db.sqlalchemy_db.SqlAlchemyDB.start_session">
-<code class="descname">start_session</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/beam_nuggets/io/relational_db/sqlalchemy_db.html#SqlAlchemyDB.start_session"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#beam_nuggets.io.relational_db.sqlalchemy_db.SqlAlchemyDB.start_session" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="beam_nuggets.io.relational_db.sqlalchemy_db.SqlAlchemyDB.write_record">
-<code class="descname">write_record</code><span class="sig-paren">(</span><em>table_config</em>, <em>record_dict</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/beam_nuggets/io/relational_db/sqlalchemy_db.html#SqlAlchemyDB.write_record"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#beam_nuggets.io.relational_db.sqlalchemy_db.SqlAlchemyDB.write_record" title="Permalink to this definition">¶</a></dt>
-<dd><p><a class="reference external" href="https://docs.sqlalchemy.org/en/latest/dialects/postgresql.html">https://docs.sqlalchemy.org/en/latest/dialects/postgresql.html</a>
-#insert-on-conflict-upsert
-<a class="reference external" href="https://docs.sqlalchemy.org/en/latest/dialects/mysql.html#mysql">https://docs.sqlalchemy.org/en/latest/dialects/mysql.html#mysql</a>
--insert-on-duplicate-key-update</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="exception">
-<dt id="beam_nuggets.io.relational_db.sqlalchemy_db.SqlAlchemyDbException">
-<em class="property">exception </em><code class="descclassname">beam_nuggets.io.relational_db.sqlalchemy_db.</code><code class="descname">SqlAlchemyDbException</code><a class="reference internal" href="_modules/beam_nuggets/io/relational_db/sqlalchemy_db.html#SqlAlchemyDbException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#beam_nuggets.io.relational_db.sqlalchemy_db.SqlAlchemyDbException" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">exceptions.Exception</span></code></p>
-</dd></dl>
-
-<dl class="class">
-<dt id="beam_nuggets.io.relational_db.sqlalchemy_db.TableConfiguration">
-<em class="property">class </em><code class="descclassname">beam_nuggets.io.relational_db.sqlalchemy_db.</code><code class="descname">TableConfiguration</code><span class="sig-paren">(</span><em>name</em>, <em>define_table_f=None</em>, <em>create_if_missing=False</em>, <em>primary_key_columns=None</em>, <em>create_insert_f=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/beam_nuggets/io/relational_db/sqlalchemy_db.html#TableConfiguration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#beam_nuggets.io.relational_db.sqlalchemy_db.TableConfiguration" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-</dd></dl>
-
-<dl class="function">
-<dt id="beam_nuggets.io.relational_db.sqlalchemy_db.create_insert">
-<code class="descclassname">beam_nuggets.io.relational_db.sqlalchemy_db.</code><code class="descname">create_insert</code><span class="sig-paren">(</span><em>table</em>, <em>record</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/beam_nuggets/io/relational_db/sqlalchemy_db.html#create_insert"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#beam_nuggets.io.relational_db.sqlalchemy_db.create_insert" title="Permalink to this definition">¶</a></dt>
-<dd><p><a class="reference external" href="https://docs.sqlalchemy.org/en/latest/core/dml.html">https://docs.sqlalchemy.org/en/latest/core/dml.html</a>
-<a class="reference external" href="https://docs.sqlalchemy.org/en/latest/core/tutorial.html#insert-expressions">https://docs.sqlalchemy.org/en/latest/core/tutorial.html#insert-expressions</a></p>
-</dd></dl>
-
-<dl class="function">
-<dt id="beam_nuggets.io.relational_db.sqlalchemy_db.create_table">
-<code class="descclassname">beam_nuggets.io.relational_db.sqlalchemy_db.</code><code class="descname">create_table</code><span class="sig-paren">(</span><em>session</em>, <em>name</em>, <em>table_config</em>, <em>record</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/beam_nuggets/io/relational_db/sqlalchemy_db.html#create_table"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#beam_nuggets.io.relational_db.sqlalchemy_db.create_table" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="beam_nuggets.io.relational_db.sqlalchemy_db.create_table_class">
-<code class="descclassname">beam_nuggets.io.relational_db.sqlalchemy_db.</code><code class="descname">create_table_class</code><span class="sig-paren">(</span><em>sqlalchemy_table</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/beam_nuggets/io/relational_db/sqlalchemy_db.html#create_table_class"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#beam_nuggets.io.relational_db.sqlalchemy_db.create_table_class" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="beam_nuggets.io.relational_db.sqlalchemy_db.create_upsert_mysql">
-<code class="descclassname">beam_nuggets.io.relational_db.sqlalchemy_db.</code><code class="descname">create_upsert_mysql</code><span class="sig-paren">(</span><em>table</em>, <em>record</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/beam_nuggets/io/relational_db/sqlalchemy_db.html#create_upsert_mysql"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#beam_nuggets.io.relational_db.sqlalchemy_db.create_upsert_mysql" title="Permalink to this definition">¶</a></dt>
-<dd><p><a class="reference external" href="https://docs.sqlalchemy.org/en/latest/dialects/mysql.html#mysql-insert">https://docs.sqlalchemy.org/en/latest/dialects/mysql.html#mysql-insert</a>
--on-duplicate-key-update</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="beam_nuggets.io.relational_db.sqlalchemy_db.create_upsert_postgres">
-<code class="descclassname">beam_nuggets.io.relational_db.sqlalchemy_db.</code><code class="descname">create_upsert_postgres</code><span class="sig-paren">(</span><em>table</em>, <em>record</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/beam_nuggets/io/relational_db/sqlalchemy_db.html#create_upsert_postgres"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#beam_nuggets.io.relational_db.sqlalchemy_db.create_upsert_postgres" title="Permalink to this definition">¶</a></dt>
-<dd><p><a class="reference external" href="https://docs.sqlalchemy.org/en/latest/dialects/postgresql.html#insert-on">https://docs.sqlalchemy.org/en/latest/dialects/postgresql.html#insert-on</a>
--conflict-upsert</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="beam_nuggets.io.relational_db.sqlalchemy_db.get_column_names_from_table">
-<code class="descclassname">beam_nuggets.io.relational_db.sqlalchemy_db.</code><code class="descname">get_column_names_from_table</code><span class="sig-paren">(</span><em>table_class</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/beam_nuggets/io/relational_db/sqlalchemy_db.html#get_column_names_from_table"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#beam_nuggets.io.relational_db.sqlalchemy_db.get_column_names_from_table" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="beam_nuggets.io.relational_db.sqlalchemy_db.infer_db_type">
-<code class="descclassname">beam_nuggets.io.relational_db.sqlalchemy_db.</code><code class="descname">infer_db_type</code><span class="sig-paren">(</span><em>val</em>, <em>drivername</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/beam_nuggets/io/relational_db/sqlalchemy_db.html#infer_db_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#beam_nuggets.io.relational_db.sqlalchemy_db.infer_db_type" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="beam_nuggets.io.relational_db.sqlalchemy_db.load_table">
-<code class="descclassname">beam_nuggets.io.relational_db.sqlalchemy_db.</code><code class="descname">load_table</code><span class="sig-paren">(</span><em>session</em>, <em>name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/beam_nuggets/io/relational_db/sqlalchemy_db.html#load_table"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#beam_nuggets.io.relational_db.sqlalchemy_db.load_table" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</div>
-<div class="section" id="module-beam_nuggets.io.relational_db.write_transform">
-<span id="beam-nuggets-io-relational-db-write-transform-module"></span><h2>beam_nuggets.io.relational_db.write_transform module<a class="headerlink" href="#module-beam_nuggets.io.relational_db.write_transform" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="beam_nuggets.io.relational_db.write_transform.Write">
-<em class="property">class </em><code class="descclassname">beam_nuggets.io.relational_db.write_transform.</code><code class="descname">Write</code><span class="sig-paren">(</span><em>source_config</em>, <em>table_config</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/beam_nuggets/io/relational_db/write_transform.html#Write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#beam_nuggets.io.relational_db.write_transform.Write" title="Permalink to this definition">¶</a></dt>
+<dt id="beam_nuggets.io.relational_db.Write">
+<em class="property">class </em><code class="descclassname">beam_nuggets.io.relational_db.</code><code class="descname">Write</code><span class="sig-paren">(</span><em>source_config</em>, <em>table_config</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/beam_nuggets/io/relational_db.html#Write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#beam_nuggets.io.relational_db.Write" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">apache_beam.transforms.ptransform.PTransform</span></code></p>
 <dl class="method">
-<dt id="beam_nuggets.io.relational_db.write_transform.Write.expand">
-<code class="descname">expand</code><span class="sig-paren">(</span><em>pcoll</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/beam_nuggets/io/relational_db/write_transform.html#Write.expand"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#beam_nuggets.io.relational_db.write_transform.Write.expand" title="Permalink to this definition">¶</a></dt>
+<dt id="beam_nuggets.io.relational_db.Write.expand">
+<code class="descname">expand</code><span class="sig-paren">(</span><em>pcoll</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/beam_nuggets/io/relational_db.html#Write.expand"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#beam_nuggets.io.relational_db.Write.expand" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
-</div>
-<div class="section" id="module-beam_nuggets.io.relational_db">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-beam_nuggets.io.relational_db" title="Permalink to this headline">¶</a></h2>
-</div>
 </div>
 
 
@@ -308,10 +197,10 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="beam_nuggets.transforms.html" class="btn btn-neutral float-right" title="beam_nuggets.transforms package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="beam_nuggets.io.relational_db_api.html" class="btn btn-neutral float-right" title="beam_nuggets.io.relational_db_api module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="beam_nuggets.io.html" class="btn btn-neutral" title="beam_nuggets.io package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="beam_nuggets.io.csv_.html" class="btn btn-neutral" title="beam_nuggets.io.csv_ module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
