@@ -12,14 +12,14 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-# import os
-# import sys
-# sys.path.insert(0, os.path.abspath('.'))
+import os
+import sys
+sys.path.insert(0, os.path.abspath('..'))
 
 
 # -- Project information -----------------------------------------------------
 
-project = u'beam-nuggets (transforms for the Apache beam python SDK)'
+project = u'beam-nuggets'
 copyright = u'2019, Mohamed Haseeb'
 author = u'Mohamed Haseeb'
 
@@ -78,7 +78,7 @@ pygments_style = None
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'alabaster'
+html_theme = "sphinx_rtd_theme"
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -105,7 +105,7 @@ html_static_path = ['_static']
 # -- Options for HTMLHelp output ---------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'beam-nuggetstransformsfortheApachebeampythonSDKdoc'
+htmlhelp_basename = 'beam-nuggetsdoc'
 
 
 # -- Options for LaTeX output ------------------------------------------------
@@ -132,7 +132,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'beam-nuggetstransformsfortheApachebeampythonSDK.tex', u'beam-nuggets (transforms for the Apache beam python SDK) Documentation',
+    (master_doc, 'beam-nuggets.tex', u'beam-nuggets Documentation',
      u'Mohamed Haseeb', 'manual'),
 ]
 
@@ -142,7 +142,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'beam-nuggetstransformsfortheapachebeampythonsdk', u'beam-nuggets (transforms for the Apache beam python SDK) Documentation',
+    (master_doc, 'beam-nuggets', u'beam-nuggets Documentation',
      [author], 1)
 ]
 
@@ -153,8 +153,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'beam-nuggetstransformsfortheApachebeampythonSDK', u'beam-nuggets (transforms for the Apache beam python SDK) Documentation',
-     author, 'beam-nuggetstransformsfortheApachebeampythonSDK', 'One line description of project.',
+    (master_doc, 'beam-nuggets', u'beam-nuggets Documentation',
+     author, 'beam-nuggets', 'One line description of project.',
      'Miscellaneous'),
 ]
 

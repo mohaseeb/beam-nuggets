@@ -11,7 +11,8 @@ REQUIRED_TEST_PACKAGES = [
 ]
 
 REQUIRED_DOCUMENTATION = [
-    'Sphinx>=1.8.3,<2.0.0'
+    'Sphinx>=1.8.3,<2.0.0',
+    'sphinx_rtd_theme>=0.4.2,<2.0.0'
 ]
 
 setup(
