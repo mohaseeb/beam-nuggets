@@ -1,6 +1,6 @@
-A collection of random transforms that I use on my Apache beam python 
-pipelines. Many are simple (or trivial) transforms. The most useful ones are 
-those for reading/writing from/to relational databases.
+A collection of random transforms for the Apache beam python SDK . Many are 
+simple (or trivial) transforms. The most useful ones are those for 
+reading/writing from/to relational databases.
 # Installation
 * Using pip
 ```bash
@@ -13,7 +13,63 @@ cd beam-nuggets
 pip install .
 ```
 # Usage
-Below example shows how you can use beam-nugget's [relational_db.Read](http://mohaseeb.com/beam-nuggets/beam_nuggets.io.relational_db.html#beam_nuggets.io.relational_db.Read) 
+Write data to an SQLite table using beam-nugget's 
+[relational_db.Write](http://mohaseeb.com/beam-nuggets/beam_nuggets.io.relational_db.html#beam_nuggets.io.relational_db.Write) transform.
+```python
+# write_sqlite.py contents
+import apache_beam as beam
+from apache_beam.options.pipeline_options import PipelineOptions
+from beam_nuggets.io import relational_db
+
+records = [
+    {'name': 'Jan', 'num': 1},
+    {'name': 'Feb', 'num': 2}
+]
+
+source_config = relational_db.SourceConfiguration(
+    drivername='sqlite',
+    database='/tmp/months_db.sqlite',
+    create_if_missing=True  # create the database if not there 
+)
+
+table_config = relational_db.TableConfiguration(
+    name='months',
+    create_if_missing=True,  # automatically create the table if not there
+    primary_key_columns=['num']  # and use 'num' column as a primary key
+)
+    
+with beam.Pipeline(options=PipelineOptions()) as p:  # Will use local runner
+    months = p | "Reading month records" >> beam.Create(records)
+    months | 'Writing to DB' >> relational_db.Write(
+        source_config=source_config,
+        table_config=table_config
+    )
+```
+Execute the pipeline
+```bash
+python write_sqlite.py 
+```
+Examine the contents
+```bash
+sqlite3 /tmp/months_db.sqlite 'select * from months'
+# output:
+# 1.0|Jan
+# 2.0|Feb
+```
+To write the same data to a PostgreSQL table instead, just create a suitable 
+[relational_db.SourceConfiguration](http://mohaseeb.com/beam-nuggets/beam_nuggets.io.relational_db_api.html#beam_nuggets.io.relational_db_api.SourceConfiguration) as follows.
+```python
+source_config = relational_db.SourceConfiguration(
+    drivername='postgresql',
+    host='localhost',
+    port=5432,
+    username='postgres',
+    password='password',
+    database='calendar',
+    create_if_missing=True  # create the database if not there 
+)
+```
+An example showing how you can use beam-nugget's [relational_db.Read](http://mohaseeb.com/beam-nuggets/beam_nuggets.io.relational_db.html#beam_nuggets.io.relational_db.Read) 
 transform to read from a PostgreSQL database table. 
 ```python
 import apache_beam as beam
@@ -35,41 +91,7 @@ with beam.Pipeline(options=PipelineOptions()) as p:
     )
     records | 'Writing to stdout' >> beam.Map(print)
 ```
-An example to write to PostgreSQL table using beam-nugget's 
-[relational_db.Write](http://mohaseeb.com/beam-nuggets/beam_nuggets.io.relational_db.html#beam_nuggets.io.relational_db.Write) transform.
-```python
-import apache_beam as beam
-from apache_beam.options.pipeline_options import PipelineOptions
-from beam_nuggets.io import relational_db
-
-records = [
-    {'name': 'Jan', 'num': 1},
-    {'name': 'Feb', 'num': 2}
-]
-
-source_config = relational_db.SourceConfiguration(
-    drivername='postgresql',
-    host='localhost',
-    port=5432,
-    username='postgres',
-    password='password',
-    database='calendar',
-    create_if_missing=True  # create the database if not there 
-)
-
-table_config = relational_db.TableConfiguration(
-    name='months',
-    create_if_missing=True,  # automatically create the table if not there
-    primary_key_columns=['num']  # and use 'num' column as primary key
-)
-    
-with beam.Pipeline(options=PipelineOptions()) as p:
-    months = p | "Reading month records" >> beam.Create(records)
-    months | 'Writing to DB' >> relational_db.Write(
-        source_config=source_config,
-        table_config=table_config
-    )
-```
+See [here](https://github.com/mohaseeb/beam-nuggets/tree/master/examples) for more examples.
 # Supported transforms
 ### IO
 * [relational_db.Read](http://mohaseeb.com/beam-nuggets/beam_nuggets.io.relational_db.html#beam_nuggets.io.relational_db.Read) 
@@ -105,7 +127,7 @@ cd beam-nuggets
 export BEAM_NUGGETS_ROOT=`pwd`
 pip install -e .[dev]
 ```
-* Make changes on separate branches
+* Make changes on dedicated dev branches
 * Run tests
 ```bash
 cd $BEAM_NUGGETS_ROOT
@@ -117,11 +139,16 @@ cd $BEAM_NUGGETS_ROOT
 docs/generate_docs.sh
 ```
 * Create a PR against master.
-
+* After merging the accepted PR and updating the local master, upload a new 
+build to pypi.
+```bash
+cd $BEAM_NUGGETS_ROOT
+scripts/build_test_deploy.sh
+```
 # Backlog 
-* upload to pypi
-* version docs?
+* versioned docs?
 * Summarize the investigation of using Source/Sink Vs ParDo(and GroupBy) for IO
+* instruct how to use other DB drivers supported by sqlalchemy
 * Example how to run on GCP
 * Sql queries support in relational_db.Read
 * more nuggets: WriteToCsv
