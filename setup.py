@@ -17,7 +17,7 @@ REQUIRED_DOCUMENTATION = [
 
 setup(
     name='beam-nuggets',
-    version='0.6.0',
+    version='0.7.0',
     install_requires=[
         'apache-beam>=2.8.0,<3.0.0',
         'SQLAlchemy>=1.2.14,<2.0.0',
