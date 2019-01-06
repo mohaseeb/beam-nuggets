@@ -3,7 +3,7 @@ from __future__ import division, print_function
 import apache_beam as beam
 from apache_beam.options.pipeline_options import PipelineOptions
 
-from beam_nuggets.io import ReadFromCsv
+from beam_nuggets.io import csvio
 
 
 def get_csv_file_path():
@@ -20,5 +20,5 @@ def get_csv_file_path():
 
 path_to_csv = get_csv_file_path()
 with beam.Pipeline(options=PipelineOptions()) as p:
-    students = p | "Reading students records" >> ReadFromCsv(path_to_csv)
+    students = p | "Reading students records" >> csvio.Read(path_to_csv)
     students | 'Writing to stdout' >> beam.Map(lambda r: print(r))

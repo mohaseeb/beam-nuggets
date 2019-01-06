@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>beam_nuggets.io.csv_ &mdash; beam-nuggets 0.1.0 documentation</title>
+  <title>beam_nuggets.io.csvio &mdash; beam-nuggets 0.1.0 documentation</title>
   
 
   
@@ -129,7 +129,7 @@
         
           <li><a href="../../index.html">Module code</a> &raquo;</li>
         
-      <li>beam_nuggets.io.csv_</li>
+      <li>beam_nuggets.io.csvio</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -144,27 +144,53 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for beam_nuggets.io.csv_</h1><div class="highlight"><pre>
+  <h1>Source code for beam_nuggets.io.csvio</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span>
 
 <span class="kn">import</span> <span class="nn">csv</span>
 
-<span class="kn">from</span> <span class="nn">apache_beam</span> <span class="k">import</span> <span class="n">PTransform</span>
-<span class="kn">from</span> <span class="nn">apache_beam.io</span> <span class="k">import</span> <span class="n">Read</span>
-<span class="kn">from</span> <span class="nn">apache_beam.io.filebasedsource</span> <span class="k">import</span> <span class="n">FileBasedSource</span>
+<span class="kn">import</span> <span class="nn">apache_beam</span> <span class="k">as</span> <span class="nn">beam</span>
 
 
-<div class="viewcode-block" id="ReadFromCsv"><a class="viewcode-back" href="../../../beam_nuggets.io.csv_.html#beam_nuggets.io.csv_.ReadFromCsv">[docs]</a><span class="k">class</span> <span class="nc">ReadFromCsv</span><span class="p">(</span><span class="n">PTransform</span><span class="p">):</span>
+<div class="viewcode-block" id="Read"><a class="viewcode-back" href="../../../beam_nuggets.io.csvio.html#beam_nuggets.io.csvio.Read">[docs]</a><span class="k">class</span> <span class="nc">Read</span><span class="p">(</span><span class="n">beam</span><span class="o">.</span><span class="n">PTransform</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A :class:`~apache_beam.transforms.ptransform.PTransform` for reading</span>
+<span class="sd">    csv files.</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">ReadFromCsv</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_file_name</span> <span class="o">=</span> <span class="n">file_name</span>
+<span class="sd">    It outputs a :class:`~apache_beam.pvalue.PCollection` of</span>
+<span class="sd">    ``dict:s``, each corresponding to a row in the csv file.</span>
 
-<div class="viewcode-block" id="ReadFromCsv.expand"><a class="viewcode-back" href="../../../beam_nuggets.io.csv_.html#beam_nuggets.io.csv_.ReadFromCsv.expand">[docs]</a>    <span class="k">def</span> <span class="nf">expand</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pcoll</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">pcoll</span> <span class="o">|</span> <span class="n">Read</span><span class="p">(</span><span class="n">_CsvSource</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_file_name</span><span class="p">))</span></div></div>
+<span class="sd">    Args:</span>
+<span class="sd">        csv_path (str): csv file path.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        Reading content of a csv file. ::</span>
+
+<span class="sd">            import apache_beam as beam</span>
+<span class="sd">            from apache_beam.options.pipeline_options import PipelineOptions</span>
+<span class="sd">            from beam_nuggets.io import csvio</span>
+
+<span class="sd">            path_to_csv = &#39;/path/to/students.csv&#39;</span>
+<span class="sd">            with beam.Pipeline(options=PipelineOptions()) as p:</span>
+<span class="sd">                students = p | &quot;Reading students records&quot; &gt;&gt; csvio.Read(path_to_csv)</span>
+<span class="sd">                students | &#39;Writing to stdout&#39; &gt;&gt; beam.Map(print)</span>
+
+<span class="sd">        The output will be something like ::</span>
+
+<span class="sd">            {&#39;lastName&#39;: &#39;Norvell&#39;, &#39;firstName&#39;: &#39;Andrel&#39;, &#39;level&#39;: &#39;10&#39;}</span>
+<span class="sd">            {&#39;lastName&#39;: &#39;Proudfoot&#39;, &#39;firstName&#39;: &#39;Dinorah&#39;, &#39;level&#39;: &#39;8&#39;}</span>
+<span class="sd">            {&#39;lastName&#39;: &#39;Plotkin&#39;, &#39;firstName&#39;: &#39;Trulal&#39;, &#39;level&#39;: &#39;14&#39;}</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">csv_path</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Read</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_csv_path</span> <span class="o">=</span> <span class="n">csv_path</span>
+
+<div class="viewcode-block" id="Read.expand"><a class="viewcode-back" href="../../../beam_nuggets.io.csvio.html#beam_nuggets.io.csvio.Read.expand">[docs]</a>    <span class="k">def</span> <span class="nf">expand</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pcoll</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">pcoll</span> <span class="o">|</span> <span class="n">beam</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">Read</span><span class="p">(</span><span class="n">_CsvSource</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_csv_path</span><span class="p">))</span></div></div>
 
 
-<span class="k">class</span> <span class="nc">_CsvSource</span><span class="p">(</span><span class="n">FileBasedSource</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">_CsvSource</span><span class="p">(</span><span class="n">beam</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">filebasedsource</span><span class="o">.</span><span class="n">FileBasedSource</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">read_records</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">,</span> <span class="n">range_tracker</span><span class="p">):</span>
         <span class="c1"># FIXME handle concurrent read</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>

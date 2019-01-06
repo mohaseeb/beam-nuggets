@@ -151,15 +151,53 @@
 
 
 <div class="viewcode-block" id="SelectFromNestedDict"><a class="viewcode-back" href="../../../beam_nuggets.transforms.nested_dict.html#beam_nuggets.transforms.nested_dict.SelectFromNestedDict">[docs]</a><span class="k">class</span> <span class="nc">SelectFromNestedDict</span><span class="p">(</span><span class="n">beam</span><span class="o">.</span><span class="n">DoFn</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    input:</span>
-<span class="sd">        {&#39;a&#39;: {&#39;b&#39;: 3, &#39;c&#39;: {&#39;d&#39;: 2} }}</span>
+    <span class="sd">&quot;&quot;&quot;A :class:`~apache_beam.DoFn` for selecting subsets of records formed of</span>
+<span class="sd">    nested dictionaries.</span>
 
-<span class="sd">    keys:</span>
-<span class="sd">        [&#39;a.b&#39;, &#39;a.c.d&#39;]</span>
+<span class="sd">    Args:</span>
+<span class="sd">        keys (list): list of dictionary keys to be selected. Each key is a</span>
+<span class="sd">            string formed of dot separated words, each is used for selecting</span>
+<span class="sd">            from a dict in the nested dicts. The order of the word in the</span>
+<span class="sd">            &quot;dot.separated.string&quot; correspond to the dict level to select from.</span>
+<span class="sd">            For instance, if the input record is ``{&#39;a&#39;: {&#39;b&#39;: 3, &#39;c&#39;: {&#39;d&#39;: 2} }}``</span>
+<span class="sd">            and keys is ``[&#39;a.b&#39;, &#39;a.c.d&#39;]``, the transform output will</span>
+<span class="sd">            ``{&#39;a_b&#39;: 3, &#39;a_c_d&#39;: 2} or {&#39;b&#39;: 3, &#39;d&#39;: 2}`` depending on</span>
+<span class="sd">            ``deepest_key_as_name `` below.</span>
+<span class="sd">        deepest_key_as_name (bool): if set to True, the deepest selected fields</span>
+<span class="sd">            keys will be used as names for the output dict keys.</span>
 
-<span class="sd">    output:</span>
-<span class="sd">        {&#39;a_b&#39;: 3, &#39;a_c_d&#39;: 2} or {&#39;b&#39;: 3, &#39;d&#39;: 2}</span>
+<span class="sd">    Examples:</span>
+<span class="sd">        Select from records formed of nested dicts. ::</span>
+
+<span class="sd">            import apache_beam as beam</span>
+<span class="sd">            from apache_beam.options.pipeline_options import PipelineOptions</span>
+<span class="sd">            from beam_nuggets.transforms import SelectFromNestedDict</span>
+
+<span class="sd">            inputs = [</span>
+<span class="sd">                {</span>
+<span class="sd">                    &#39;name&#39;: {&#39;first&#39;: &#39;Star&#39;, &#39;second&#39;: &#39;Light&#39;},</span>
+<span class="sd">                    &#39;address&#39;: {&#39;st&#39;: &#39;Jupiter&#39;, &#39;flat&#39;: 3},</span>
+<span class="sd">                    &#39;email&#39;: &#39;s@l.no&#39;</span>
+<span class="sd">                },</span>
+<span class="sd">                {</span>
+<span class="sd">                    &#39;name&#39;: {&#39;first&#39;: &#39;Mark&#39;, &#39;second&#39;: &#39;Sight&#39;},</span>
+<span class="sd">                    &#39;address&#39;: {&#39;st&#39;: &#39;Loon&#39;, &#39;flat&#39;: 5},</span>
+<span class="sd">                    &#39;email&#39;: &#39;m@s.no&#39;</span>
+<span class="sd">                }</span>
+<span class="sd">            ]</span>
+<span class="sd">            with beam.Pipeline(options=PipelineOptions()) as p:</span>
+<span class="sd">                nested = p | &quot;Reading nested dicts&quot; &gt;&gt; beam.Create(inputs)</span>
+<span class="sd">                transformed = nested | &quot;filtering&quot; &gt;&gt; beam.ParDo(SelectFromNestedDict(</span>
+<span class="sd">                    keys=[&#39;name.first&#39;, &#39;address.st&#39;, &#39;email&#39;],</span>
+<span class="sd">                    # deepest_key_as_name=True,</span>
+<span class="sd">                ))</span>
+<span class="sd">                transformed | &#39;Writing to stdout&#39; &gt;&gt; beam.Map(print)</span>
+
+<span class="sd">        The output will be something like:</span>
+
+<span class="sd">            {&#39;address_st&#39;: &#39;Jupiter&#39;, &#39;name_first&#39;: &#39;Star&#39;, &#39;email&#39;: &#39;s@l.no&#39;}</span>
+<span class="sd">            {&#39;address_st&#39;: &#39;Loon&#39;, &#39;name_first&#39;: &#39;Mark&#39;, &#39;email&#39;: &#39;m@s.no&#39;}</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keys</span><span class="p">,</span> <span class="n">deepest_key_as_name</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>

@@ -336,10 +336,12 @@ default implementations are used:</p>
 <p>As a mechanism to recover from failures, beam runners will
 attempt to apply a transform multiple times on the same data;
 because of that it is recommended to implement idempotent writes
-(e.g. <a class="reference internal" href="#beam_nuggets.io.relational_db_api.create_upsert_mysql" title="beam_nuggets.io.relational_db_api.create_upsert_mysql"><code class="xref py py-func docutils literal notranslate"><span class="pre">create_upsert_mysql()</span></code></a> and <a class="reference internal" href="#beam_nuggets.io.relational_db_api.create_upsert_postgres" title="beam_nuggets.io.relational_db_api.create_upsert_postgres"><code class="xref py py-func docutils literal notranslate"><span class="pre">create_upsert_postgres()</span></code></a>)
+(e.g. <a class="reference internal" href="#beam_nuggets.io.relational_db_api.create_upsert_mysql" title="beam_nuggets.io.relational_db_api.create_upsert_mysql"><code class="xref py py-func docutils literal notranslate"><span class="pre">create_upsert_mysql()</span></code></a> and
+<a class="reference internal" href="#beam_nuggets.io.relational_db_api.create_upsert_postgres" title="beam_nuggets.io.relational_db_api.create_upsert_postgres"><code class="xref py py-func docutils literal notranslate"><span class="pre">create_upsert_postgres()</span></code></a>)
 to avoid data inconsistency issues arising from this beam behavior.
 The function has the following signature:
-(<code class="docutils literal notranslate"><span class="pre">sqlalchemy.sql.schema.Table</span></code>, <code class="docutils literal notranslate"><span class="pre">dict</span></code>) -&gt; <code class="docutils literal notranslate"><span class="pre">sqlalchemy.sql.dml.Insert</span></code>.</p>
+(<code class="docutils literal notranslate"><span class="pre">sqlalchemy.sql.schema.Table</span></code>, <code class="docutils literal notranslate"><span class="pre">dict</span></code>) -&gt;
+<code class="docutils literal notranslate"><span class="pre">sqlalchemy.sql.dml.Insert</span></code>.</p>
 </li>
 <li><strong>create_if_missing</strong> (<em>bool</em>) – if set to True and the table is missing
 <a class="reference internal" href="#beam_nuggets.io.relational_db_api.SqlAlchemyDB" title="beam_nuggets.io.relational_db_api.SqlAlchemyDB"><code class="xref py py-class docutils literal notranslate"><span class="pre">SqlAlchemyDB</span></code></a> will create the table. See below notes on new
@@ -530,10 +532,57 @@ record to the specified table.</p>
 <dl class="function">
 <dt id="beam_nuggets.io.relational_db_api.infer_db_type">
 <code class="descclassname">beam_nuggets.io.relational_db_api.</code><code class="descname">infer_db_type</code><span class="sig-paren">(</span><em>val</em>, <em>drivername</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/beam_nuggets/io/relational_db_api.html#infer_db_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#beam_nuggets.io.relational_db_api.infer_db_type" title="Permalink to this definition">¶</a></dt>
-<dd><p>TODO
-:param val:
-:param drivername:</p>
-<p>Returns:</p>
+<dd><p>Infer a database column type for storing values of the same type as the
+passed variable val in a database identified by drivername.</p>
+<p>Column types are inferred based on the following mapping:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="18%" />
+<col width="82%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Python type</th>
+<th class="head">Column type</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">bool</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">Boolean</span></code></td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">&lt;number&gt;</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">Float</span></code> (All python numbers are mapped to Float columns)</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">datetime.datetime</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">DateTime</span></code></td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">datetime.date</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">Date</span></code></td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">&lt;default&gt;</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">String</span></code> for PostgreSQL and SQLite and String(<code class="xref py py-const docutils literal notranslate"><span class="pre">VARCHAR_DEFAULT_COL_SIZE</span></code>) for other databases</td>
+</tr>
+</tbody>
+</table>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>val</strong> (<em>object</em>) – value used to infer the database column type.</li>
+<li><strong>drivername</strong> – specifies the database type and driver used for
+connecting to the database (the driver information isn’t used to
+infer the column type).</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">one of sqlalchemy column types.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">object</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">

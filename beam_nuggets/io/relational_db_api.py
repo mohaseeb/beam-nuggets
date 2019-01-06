@@ -130,10 +130,12 @@ class TableConfiguration(object):
             As a mechanism to recover from failures, beam runners will
             attempt to apply a transform multiple times on the same data;
             because of that it is recommended to implement idempotent writes
-            (e.g. :func:`create_upsert_mysql` and :func:`create_upsert_postgres`)
+            (e.g. :func:`create_upsert_mysql` and
+            :func:`create_upsert_postgres`)
             to avoid data inconsistency issues arising from this beam behavior.
             The function has the following signature:
-            (``sqlalchemy.sql.schema.Table``, ``dict``) -> ``sqlalchemy.sql.dml.Insert``.
+            (``sqlalchemy.sql.schema.Table``, ``dict``) ->
+            ``sqlalchemy.sql.dml.Insert``.
         create_if_missing (bool): if set to True and the table is missing
             :class:`SqlAlchemyDB` will create the table. See below notes on new
             table creation. See below note how this is used when creating
@@ -210,7 +212,8 @@ class TableConfiguration(object):
             )
 
     .. _define table tutorial:
-       https://docs.sqlalchemy.org/en/latest/core/tutorial.html#define-and-create-tables
+       https://docs.sqlalchemy.org/en/latest/core/tutorial.html#define-and
+       -create-tables
     """
 
     def __init__(
@@ -519,23 +522,46 @@ def get_column_names_from_table(table_class):
 
 
 def infer_db_type(val, drivername):
-    """
-    TODO
+    """Infer a database column type for storing values of the same type as the
+    passed variable val in a database identified by drivername.
+
+    Column types are inferred based on the following mapping:
+
+    +-----------------------+--------------------------------------------------------------------------------------------------------+
+    | Python type           | Column type                                                                                            |
+    +=======================+========================================================================================================+
+    | ``bool``              | ``Boolean``                                                                                            |
+    +-----------------------+--------------------------------------------------------------------------------------------------------+
+    | ``<number>``          | ``Float`` (All python numbers are mapped to Float columns)                                             |
+    +-----------------------+--------------------------------------------------------------------------------------------------------+
+    | ``datetime.datetime`` | ``DateTime``                                                                                           |
+    +-----------------------+--------------------------------------------------------------------------------------------------------+
+    | ``datetime.date``     | ``Date``                                                                                               |
+    +-----------------------+--------------------------------------------------------------------------------------------------------+
+    | ``<default>``         | ``String`` for PostgreSQL and SQLite and String(:const:`VARCHAR_DEFAULT_COL_SIZE`) for other databases |
+    +-----------------------+--------------------------------------------------------------------------------------------------------+
+
     Args:
-        val:
-        drivername:
+        val (object): value used to infer the database column type.
+        drivername: specifies the database type and driver used for
+            connecting to the database (the driver information isn't used to
+            infer the column type).
 
     Returns:
-
+        object: one of sqlalchemy column types.
     """
     for is_type_f, db_type in PYTHON_TO_DB_TYPE:
         if is_type_f(val):
             return db_type
-    return String if _does_support_varchar(drivername) else String(100)
-    # FIXME: Users familiar with the syntax of CREATE TABLE may notice
-    #  that the VARCHAR columns were generated without a length; on
-    #  SQLite and PostgreSQL, this is a valid datatype, but on others,
-    #  it\'s not allowed.
+    return (
+        String if _does_support_varchar(drivername) else
+        String(VARCHAR_DEFAULT_COL_SIZE)
+        # It seems only PostgreSQL and SQLite support String columns with
+        # not specified length.
+    )
+
+
+VARCHAR_DEFAULT_COL_SIZE = 50
 
 
 def _does_support_varchar(drivername):

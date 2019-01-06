@@ -1,7 +1,7 @@
-beam\_nuggets.io.csv\_ module
+beam\_nuggets.io.csvio module
 =============================
 
-.. automodule:: beam_nuggets.io.csv_
+.. automodule:: beam_nuggets.io.csvio
     :members:
     :undoc-members:
     :show-inheritance:
