@@ -20,7 +20,6 @@ pip install .
 ```python
 import apache_beam as beam
 from apache_beam.options.pipeline_options import PipelineOptions
-
 from beam_nuggets.io import relational_db
 
 with beam.Pipeline(options=PipelineOptions()) as p:
@@ -132,7 +131,6 @@ with beam.Pipeline(options=PipelineOptions()) as p:
 * AssignUniqueId
 
 # TODO 
-* Idempotency in WriteToRelationalDB
 * Summarize the investigation of using Source/Sink Vs ParDo for IO
     - send to beam mailing list about the "ParDo -> GroupByKey -> ParDo" 
       read pattern.

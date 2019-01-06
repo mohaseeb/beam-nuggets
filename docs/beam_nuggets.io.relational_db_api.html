@@ -1,0 +1,604 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>beam_nuggets.io.relational_db_api module &mdash; beam-nuggets 0.1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="beam_nuggets.transforms package" href="beam_nuggets.transforms.html" />
+    <link rel="prev" title="beam_nuggets.io.relational_db module" href="beam_nuggets.io.relational_db.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> beam-nuggets
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="get_started.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="get_started.html#usage">Usage</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="beam_nuggets.html">beam_nuggets package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="beam_nuggets.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="beam_nuggets.io.html">beam_nuggets.io package</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="beam_nuggets.io.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="beam_nuggets.io.html#module-beam_nuggets.io">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="beam_nuggets.transforms.html">beam_nuggets.transforms package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="beam_nuggets.html#module-beam_nuggets">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">beam-nuggets</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="beam_nuggets.html">beam_nuggets package</a> &raquo;</li>
+        
+          <li><a href="beam_nuggets.io.html">beam_nuggets.io package</a> &raquo;</li>
+        
+      <li>beam_nuggets.io.relational_db_api module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/beam_nuggets.io.relational_db_api.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-beam_nuggets.io.relational_db_api">
+<span id="beam-nuggets-io-relational-db-api-module"></span><h1>beam_nuggets.io.relational_db_api module<a class="headerlink" href="#module-beam_nuggets.io.relational_db_api" title="Permalink to this headline">¶</a></h1>
+<p>Wrapper of SqlAlchemy code used for reading from and writing to databases</p>
+<dl class="class">
+<dt id="beam_nuggets.io.relational_db_api.SourceConfiguration">
+<em class="property">class </em><code class="descclassname">beam_nuggets.io.relational_db_api.</code><code class="descname">SourceConfiguration</code><span class="sig-paren">(</span><em>drivername</em>, <em>host=None</em>, <em>port=None</em>, <em>database=None</em>, <em>username=None</em>, <em>password=None</em>, <em>create_if_missing=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/beam_nuggets/io/relational_db_api.html#SourceConfiguration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#beam_nuggets.io.relational_db_api.SourceConfiguration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Holds parameters for accessing a database.</p>
+<p>User to pass database access parameters to
+<a class="reference internal" href="#beam_nuggets.io.relational_db_api.SqlAlchemyDB" title="beam_nuggets.io.relational_db_api.SqlAlchemyDB"><code class="xref py py-class docutils literal notranslate"><span class="pre">SqlAlchemyDB</span></code></a>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">SourceConfiguration.url</span></code> provides the database url used by SqlAlchemy to
+connect to the database.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>drivername</strong> (<em>str</em>) – <p>name of the database backend. It specifies the
+target database type and the driver (DBAPI) used
+by SqlAlchemy to communicate with database. The following
+drivernames are supported by and tested on beam-nuggets:</p>
+<blockquote>
+<div><ul>
+<li>mysql+pymysql: for MySQL (pymysql is the driver name).</li>
+<li>postgresql: for PostgreSQL (default driver psycopg2 is used).</li>
+<li>sqlite: for SQLite.</li>
+</ul>
+</div></blockquote>
+<p>Additional drivers can be used after installing their
+corresponding python libraries. Refer to <a class="reference external" href="https://docs.sqlalchemy.org/en/latest/dialects/">SqlAlchemy dialects</a>
+for more information on the supported databases and the
+corresponding drivers.</p>
+</li>
+<li><strong>host</strong> (<em>str</em>) – database host name or IP.</li>
+<li><strong>port</strong> (<em>int</em>) – database port number.</li>
+<li><strong>database</strong> (<em>str</em>) – database name.</li>
+<li><strong>username</strong> (<em>str</em>) – database username.</li>
+<li><strong>password</strong> (<em>str</em>) – database password.</li>
+<li><strong>create_if_missing</strong> (<em>bool</em>) – If set to True, it instructs to create a
+missing database before writing to it.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<p>MySQL database</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">beam_nuggets.io</span> <span class="k">import</span> <span class="n">relational_db</span>
+<span class="n">src_cnf</span> <span class="o">=</span> <span class="n">relational_db</span><span class="o">.</span><span class="n">SourceConfiguration</span><span class="p">(</span>
+    <span class="n">drivername</span><span class="o">=</span><span class="s1">&#39;mysql+pymysql&#39;</span><span class="p">,</span>
+    <span class="n">host</span><span class="o">=</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span>
+    <span class="n">port</span><span class="o">=</span><span class="mi">37311</span><span class="p">,</span>
+    <span class="n">username</span><span class="o">=</span><span class="s1">&#39;root&#39;</span><span class="p">,</span>
+    <span class="n">database</span><span class="o">=</span><span class="s1">&#39;test&#39;</span><span class="p">,</span>
+    <span class="n">create_if_missing</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">src_cnf</span><span class="o">.</span><span class="n">url</span><span class="p">)</span>
+<span class="c1"># mysql+pymysql://root@localhost:37311/test</span>
+</pre></div>
+</div>
+<p>PostgreSQL database</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">beam_nuggets.io</span> <span class="k">import</span> <span class="n">relational_db</span>
+<span class="n">src_cnf</span> <span class="o">=</span> <span class="n">relational_db</span><span class="o">.</span><span class="n">SourceConfiguration</span><span class="p">(</span>
+    <span class="n">drivername</span><span class="o">=</span><span class="s1">&#39;postgresql&#39;</span><span class="p">,</span>
+    <span class="n">host</span><span class="o">=</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span>
+    <span class="n">port</span><span class="o">=</span><span class="mi">42139</span><span class="p">,</span>
+    <span class="n">username</span><span class="o">=</span><span class="s1">&#39;postgres&#39;</span><span class="p">,</span>
+    <span class="n">password</span><span class="o">=</span><span class="s1">&#39;pass&#39;</span><span class="p">,</span>
+    <span class="n">database</span><span class="o">=</span><span class="s1">&#39;test&#39;</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">src_cnf</span><span class="o">.</span><span class="n">url</span><span class="p">)</span>
+<span class="c1"># postgresql://postgres:pass@localhost:42139/test</span>
+</pre></div>
+</div>
+<p>SQLite database</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">beam_nuggets.io</span> <span class="k">import</span> <span class="n">relational_db</span>
+<span class="n">src_cnf</span> <span class="o">=</span> <span class="n">relational_db</span><span class="o">.</span><span class="n">SourceConfiguration</span><span class="p">(</span>
+    <span class="n">drivername</span><span class="o">=</span><span class="s1">&#39;sqlite&#39;</span><span class="p">,</span>
+    <span class="n">database</span><span class="o">=</span><span class="s1">&#39;/tmp/test_db.sqlite&#39;</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">src_cnf</span><span class="o">.</span><span class="n">url</span><span class="p">)</span>
+<span class="c1"># sqlite:////tmp/test_db.sqlite</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="class">
+<dt id="beam_nuggets.io.relational_db_api.SqlAlchemyDB">
+<em class="property">class </em><code class="descclassname">beam_nuggets.io.relational_db_api.</code><code class="descname">SqlAlchemyDB</code><span class="sig-paren">(</span><em>source_config</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/beam_nuggets/io/relational_db_api.html#SqlAlchemyDB"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#beam_nuggets.io.relational_db_api.SqlAlchemyDB" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Provides functionality to read and write from and to relational DBs.
+It uses SqlAlchemy.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>source_config</strong> (<a class="reference internal" href="#beam_nuggets.io.relational_db_api.SourceConfiguration" title="beam_nuggets.io.relational_db_api.SourceConfiguration"><em>SourceConfiguration</em></a>) – Information for accessing the
+target database.</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="beam_nuggets.io.relational_db_api.SqlAlchemyDB.close_session">
+<code class="descname">close_session</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/beam_nuggets/io/relational_db_api.html#SqlAlchemyDB.close_session"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#beam_nuggets.io.relational_db_api.SqlAlchemyDB.close_session" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="beam_nuggets.io.relational_db_api.SqlAlchemyDB.read">
+<code class="descname">read</code><span class="sig-paren">(</span><em>table_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/beam_nuggets/io/relational_db_api.html#SqlAlchemyDB.read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#beam_nuggets.io.relational_db_api.SqlAlchemyDB.read" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="beam_nuggets.io.relational_db_api.SqlAlchemyDB.start_session">
+<code class="descname">start_session</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/beam_nuggets/io/relational_db_api.html#SqlAlchemyDB.start_session"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#beam_nuggets.io.relational_db_api.SqlAlchemyDB.start_session" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="beam_nuggets.io.relational_db_api.SqlAlchemyDB.write_record">
+<code class="descname">write_record</code><span class="sig-paren">(</span><em>table_config</em>, <em>record_dict</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/beam_nuggets/io/relational_db_api.html#SqlAlchemyDB.write_record"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#beam_nuggets.io.relational_db_api.SqlAlchemyDB.write_record" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes a single record to the specified table.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>table_config</strong> (<a class="reference internal" href="#beam_nuggets.io.relational_db_api.TableConfiguration" title="beam_nuggets.io.relational_db_api.TableConfiguration"><em>TableConfiguration</em></a>) – specifies the target table,
+how data should inserted and how to create it if it was
+missing. See <a class="reference internal" href="#beam_nuggets.io.relational_db_api.TableConfiguration" title="beam_nuggets.io.relational_db_api.TableConfiguration"><code class="xref py py-class docutils literal notranslate"><span class="pre">TableConfiguration</span></code></a> notes on table
+creation.</li>
+<li><strong>record_dict</strong> (<em>dict</em>) – the record to be written</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="exception">
+<dt id="beam_nuggets.io.relational_db_api.SqlAlchemyDbException">
+<em class="property">exception </em><code class="descclassname">beam_nuggets.io.relational_db_api.</code><code class="descname">SqlAlchemyDbException</code><a class="reference internal" href="_modules/beam_nuggets/io/relational_db_api.html#SqlAlchemyDbException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#beam_nuggets.io.relational_db_api.SqlAlchemyDbException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">exceptions.Exception</span></code></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="beam_nuggets.io.relational_db_api.TableConfiguration">
+<em class="property">class </em><code class="descclassname">beam_nuggets.io.relational_db_api.</code><code class="descname">TableConfiguration</code><span class="sig-paren">(</span><em>name</em>, <em>define_table_f=None</em>, <em>create_if_missing=False</em>, <em>primary_key_columns=None</em>, <em>create_insert_f=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/beam_nuggets/io/relational_db_api.html#TableConfiguration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#beam_nuggets.io.relational_db_api.TableConfiguration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Holds parameters for a database table.
+Used to pass table parameters to <a class="reference internal" href="#beam_nuggets.io.relational_db_api.SqlAlchemyDB" title="beam_nuggets.io.relational_db_api.SqlAlchemyDB"><code class="xref py py-class docutils literal notranslate"><span class="pre">SqlAlchemyDB</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> (<em>str</em>) – the table name.</li>
+<li><strong>create_insert_f</strong> (<em>function</em>) – <p>a function that takes as input an
+SqlAlchemy table and a row record, and returns an statement for
+inserting the record into the table. The function doesn’t
+execute the insert statement. If not specified, the following
+default implementations are used:</p>
+<blockquote>
+<div><ul>
+<li><a class="reference internal" href="#beam_nuggets.io.relational_db_api.create_upsert_mysql" title="beam_nuggets.io.relational_db_api.create_upsert_mysql"><code class="xref py py-func docutils literal notranslate"><span class="pre">create_upsert_mysql()</span></code></a> for MySQL tables.</li>
+<li><a class="reference internal" href="#beam_nuggets.io.relational_db_api.create_upsert_postgres" title="beam_nuggets.io.relational_db_api.create_upsert_postgres"><code class="xref py py-func docutils literal notranslate"><span class="pre">create_upsert_postgres()</span></code></a> for PostgreSQL tables.</li>
+<li><a class="reference internal" href="#beam_nuggets.io.relational_db_api.create_insert" title="beam_nuggets.io.relational_db_api.create_insert"><code class="xref py py-func docutils literal notranslate"><span class="pre">create_insert()</span></code></a> for other databases.</li>
+</ul>
+</div></blockquote>
+<p>As a mechanism to recover from failures, beam runners will
+attempt to apply a transform multiple times on the same data;
+because of that it is recommended to implement idempotent writes
+(e.g. <a class="reference internal" href="#beam_nuggets.io.relational_db_api.create_upsert_mysql" title="beam_nuggets.io.relational_db_api.create_upsert_mysql"><code class="xref py py-func docutils literal notranslate"><span class="pre">create_upsert_mysql()</span></code></a> and <a class="reference internal" href="#beam_nuggets.io.relational_db_api.create_upsert_postgres" title="beam_nuggets.io.relational_db_api.create_upsert_postgres"><code class="xref py py-func docutils literal notranslate"><span class="pre">create_upsert_postgres()</span></code></a>)
+to avoid data inconsistency issues arising from this beam behavior.
+The function has the following signature:
+(<code class="docutils literal notranslate"><span class="pre">sqlalchemy.sql.schema.Table</span></code>, <code class="docutils literal notranslate"><span class="pre">dict</span></code>) -&gt; <code class="docutils literal notranslate"><span class="pre">sqlalchemy.sql.dml.Insert</span></code>.</p>
+</li>
+<li><strong>create_if_missing</strong> (<em>bool</em>) – if set to True and the table is missing
+<a class="reference internal" href="#beam_nuggets.io.relational_db_api.SqlAlchemyDB" title="beam_nuggets.io.relational_db_api.SqlAlchemyDB"><code class="xref py py-class docutils literal notranslate"><span class="pre">SqlAlchemyDB</span></code></a> will create the table. See below notes on new
+table creation. See below note how this is used when creating
+new tables.</li>
+<li><strong>primary_key_columns</strong> (<em>list</em>) – list of column names to be used as
+primary key (if multiple columns are specified, a composite key
+is created), when creating the table. See below notes on new table
+creation.</li>
+<li><strong>define_table_f</strong> (<em>function</em>) – A function for defining an SqlAlchemy
+table (the function doesn’t create the table); the definition is
+used when creating the table. The function has the following
+signature: (<code class="docutils literal notranslate"><span class="pre">Sqlalchemy.Metadata</span></code>) -&gt; <code class="docutils literal notranslate"><span class="pre">sqlalchemy.Table</span></code>. See
+below notes on how this is used when creating missing tables.
+See this <a class="reference external" href="https://docs.sqlalchemy.org/en/latest/core/tutorial.html#define-and-create-tables">define table tutorial</a> for how to implement the
+function.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>When attempting to write to a missing database table,
+<a class="reference internal" href="#beam_nuggets.io.relational_db_api.SqlAlchemyDB" title="beam_nuggets.io.relational_db_api.SqlAlchemyDB"><code class="xref py py-class docutils literal notranslate"><span class="pre">SqlAlchemyDB</span></code></a> will handle the situation based on the values
+<code class="docutils literal notranslate"><span class="pre">create_if_missing</span></code>, <code class="docutils literal notranslate"><span class="pre">primary_key_columns</span></code> and <code class="docutils literal notranslate"><span class="pre">define_table_f</span></code>
+of the passed <a class="reference internal" href="#beam_nuggets.io.relational_db_api.TableConfiguration" title="beam_nuggets.io.relational_db_api.TableConfiguration"><code class="xref py py-class docutils literal notranslate"><span class="pre">TableConfiguration</span></code></a>, as follows:</p>
+<blockquote>
+<div><ul class="simple">
+<li>If the table is missing and <code class="docutils literal notranslate"><span class="pre">create_if_missing</span></code> is set to</li>
+</ul>
+<p>False (default), <a class="reference internal" href="#beam_nuggets.io.relational_db_api.SqlAlchemyDB" title="beam_nuggets.io.relational_db_api.SqlAlchemyDB"><code class="xref py py-class docutils literal notranslate"><span class="pre">SqlAlchemyDB</span></code></a> will raise an exception.
+- Only when the target table is missing the <code class="docutils literal notranslate"><span class="pre">create_if_missing</span></code>
+is set to True, table creation is attempted. This is the assumed
+state for all the following cases.
+- If <code class="docutils literal notranslate"><span class="pre">define_table_f</span></code> is specified, a new table will be created
+using the table definition returned by <code class="docutils literal notranslate"><span class="pre">define_table_f</span></code>,
+irrespective of <code class="docutils literal notranslate"><span class="pre">primary_key_columns</span></code>.
+- If <code class="docutils literal notranslate"><span class="pre">primary_key_columns</span></code> is specified and <code class="docutils literal notranslate"><span class="pre">define_table_f</span></code>
+is None, a new table will be created using the columns specified
+in <code class="docutils literal notranslate"><span class="pre">primary_key_columns</span></code> as the primary key. The full column
+list and their types are inferred automatically using the first
+record to be written. See <a class="reference internal" href="#beam_nuggets.io.relational_db_api.infer_db_type" title="beam_nuggets.io.relational_db_api.infer_db_type"><code class="xref py py-func docutils literal notranslate"><span class="pre">infer_db_type()</span></code></a> for information on
+the how the database column types are inferred from the python
+types. If <code class="docutils literal notranslate"><span class="pre">primary_key_columns</span></code> is also None, an auto_increment
+Integer column will be created and used as primary key this is
+done as some databases require a primary key to be specified when
+creating tables.</p>
+</div></blockquote>
+<p class="rubric">Examples</p>
+<p>A config that creates the table if missing, using the specified
+columns to create the primary key.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">beam_nuggets.io</span> <span class="k">import</span> <span class="n">relational_db</span>
+
+<span class="n">table_config</span> <span class="o">=</span> <span class="n">relational_db</span><span class="o">.</span><span class="n">TableConfiguration</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;students&#39;</span><span class="p">,</span>
+    <span class="n">create_if_missing</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">primary_key_columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>A config that creates the table if missing using the specified
+definition.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="k">import</span> <span class="n">Table</span><span class="p">,</span> <span class="n">Integer</span><span class="p">,</span> <span class="n">String</span><span class="p">,</span> <span class="n">Column</span>
+<span class="kn">from</span> <span class="nn">beam_nuggets.io</span> <span class="k">import</span> <span class="n">relational_db</span>
+
+<span class="n">table_name</span> <span class="o">=</span> <span class="s1">&#39;students&#39;</span>
+
+<span class="k">def</span> <span class="nf">define_students_table</span><span class="p">(</span><span class="n">metadata</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">Table</span><span class="p">(</span>
+        <span class="n">table_name</span><span class="p">,</span> <span class="n">metadata</span><span class="p">,</span>
+        <span class="n">Column</span><span class="p">(</span><span class="n">ID</span><span class="p">,</span> <span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+        <span class="n">Column</span><span class="p">(</span><span class="n">NAME</span><span class="p">,</span> <span class="n">String</span><span class="p">(</span><span class="mi">100</span><span class="p">)),</span>
+        <span class="n">Column</span><span class="p">(</span><span class="n">AGE</span><span class="p">,</span> <span class="n">Integer</span><span class="p">)</span>
+    <span class="p">)</span>
+
+<span class="n">table_config</span> <span class="o">=</span> <span class="n">relational_db</span><span class="o">.</span><span class="n">TableConfiguration</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="n">table_name</span><span class="p">,</span>
+    <span class="n">create_if_missing</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">define_table_f</span><span class="o">=</span><span class="n">define_students_table</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="beam_nuggets.io.relational_db_api.create_insert">
+<code class="descclassname">beam_nuggets.io.relational_db_api.</code><code class="descname">create_insert</code><span class="sig-paren">(</span><em>table</em>, <em>record</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/beam_nuggets/io/relational_db_api.html#create_insert"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#beam_nuggets.io.relational_db_api.create_insert" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a statement for inserting the passed record to the passed table.
+The created statement is not executed by this function.</p>
+<p>For information on creating insert and update statements Refer to these
+SqlAlchemy <a class="reference external" href="https://docs.sqlalchemy.org/en/latest/core/dml.html">documentation</a> and <a class="reference external" href="https://docs.sqlalchemy.org/en/latest/core/tutorial.html#insert-expressions">tutorial</a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>table</strong> (<em>sqlalchemy.sql.schema.Table</em>) – database table metadata.</li>
+<li><strong>record</strong> (<em>dict</em>) – a data record, corresponding to one row, to be inserted.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">a statement for inserting the passed
+record to the specified table.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">sqlalchemy.sql.dml.Insert</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="beam_nuggets.io.relational_db_api.create_table">
+<code class="descclassname">beam_nuggets.io.relational_db_api.</code><code class="descname">create_table</code><span class="sig-paren">(</span><em>session</em>, <em>name</em>, <em>table_config</em>, <em>record</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/beam_nuggets/io/relational_db_api.html#create_table"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#beam_nuggets.io.relational_db_api.create_table" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="beam_nuggets.io.relational_db_api.create_table_class">
+<code class="descclassname">beam_nuggets.io.relational_db_api.</code><code class="descname">create_table_class</code><span class="sig-paren">(</span><em>sqlalchemy_table</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/beam_nuggets/io/relational_db_api.html#create_table_class"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#beam_nuggets.io.relational_db_api.create_table_class" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="beam_nuggets.io.relational_db_api.create_upsert_mysql">
+<code class="descclassname">beam_nuggets.io.relational_db_api.</code><code class="descname">create_upsert_mysql</code><span class="sig-paren">(</span><em>table</em>, <em>record</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/beam_nuggets/io/relational_db_api.html#create_upsert_mysql"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#beam_nuggets.io.relational_db_api.create_upsert_mysql" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a statement for inserting the passed record to the passed
+table; if the record already exists, the existing record will be updated.
+This uses MySQL <cite>on_duplicate_key_update</cite> (hence upsert), and that
+why the returned statement is valid only for MySQL tables. Refer to this
+<a class="reference external" href="https://docs.sqlalchemy.org/en/latest/dialects/mysql.html#mysql-inser-on-duplicate-key-update">SqlAlchemy MySQL documentation</a> for more information.</p>
+<p>The created statement is not executed by this function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>table</strong> (<em>sqlalchemy.sql.schema.Table</em>) – database table metadata.</li>
+<li><strong>record</strong> (<em>dict</em>) – a data record, corresponding to one row, to be inserted.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">a statement for inserting the passed
+record to the specified table.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">sqlalchemy.sql.dml.Insert</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="beam_nuggets.io.relational_db_api.create_upsert_postgres">
+<code class="descclassname">beam_nuggets.io.relational_db_api.</code><code class="descname">create_upsert_postgres</code><span class="sig-paren">(</span><em>table</em>, <em>record</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/beam_nuggets/io/relational_db_api.html#create_upsert_postgres"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#beam_nuggets.io.relational_db_api.create_upsert_postgres" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a statement for inserting the passed record to the passed
+table; if the record already exists, the existing record will be updated.
+This uses PostgreSQL <cite>on_conflict_do_update</cite> (hence upsert), and that
+why the returned statement is just valid for PostgreSQL tables. Refer to
+this <a class="reference external" href="https://docs.sqlalchemy.org/en/latest/dialects/postgresql.html#insert-on-conflict-upsert">SqlAlchemy PostgreSQL documentation</a> for more information.</p>
+<p>The created statement is not executed by this function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>table</strong> (<em>sqlalchemy.sql.schema.Table</em>) – database table metadata.</li>
+<li><strong>record</strong> (<em>dict</em>) – a data record, corresponding to one row, to be inserted.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">a statement for inserting the passed
+record to the specified table.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">sqlalchemy.sql.dml.Insert</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="beam_nuggets.io.relational_db_api.get_column_names_from_table">
+<code class="descclassname">beam_nuggets.io.relational_db_api.</code><code class="descname">get_column_names_from_table</code><span class="sig-paren">(</span><em>table_class</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/beam_nuggets/io/relational_db_api.html#get_column_names_from_table"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#beam_nuggets.io.relational_db_api.get_column_names_from_table" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="beam_nuggets.io.relational_db_api.infer_db_type">
+<code class="descclassname">beam_nuggets.io.relational_db_api.</code><code class="descname">infer_db_type</code><span class="sig-paren">(</span><em>val</em>, <em>drivername</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/beam_nuggets/io/relational_db_api.html#infer_db_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#beam_nuggets.io.relational_db_api.infer_db_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>TODO
+:param val:
+:param drivername:</p>
+<p>Returns:</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="beam_nuggets.io.relational_db_api.load_table">
+<code class="descclassname">beam_nuggets.io.relational_db_api.</code><code class="descname">load_table</code><span class="sig-paren">(</span><em>session</em>, <em>name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/beam_nuggets/io/relational_db_api.html#load_table"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#beam_nuggets.io.relational_db_api.load_table" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="beam_nuggets.transforms.html" class="btn btn-neutral float-right" title="beam_nuggets.transforms package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="beam_nuggets.io.relational_db.html" class="btn btn-neutral" title="beam_nuggets.io.relational_db module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Mohamed Haseeb
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
