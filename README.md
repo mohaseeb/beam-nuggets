@@ -2,6 +2,11 @@ A collection of random transforms that I use on my Apache beam python
 pipelines. Many are simple (or trivial) transforms. The most useful ones are 
 those for reading/writing from/to relational databases.
 # Installation
+* Using pip
+```bash
+# TODO
+```
+* From source
 ```bash
 git clone git@github.com:mohaseeb/beam-nuggets.git
 cd beam-nuggets
@@ -114,8 +119,8 @@ docs/generate_docs.sh
 * Create a PR against master.
 
 # Backlog 
-* version docs? 
 * upload to pypi
+* version docs?
 * Summarize the investigation of using Source/Sink Vs ParDo for IO
 * Example how to run on GCP
 * Sql queries support in ReadToRelationalDB
