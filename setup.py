@@ -2,7 +2,7 @@ from __future__ import division, print_function
 
 from setuptools import setup, find_packages
 
-VERSION = '0.9.0'
+VERSION = '0.10.0.dev1'
 
 REQUIRED_PACKAGES = [
     'apache-beam>=2.8.0,<3.0.0',
@@ -11,8 +11,6 @@ REQUIRED_PACKAGES = [
     # Below are drivers for connection to specific DBs
     'psycopg2-binary>=2.7.6.1,<3.0.0',
     'PyMySQL>=0.9.3,<2.0.0'
-    # FIXME instruct how to use other DB drivers supported by sqlalchemy
-    #  and not installed by default as part of beam-nuggets
 ]
 
 REQUIRED_PACKAGES_TEST = [
