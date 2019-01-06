@@ -2,7 +2,7 @@ from __future__ import division, print_function
 
 from setuptools import setup, find_packages
 
-VERSION = '0.9.0.dev3'
+VERSION = '0.9.0'
 
 REQUIRED_PACKAGES = [
     'apache-beam>=2.8.0,<3.0.0',
