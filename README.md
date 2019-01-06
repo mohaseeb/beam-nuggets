@@ -4,7 +4,7 @@ those for reading/writing from/to relational databases.
 # Installation
 * Using pip
 ```bash
-# TODO
+pip install beam-nuggets
 ```
 * From source
 ```bash
@@ -121,13 +121,12 @@ docs/generate_docs.sh
 # Backlog 
 * upload to pypi
 * version docs?
-* Summarize the investigation of using Source/Sink Vs ParDo for IO
+* Summarize the investigation of using Source/Sink Vs ParDo(and GroupBy) for IO
 * Example how to run on GCP
-* Sql queries support in ReadToRelationalDB
+* Sql queries support in relational_db.Read
 * more nuggets: WriteToCsv
 * integration tests
-* DB transforms failures handling
-* DB transforms for unbounded sources (e.g. keep sessions alive)
+* DB transforms failures handling on IO transforms
 * more nuggets: Elasticsearch, Mongo 
 * WriteToRelationalDB, logging
 

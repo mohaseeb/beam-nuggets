@@ -2,7 +2,7 @@ Installation
 ============
 Using pip ::
 
-    # TODO
+    pip install beam-nuggets
 
 From source ::
 

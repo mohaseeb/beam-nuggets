@@ -1,4 +1,4 @@
-""":class:`~apache_beam.transforms.ptransform.PTransform`s for reading from
+""":class:`~apache_beam.transforms.ptransform.PTransform` s for reading from
 and writing to relational databases. SQLAlchemy_ is used for interfacing the
 databases.
 
