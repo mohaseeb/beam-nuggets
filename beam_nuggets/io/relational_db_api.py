@@ -156,23 +156,23 @@ class TableConfiguration(object):
         ``create_if_missing``, ``primary_key_columns`` and ``define_table_f``
         of the passed :class:`TableConfiguration`, as follows:
           - If the table is missing and ``create_if_missing`` is set to
-          False (default), :class:`SqlAlchemyDB` will raise an exception.
-          - Only when the target table is missing the ``create_if_missing``
-          is set to True, table creation is attempted. This is the assumed
-          state for all the following cases.
+            False (default), :class:`SqlAlchemyDB` will raise an exception.
+          - Only when the target table is missing and ``create_if_missing``
+            is set to True, table creation is attempted. This is the assumed
+            state for all the following cases.
           - If ``define_table_f`` is specified, a new table will be created
-          using the table definition returned by ``define_table_f``,
-          irrespective of ``primary_key_columns``.
+            using the table definition returned by ``define_table_f``,
+            irrespective of ``primary_key_columns``.
           - If ``primary_key_columns`` is specified and ``define_table_f``
-          is None, a new table will be created using the columns specified
-          in ``primary_key_columns`` as the primary key. The full column
-          list and their types are inferred automatically using the first
-          record to be written. See :func:`infer_db_type` for information on
-          the how the database column types are inferred from the python
-          types. If ``primary_key_columns`` is also None, an auto_increment
-          Integer column will be created and used as primary key this is
-          done as some databases require a primary key to be specified when
-          creating tables.
+            is None, a new table will be created using the columns specified
+            in ``primary_key_columns`` as the primary key. The full column
+            list and their types are inferred automatically using the first
+            record to be written. See :func:`infer_db_type` for information on
+            the how the database column types are inferred from the python
+            types. If ``primary_key_columns`` is also None, an auto_increment
+            Integer column will be created and used as primary key this is
+            done as some databases require a primary key to be specified when
+            creating tables.
 
     Examples:
         A configuration for creating the table if missing using the specified

@@ -302,26 +302,26 @@
 <span class="sd">        ``create_if_missing``, ``primary_key_columns`` and ``define_table_f``</span>
 <span class="sd">        of the passed :class:`TableConfiguration`, as follows:</span>
 <span class="sd">          - If the table is missing and ``create_if_missing`` is set to</span>
-<span class="sd">          False (default), :class:`SqlAlchemyDB` will raise an exception.</span>
-<span class="sd">          - Only when the target table is missing the ``create_if_missing``</span>
-<span class="sd">          is set to True, table creation is attempted. This is the assumed</span>
-<span class="sd">          state for all the following cases.</span>
+<span class="sd">            False (default), :class:`SqlAlchemyDB` will raise an exception.</span>
+<span class="sd">          - Only when the target table is missing and ``create_if_missing``</span>
+<span class="sd">            is set to True, table creation is attempted. This is the assumed</span>
+<span class="sd">            state for all the following cases.</span>
 <span class="sd">          - If ``define_table_f`` is specified, a new table will be created</span>
-<span class="sd">          using the table definition returned by ``define_table_f``,</span>
-<span class="sd">          irrespective of ``primary_key_columns``.</span>
+<span class="sd">            using the table definition returned by ``define_table_f``,</span>
+<span class="sd">            irrespective of ``primary_key_columns``.</span>
 <span class="sd">          - If ``primary_key_columns`` is specified and ``define_table_f``</span>
-<span class="sd">          is None, a new table will be created using the columns specified</span>
-<span class="sd">          in ``primary_key_columns`` as the primary key. The full column</span>
-<span class="sd">          list and their types are inferred automatically using the first</span>
-<span class="sd">          record to be written. See :func:`infer_db_type` for information on</span>
-<span class="sd">          the how the database column types are inferred from the python</span>
-<span class="sd">          types. If ``primary_key_columns`` is also None, an auto_increment</span>
-<span class="sd">          Integer column will be created and used as primary key this is</span>
-<span class="sd">          done as some databases require a primary key to be specified when</span>
-<span class="sd">          creating tables.</span>
+<span class="sd">            is None, a new table will be created using the columns specified</span>
+<span class="sd">            in ``primary_key_columns`` as the primary key. The full column</span>
+<span class="sd">            list and their types are inferred automatically using the first</span>
+<span class="sd">            record to be written. See :func:`infer_db_type` for information on</span>
+<span class="sd">            the how the database column types are inferred from the python</span>
+<span class="sd">            types. If ``primary_key_columns`` is also None, an auto_increment</span>
+<span class="sd">            Integer column will be created and used as primary key this is</span>
+<span class="sd">            done as some databases require a primary key to be specified when</span>
+<span class="sd">            creating tables.</span>
 
 <span class="sd">    Examples:</span>
-<span class="sd">        A config that creates the table if missing, using the specified</span>
+<span class="sd">        A configuration for creating the table if missing using the specified</span>
 <span class="sd">        columns to create the primary key. ::</span>
 
 <span class="sd">            from beam_nuggets.io import relational_db</span>
@@ -333,7 +333,7 @@
 <span class="sd">            )</span>
 
 
-<span class="sd">        A config that creates the table if missing using the specified</span>
+<span class="sd">        A configuration for creating the table if missing using the specified</span>
 <span class="sd">        definition. ::</span>
 
 <span class="sd">            from sqlalchemy import Table, Integer, String, Column</span>
