@@ -7,7 +7,7 @@ Welcome to beam-nuggets' documentation!
 
    get_started
    beam_nuggets
-
+   beam-nuggets on Github <https://github.com/mohaseeb/beam-nuggets>
 
 Indices and tables
 ==================
