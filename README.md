@@ -132,13 +132,15 @@ with beam.Pipeline(options=PipelineOptions()) as p:
 * ParseJson
 * AssignUniqueId
 
-# TODO 
-* Summarize the investigation of using Source/Sink Vs ParDo for IO
-    - send to beam mailing list about the "ParDo -> GroupByKey -> ParDo" 
-      read pattern.
-* Sql queries support in ReadToRelationalDB
+# TODO
+* fix the mysql test case 
 * Cleanup and DOCs for all transforms
+  - move stuff from the readme; point to the docs site
+  - one cool example with local runner; later with gcp
+* version docs? 
 * upload to pypi
+* Summarize the investigation of using Source/Sink Vs ParDo for IO
+* Sql queries support in ReadToRelationalDB
 * more nuggets: WriteToCsv
 * Example how to run on GCP
 * integration tests
