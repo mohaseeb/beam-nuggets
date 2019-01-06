@@ -95,6 +95,7 @@
 <li class="toctree-l2"><a class="reference internal" href="beam_nuggets.html#module-beam_nuggets">Module contents</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/mohaseeb/beam-nuggets">beam-nuggets on Github</a></li>
 </ul>
 
             
@@ -367,16 +368,15 @@ function.</li>
 of the passed <a class="reference internal" href="#beam_nuggets.io.relational_db_api.TableConfiguration" title="beam_nuggets.io.relational_db_api.TableConfiguration"><code class="xref py py-class docutils literal notranslate"><span class="pre">TableConfiguration</span></code></a>, as follows:</p>
 <blockquote>
 <div><ul class="simple">
-<li>If the table is missing and <code class="docutils literal notranslate"><span class="pre">create_if_missing</span></code> is set to</li>
-</ul>
-<p>False (default), <a class="reference internal" href="#beam_nuggets.io.relational_db_api.SqlAlchemyDB" title="beam_nuggets.io.relational_db_api.SqlAlchemyDB"><code class="xref py py-class docutils literal notranslate"><span class="pre">SqlAlchemyDB</span></code></a> will raise an exception.
-- Only when the target table is missing the <code class="docutils literal notranslate"><span class="pre">create_if_missing</span></code>
+<li>If the table is missing and <code class="docutils literal notranslate"><span class="pre">create_if_missing</span></code> is set to
+False (default), <a class="reference internal" href="#beam_nuggets.io.relational_db_api.SqlAlchemyDB" title="beam_nuggets.io.relational_db_api.SqlAlchemyDB"><code class="xref py py-class docutils literal notranslate"><span class="pre">SqlAlchemyDB</span></code></a> will raise an exception.</li>
+<li>Only when the target table is missing and <code class="docutils literal notranslate"><span class="pre">create_if_missing</span></code>
 is set to True, table creation is attempted. This is the assumed
-state for all the following cases.
-- If <code class="docutils literal notranslate"><span class="pre">define_table_f</span></code> is specified, a new table will be created
+state for all the following cases.</li>
+<li>If <code class="docutils literal notranslate"><span class="pre">define_table_f</span></code> is specified, a new table will be created
 using the table definition returned by <code class="docutils literal notranslate"><span class="pre">define_table_f</span></code>,
-irrespective of <code class="docutils literal notranslate"><span class="pre">primary_key_columns</span></code>.
-- If <code class="docutils literal notranslate"><span class="pre">primary_key_columns</span></code> is specified and <code class="docutils literal notranslate"><span class="pre">define_table_f</span></code>
+irrespective of <code class="docutils literal notranslate"><span class="pre">primary_key_columns</span></code>.</li>
+<li>If <code class="docutils literal notranslate"><span class="pre">primary_key_columns</span></code> is specified and <code class="docutils literal notranslate"><span class="pre">define_table_f</span></code>
 is None, a new table will be created using the columns specified
 in <code class="docutils literal notranslate"><span class="pre">primary_key_columns</span></code> as the primary key. The full column
 list and their types are inferred automatically using the first
@@ -385,10 +385,11 @@ the how the database column types are inferred from the python
 types. If <code class="docutils literal notranslate"><span class="pre">primary_key_columns</span></code> is also None, an auto_increment
 Integer column will be created and used as primary key this is
 done as some databases require a primary key to be specified when
-creating tables.</p>
+creating tables.</li>
+</ul>
 </div></blockquote>
 <p class="rubric">Examples</p>
-<p>A config that creates the table if missing, using the specified
+<p>A configuration for creating the table if missing using the specified
 columns to create the primary key.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">beam_nuggets.io</span> <span class="k">import</span> <span class="n">relational_db</span>
 
@@ -399,7 +400,7 @@ columns to create the primary key.</p>
 <span class="p">)</span>
 </pre></div>
 </div>
-<p>A config that creates the table if missing using the specified
+<p>A configuration for creating the table if missing using the specified
 definition.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="k">import</span> <span class="n">Table</span><span class="p">,</span> <span class="n">Integer</span><span class="p">,</span> <span class="n">String</span><span class="p">,</span> <span class="n">Column</span>
 <span class="kn">from</span> <span class="nn">beam_nuggets.io</span> <span class="k">import</span> <span class="n">relational_db</span>
