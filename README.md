@@ -3,6 +3,8 @@ pipelines. Many are simple (or trivial) transforms. The most useful ones are
 those for reading/writing from/to relational databases.
 # !!WORK IN PROGRESS!!
 See TODO at the bottom.
+# Documentation
+See [here](http://mohaseeb.com/beam-nuggets/).
 # Installation
 ```bash
 git clone git@github.com:mohaseeb/beam-nuggets.git
