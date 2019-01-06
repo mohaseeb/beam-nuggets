@@ -170,14 +170,59 @@
 <dt id="beam_nuggets.transforms.nested_dict.SelectFromNestedDict">
 <em class="property">class </em><code class="descclassname">beam_nuggets.transforms.nested_dict.</code><code class="descname">SelectFromNestedDict</code><span class="sig-paren">(</span><em>keys</em>, <em>deepest_key_as_name=False</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/beam_nuggets/transforms/nested_dict.html#SelectFromNestedDict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#beam_nuggets.transforms.nested_dict.SelectFromNestedDict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">apache_beam.transforms.core.DoFn</span></code></p>
-<dl class="docutils">
-<dt>input:</dt>
-<dd>{‘a’: {‘b’: 3, ‘c’: {‘d’: 2} }}</dd>
-<dt>keys:</dt>
-<dd>[‘a.b’, ‘a.c.d’]</dd>
-<dt>output:</dt>
-<dd>{‘a_b’: 3, ‘a_c_d’: 2} or {‘b’: 3, ‘d’: 2}</dd>
-</dl>
+<p>A <code class="xref py py-class docutils literal notranslate"><span class="pre">DoFn</span></code> for selecting subsets of records formed of
+nested dictionaries.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>keys</strong> (<em>list</em>) – list of dictionary keys to be selected. Each key is a
+string formed of dot separated words, each is used for selecting
+from a dict in the nested dicts. The order of the word in the
+“dot.separated.string” correspond to the dict level to select from.
+For instance, if the input record is <code class="docutils literal notranslate"><span class="pre">{'a':</span> <span class="pre">{'b':</span> <span class="pre">3,</span> <span class="pre">'c':</span> <span class="pre">{'d':</span> <span class="pre">2}</span> <span class="pre">}}</span></code>
+and keys is <code class="docutils literal notranslate"><span class="pre">['a.b',</span> <span class="pre">'a.c.d']</span></code>, the transform output will
+<code class="docutils literal notranslate"><span class="pre">{'a_b':</span> <span class="pre">3,</span> <span class="pre">'a_c_d':</span> <span class="pre">2}</span> <span class="pre">or</span> <span class="pre">{'b':</span> <span class="pre">3,</span> <span class="pre">'d':</span> <span class="pre">2}</span></code> depending on
+<a href="#id1"><span class="problematic" id="id2">``</span></a>deepest_key_as_name `` below.</li>
+<li><strong>deepest_key_as_name</strong> (<em>bool</em>) – if set to True, the deepest selected fields
+keys will be used as names for the output dict keys.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<p>Select from records formed of nested dicts.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">apache_beam</span> <span class="k">as</span> <span class="nn">beam</span>
+<span class="kn">from</span> <span class="nn">apache_beam.options.pipeline_options</span> <span class="k">import</span> <span class="n">PipelineOptions</span>
+<span class="kn">from</span> <span class="nn">beam_nuggets.transforms</span> <span class="k">import</span> <span class="n">SelectFromNestedDict</span>
+
+<span class="n">inputs</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;first&#39;</span><span class="p">:</span> <span class="s1">&#39;Star&#39;</span><span class="p">,</span> <span class="s1">&#39;second&#39;</span><span class="p">:</span> <span class="s1">&#39;Light&#39;</span><span class="p">},</span>
+        <span class="s1">&#39;address&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;st&#39;</span><span class="p">:</span> <span class="s1">&#39;Jupiter&#39;</span><span class="p">,</span> <span class="s1">&#39;flat&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">},</span>
+        <span class="s1">&#39;email&#39;</span><span class="p">:</span> <span class="s1">&#39;s@l.no&#39;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;first&#39;</span><span class="p">:</span> <span class="s1">&#39;Mark&#39;</span><span class="p">,</span> <span class="s1">&#39;second&#39;</span><span class="p">:</span> <span class="s1">&#39;Sight&#39;</span><span class="p">},</span>
+        <span class="s1">&#39;address&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;st&#39;</span><span class="p">:</span> <span class="s1">&#39;Loon&#39;</span><span class="p">,</span> <span class="s1">&#39;flat&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">},</span>
+        <span class="s1">&#39;email&#39;</span><span class="p">:</span> <span class="s1">&#39;m@s.no&#39;</span>
+    <span class="p">}</span>
+<span class="p">]</span>
+<span class="k">with</span> <span class="n">beam</span><span class="o">.</span><span class="n">Pipeline</span><span class="p">(</span><span class="n">options</span><span class="o">=</span><span class="n">PipelineOptions</span><span class="p">())</span> <span class="k">as</span> <span class="n">p</span><span class="p">:</span>
+    <span class="n">nested</span> <span class="o">=</span> <span class="n">p</span> <span class="o">|</span> <span class="s2">&quot;Reading nested dicts&quot;</span> <span class="o">&gt;&gt;</span> <span class="n">beam</span><span class="o">.</span><span class="n">Create</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span>
+    <span class="n">transformed</span> <span class="o">=</span> <span class="n">nested</span> <span class="o">|</span> <span class="s2">&quot;filtering&quot;</span> <span class="o">&gt;&gt;</span> <span class="n">beam</span><span class="o">.</span><span class="n">ParDo</span><span class="p">(</span><span class="n">SelectFromNestedDict</span><span class="p">(</span>
+        <span class="n">keys</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;name.first&#39;</span><span class="p">,</span> <span class="s1">&#39;address.st&#39;</span><span class="p">,</span> <span class="s1">&#39;email&#39;</span><span class="p">],</span>
+        <span class="c1"># deepest_key_as_name=True,</span>
+    <span class="p">))</span>
+    <span class="n">transformed</span> <span class="o">|</span> <span class="s1">&#39;Writing to stdout&#39;</span> <span class="o">&gt;&gt;</span> <span class="n">beam</span><span class="o">.</span><span class="n">Map</span><span class="p">(</span><span class="nb">print</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The output will be something like:</p>
+<blockquote>
+<div>{‘address_st’: ‘Jupiter’, ‘name_first’: ‘Star’, ‘email’: <a class="reference external" href="mailto:'s&#37;&#52;&#48;l&#46;no">‘s<span>&#64;</span>l<span>&#46;</span>no</a>’}
+{‘address_st’: ‘Loon’, ‘name_first’: ‘Mark’, ‘email’: <a class="reference external" href="mailto:'m&#37;&#52;&#48;s&#46;no">‘m<span>&#64;</span>s<span>&#46;</span>no</a>’}</div></blockquote>
 <dl class="method">
 <dt id="beam_nuggets.transforms.nested_dict.SelectFromNestedDict.process">
 <code class="descname">process</code><span class="sig-paren">(</span><em>element</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/beam_nuggets/transforms/nested_dict.html#SelectFromNestedDict.process"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#beam_nuggets.transforms.nested_dict.SelectFromNestedDict.process" title="Permalink to this definition">¶</a></dt>

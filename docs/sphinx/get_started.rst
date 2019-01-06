@@ -1,7 +1,17 @@
 Installation
 ============
-pip install beam_nuggets
+Using pip ::
+
+    # TODO
+
+From source ::
+
+    git clone git@github.com:mohaseeb/beam-nuggets.git
+    cd beam-nuggets
+    pip install .
 
 Usage
 =====
-from beam_nuggets.io import relational_db
+See the `README on github`_.
+
+.. _README on github: https://github.com/mohaseeb/beam-nuggets#usage

@@ -277,10 +277,12 @@
 <span class="sd">            As a mechanism to recover from failures, beam runners will</span>
 <span class="sd">            attempt to apply a transform multiple times on the same data;</span>
 <span class="sd">            because of that it is recommended to implement idempotent writes</span>
-<span class="sd">            (e.g. :func:`create_upsert_mysql` and :func:`create_upsert_postgres`)</span>
+<span class="sd">            (e.g. :func:`create_upsert_mysql` and</span>
+<span class="sd">            :func:`create_upsert_postgres`)</span>
 <span class="sd">            to avoid data inconsistency issues arising from this beam behavior.</span>
 <span class="sd">            The function has the following signature:</span>
-<span class="sd">            (``sqlalchemy.sql.schema.Table``, ``dict``) -&gt; ``sqlalchemy.sql.dml.Insert``.</span>
+<span class="sd">            (``sqlalchemy.sql.schema.Table``, ``dict``) -&gt;</span>
+<span class="sd">            ``sqlalchemy.sql.dml.Insert``.</span>
 <span class="sd">        create_if_missing (bool): if set to True and the table is missing</span>
 <span class="sd">            :class:`SqlAlchemyDB` will create the table. See below notes on new</span>
 <span class="sd">            table creation. See below note how this is used when creating</span>
@@ -357,7 +359,8 @@
 <span class="sd">            )</span>
 
 <span class="sd">    .. _define table tutorial:</span>
-<span class="sd">       https://docs.sqlalchemy.org/en/latest/core/tutorial.html#define-and-create-tables</span>
+<span class="sd">       https://docs.sqlalchemy.org/en/latest/core/tutorial.html#define-and</span>
+<span class="sd">       -create-tables</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
@@ -666,23 +669,46 @@
 
 
 <div class="viewcode-block" id="infer_db_type"><a class="viewcode-back" href="../../../beam_nuggets.io.relational_db_api.html#beam_nuggets.io.relational_db_api.infer_db_type">[docs]</a><span class="k">def</span> <span class="nf">infer_db_type</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">drivername</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    TODO</span>
+    <span class="sd">&quot;&quot;&quot;Infer a database column type for storing values of the same type as the</span>
+<span class="sd">    passed variable val in a database identified by drivername.</span>
+
+<span class="sd">    Column types are inferred based on the following mapping:</span>
+
+<span class="sd">    +-----------------------+--------------------------------------------------------------------------------------------------------+</span>
+<span class="sd">    | Python type           | Column type                                                                                            |</span>
+<span class="sd">    +=======================+========================================================================================================+</span>
+<span class="sd">    | ``bool``              | ``Boolean``                                                                                            |</span>
+<span class="sd">    +-----------------------+--------------------------------------------------------------------------------------------------------+</span>
+<span class="sd">    | ``&lt;number&gt;``          | ``Float`` (All python numbers are mapped to Float columns)                                             |</span>
+<span class="sd">    +-----------------------+--------------------------------------------------------------------------------------------------------+</span>
+<span class="sd">    | ``datetime.datetime`` | ``DateTime``                                                                                           |</span>
+<span class="sd">    +-----------------------+--------------------------------------------------------------------------------------------------------+</span>
+<span class="sd">    | ``datetime.date``     | ``Date``                                                                                               |</span>
+<span class="sd">    +-----------------------+--------------------------------------------------------------------------------------------------------+</span>
+<span class="sd">    | ``&lt;default&gt;``         | ``String`` for PostgreSQL and SQLite and String(:const:`VARCHAR_DEFAULT_COL_SIZE`) for other databases |</span>
+<span class="sd">    +-----------------------+--------------------------------------------------------------------------------------------------------+</span>
+
 <span class="sd">    Args:</span>
-<span class="sd">        val:</span>
-<span class="sd">        drivername:</span>
+<span class="sd">        val (object): value used to infer the database column type.</span>
+<span class="sd">        drivername: specifies the database type and driver used for</span>
+<span class="sd">            connecting to the database (the driver information isn&#39;t used to</span>
+<span class="sd">            infer the column type).</span>
 
 <span class="sd">    Returns:</span>
-
+<span class="sd">        object: one of sqlalchemy column types.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">for</span> <span class="n">is_type_f</span><span class="p">,</span> <span class="n">db_type</span> <span class="ow">in</span> <span class="n">PYTHON_TO_DB_TYPE</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">is_type_f</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">db_type</span>
-    <span class="k">return</span> <span class="n">String</span> <span class="k">if</span> <span class="n">_does_support_varchar</span><span class="p">(</span><span class="n">drivername</span><span class="p">)</span> <span class="k">else</span> <span class="n">String</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span></div>
-    <span class="c1"># FIXME: Users familiar with the syntax of CREATE TABLE may notice</span>
-    <span class="c1">#  that the VARCHAR columns were generated without a length; on</span>
-    <span class="c1">#  SQLite and PostgreSQL, this is a valid datatype, but on others,</span>
-    <span class="c1">#  it\&#39;s not allowed.</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">String</span> <span class="k">if</span> <span class="n">_does_support_varchar</span><span class="p">(</span><span class="n">drivername</span><span class="p">)</span> <span class="k">else</span>
+        <span class="n">String</span><span class="p">(</span><span class="n">VARCHAR_DEFAULT_COL_SIZE</span><span class="p">)</span>
+        <span class="c1"># It seems only PostgreSQL and SQLite support String columns with</span>
+        <span class="c1"># not specified length.</span>
+    <span class="p">)</span></div>
+
+
+<span class="n">VARCHAR_DEFAULT_COL_SIZE</span> <span class="o">=</span> <span class="mi">50</span>
 
 
 <span class="k">def</span> <span class="nf">_does_support_varchar</span><span class="p">(</span><span class="n">drivername</span><span class="p">):</span>

@@ -17,15 +17,16 @@ REQUIRED_DOCUMENTATION = [
 
 setup(
     name='beam-nuggets',
-    version='0.7.0',
+    version='0.8.0',
     install_requires=[
         'apache-beam>=2.8.0,<3.0.0',
         'SQLAlchemy>=1.2.14,<2.0.0',
         'sqlalchemy-utils>=0.33.8,<0.34',
-        # Below is for connection to specific DBs
+        # Below are drivers for connection to specific DBs
         'psycopg2-binary>=2.7.6.1,<3.0.0',
         'PyMySQL>=0.9.3,<2.0.0'
-        # FIXME what about the other DBs supported by sqlalchemy
+        # FIXME instruct how to use other DB drivers supported by sqlalchemy
+        #  and not installed by default as part of beam-nuggets
     ],
     extras_require={'dev': REQUIRED_TEST_PACKAGES + REQUIRED_DOCUMENTATION},
     packages=find_packages(exclude=("test", "tests"))

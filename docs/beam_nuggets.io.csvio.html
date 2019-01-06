@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>beam_nuggets.io.csv_ module &mdash; beam-nuggets 0.1.0 documentation</title>
+  <title>beam_nuggets.io.csvio module &mdash; beam-nuggets 0.1.0 documentation</title>
   
 
   
@@ -145,13 +145,13 @@
         
           <li><a href="beam_nuggets.io.html">beam_nuggets.io package</a> &raquo;</li>
         
-      <li>beam_nuggets.io.csv_ module</li>
+      <li>beam_nuggets.io.csvio module</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="_sources/beam_nuggets.io.csv_.rst.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/beam_nuggets.io.csvio.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -164,15 +164,45 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="module-beam_nuggets.io.csv_">
-<span id="beam-nuggets-io-csv-module"></span><h1>beam_nuggets.io.csv_ module<a class="headerlink" href="#module-beam_nuggets.io.csv_" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-beam_nuggets.io.csvio">
+<span id="beam-nuggets-io-csvio-module"></span><h1>beam_nuggets.io.csvio module<a class="headerlink" href="#module-beam_nuggets.io.csvio" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
-<dt id="beam_nuggets.io.csv_.ReadFromCsv">
-<em class="property">class </em><code class="descclassname">beam_nuggets.io.csv_.</code><code class="descname">ReadFromCsv</code><span class="sig-paren">(</span><em>file_name</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/beam_nuggets/io/csv_.html#ReadFromCsv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#beam_nuggets.io.csv_.ReadFromCsv" title="Permalink to this definition">¶</a></dt>
+<dt id="beam_nuggets.io.csvio.Read">
+<em class="property">class </em><code class="descclassname">beam_nuggets.io.csvio.</code><code class="descname">Read</code><span class="sig-paren">(</span><em>csv_path</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/beam_nuggets/io/csvio.html#Read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#beam_nuggets.io.csvio.Read" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">apache_beam.transforms.ptransform.PTransform</span></code></p>
+<p>A <code class="xref py py-class docutils literal notranslate"><span class="pre">PTransform</span></code> for reading
+csv files.</p>
+<p>It outputs a <code class="xref py py-class docutils literal notranslate"><span class="pre">PCollection</span></code> of
+<code class="docutils literal notranslate"><span class="pre">dict:s</span></code>, each corresponding to a row in the csv file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>csv_path</strong> (<em>str</em>) – csv file path.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<p>Reading content of a csv file.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">apache_beam</span> <span class="k">as</span> <span class="nn">beam</span>
+<span class="kn">from</span> <span class="nn">apache_beam.options.pipeline_options</span> <span class="k">import</span> <span class="n">PipelineOptions</span>
+<span class="kn">from</span> <span class="nn">beam_nuggets.io</span> <span class="k">import</span> <span class="n">csvio</span>
+
+<span class="n">path_to_csv</span> <span class="o">=</span> <span class="s1">&#39;/path/to/students.csv&#39;</span>
+<span class="k">with</span> <span class="n">beam</span><span class="o">.</span><span class="n">Pipeline</span><span class="p">(</span><span class="n">options</span><span class="o">=</span><span class="n">PipelineOptions</span><span class="p">())</span> <span class="k">as</span> <span class="n">p</span><span class="p">:</span>
+    <span class="n">students</span> <span class="o">=</span> <span class="n">p</span> <span class="o">|</span> <span class="s2">&quot;Reading students records&quot;</span> <span class="o">&gt;&gt;</span> <span class="n">csvio</span><span class="o">.</span><span class="n">Read</span><span class="p">(</span><span class="n">path_to_csv</span><span class="p">)</span>
+    <span class="n">students</span> <span class="o">|</span> <span class="s1">&#39;Writing to stdout&#39;</span> <span class="o">&gt;&gt;</span> <span class="n">beam</span><span class="o">.</span><span class="n">Map</span><span class="p">(</span><span class="nb">print</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The output will be something like</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s1">&#39;lastName&#39;</span><span class="p">:</span> <span class="s1">&#39;Norvell&#39;</span><span class="p">,</span> <span class="s1">&#39;firstName&#39;</span><span class="p">:</span> <span class="s1">&#39;Andrel&#39;</span><span class="p">,</span> <span class="s1">&#39;level&#39;</span><span class="p">:</span> <span class="s1">&#39;10&#39;</span><span class="p">}</span>
+<span class="p">{</span><span class="s1">&#39;lastName&#39;</span><span class="p">:</span> <span class="s1">&#39;Proudfoot&#39;</span><span class="p">,</span> <span class="s1">&#39;firstName&#39;</span><span class="p">:</span> <span class="s1">&#39;Dinorah&#39;</span><span class="p">,</span> <span class="s1">&#39;level&#39;</span><span class="p">:</span> <span class="s1">&#39;8&#39;</span><span class="p">}</span>
+<span class="p">{</span><span class="s1">&#39;lastName&#39;</span><span class="p">:</span> <span class="s1">&#39;Plotkin&#39;</span><span class="p">,</span> <span class="s1">&#39;firstName&#39;</span><span class="p">:</span> <span class="s1">&#39;Trulal&#39;</span><span class="p">,</span> <span class="s1">&#39;level&#39;</span><span class="p">:</span> <span class="s1">&#39;14&#39;</span><span class="p">}</span>
+</pre></div>
+</div>
 <dl class="method">
-<dt id="beam_nuggets.io.csv_.ReadFromCsv.expand">
-<code class="descname">expand</code><span class="sig-paren">(</span><em>pcoll</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/beam_nuggets/io/csv_.html#ReadFromCsv.expand"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#beam_nuggets.io.csv_.ReadFromCsv.expand" title="Permalink to this definition">¶</a></dt>
+<dt id="beam_nuggets.io.csvio.Read.expand">
+<code class="descname">expand</code><span class="sig-paren">(</span><em>pcoll</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/beam_nuggets/io/csvio.html#Read.expand"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#beam_nuggets.io.csvio.Read.expand" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
