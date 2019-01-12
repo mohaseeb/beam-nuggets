@@ -60,7 +60,7 @@ To write the same data to a PostgreSQL table instead, just create a suitable
 [relational_db.SourceConfiguration](http://mohaseeb.com/beam-nuggets/beam_nuggets.io.relational_db_api.html#beam_nuggets.io.relational_db_api.SourceConfiguration) as follows.
 ```python
 source_config = relational_db.SourceConfiguration(
-    drivername='postgresql',
+    drivername='postgresql+pg8000',
     host='localhost',
     port=5432,
     username='postgres',
@@ -78,7 +78,7 @@ from beam_nuggets.io import relational_db
 
 with beam.Pipeline(options=PipelineOptions()) as p:
     source_config = relational_db.SourceConfiguration(
-        drivername='postgresql',
+        drivername='postgresql+pg8000',
         host='localhost',
         port=5432,
         username='postgres',

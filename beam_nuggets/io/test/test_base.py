@@ -47,7 +47,7 @@ class TransformBaseTest(unittest.TestCase):
         cls.postgres_instance = cls.connect_to_postgresql()
         if cls.postgres_instance:
             return SourceConfiguration(
-                drivername='postgresql',
+                drivername='postgresql+pg8000',
                 host='localhost',
                 port=cls.postgres_instance.settings['port'],
                 username='postgres',
@@ -97,8 +97,8 @@ class TransformBaseTest(unittest.TestCase):
                 '\nCheck mysql installed locally to run tests against it '
                 '.\n{}\n{}'.format(
                     e,
-                    'https://www.postgresql.org/download/linux/ubuntu/',
-                    'https://github.com/tk0miya/testing.postgresql'
+                    'https://support.rackspace.com/how-to/installing-mysql-server-on-ubuntu/',
+                    'https://github.com/tk0miya/testing.mysqld'
                 )
             )
         return mysql

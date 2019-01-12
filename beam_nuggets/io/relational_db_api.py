@@ -37,8 +37,8 @@ class SourceConfiguration(object):
             target database type and the driver (DBAPI) used
             by SqlAlchemy to communicate with database. The following
             drivernames are supported by and tested on beam-nuggets:
-              - mysql+pymysql: for MySQL (pymysql is the driver name).
-              - postgresql: for PostgreSQL (default driver pg8000 is used).
+              - postgresql+pg8000: for PostgreSQL (pg8000 is the DB driver).
+              - mysql+pymysql: for MySQL.
               - sqlite: for SQLite.
             Additional drivers can be used after installing their
             corresponding python libraries. Refer to `SqlAlchemy dialects`_
@@ -258,7 +258,8 @@ class SqlAlchemyDB(object):
         self._session = self._SessionClass()
 
     def close_session(self):
-        self._session.close()
+        self._session.close_all()
+        self._session.bind.dispose()
         self._session = None
 
     def read(self, table_name):
@@ -351,7 +352,8 @@ class _Table(object):
             session.commit()
         except:
             session.rollback()
-            session.close()
+            session.close_all()
+            session.bind.dispose()
             raise
 
     def _to_db_record(self, record_dict):
