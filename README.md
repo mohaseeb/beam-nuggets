@@ -35,7 +35,7 @@ source_config = relational_db.SourceConfiguration(
 table_config = relational_db.TableConfiguration(
     name='months',
     create_if_missing=True,  # automatically create the table if not there
-    primary_key_columns=['num']  # and use 'num' column as a primary key
+    primary_key_columns=['num']  # and use 'num' column as primary key
 )
     
 with beam.Pipeline(options=PipelineOptions()) as p:  # Will use local runner
@@ -69,6 +69,10 @@ source_config = relational_db.SourceConfiguration(
     create_if_missing=True  # create the database if not there 
 )
 ```
+Click [here](https://github.com/mohaseeb/beam-nuggets/tree/master/examples/dataflow/)
+for more examples, including writing to PostgreSQL in Google Cloud Platform 
+using the DataFlowRunner. 
+<br><br>
 An example showing how you can use beam-nugget's [relational_db.Read](http://mohaseeb.com/beam-nuggets/beam_nuggets.io.relational_db.html#beam_nuggets.io.relational_db.Read) 
 transform to read from a PostgreSQL database table. 
 ```python

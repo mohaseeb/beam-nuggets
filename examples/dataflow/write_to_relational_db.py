@@ -29,6 +29,7 @@ def main():
         {'name': 'Mar', 'num': 3},
         {'name': 'Apr', 'num': 4},
         {'name': 'May', 'num': 5},
+        {'name': 'Jun', 'num': 6},
     ]
 
     # Target database table
