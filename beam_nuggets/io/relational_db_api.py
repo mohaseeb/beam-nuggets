@@ -2,7 +2,6 @@
 from __future__ import division, print_function
 
 import datetime
-from copy import copy
 
 from sqlalchemy import (
     create_engine, MetaData, Table, Column,
@@ -16,11 +15,10 @@ from sqlalchemy import (
 )
 from sqlalchemy.dialects.mysql import insert as mysql_insert
 from sqlalchemy.dialects.postgresql import insert as postgres_insert
-from sqlalchemy.engine.url import URL, make_url
+from sqlalchemy.engine.url import URL
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy_utils import database_exists
-from sqlalchemy_utils.functions import quote
+from sqlalchemy_utils import database_exists, create_database
 
 
 class SourceConfiguration(object):
@@ -254,7 +252,7 @@ class SqlAlchemyDB(object):
         create_if_missing = self._source.create_if_missing
         is_database_missing = lambda: not database_exists(self._source.url)
         if create_if_missing and is_database_missing():
-            _create_database_tmp(self._source.url)
+            create_database(self._source.url)
         self._session = self._SessionClass()
 
     def close_session(self):
@@ -587,86 +585,3 @@ PYTHON_TO_DB_TYPE = [
     (lambda x: isinstance(x, datetime.datetime), DateTime),
     (lambda x: isinstance(x, datetime.date), Date),
 ]
-
-
-# TODO Below is a copy of sqlalchemy_utils.create_database with a fix to
-#  support creating PostgreSQL DBs using pg8000. We should remove this tmp fix
-#  when the following PR is merged:
-#  https://github.com/kvesteri/sqlalchemy-utils/pull/356
-def _create_database_tmp(url, encoding='utf8', template=None):
-    """Issue the appropriate CREATE DATABASE statement.
-
-    :param url: A SQLAlchemy engine URL.
-    :param encoding: The encoding to create the database as.
-    :param template:
-        The name of the template from which to create the new database. At the
-        moment only supported by PostgreSQL driver.
-
-    To create a database, you can pass a simple URL that would have
-    been passed to ``create_engine``. ::
-
-        create_database('postgres://postgres@localhost/name')
-
-    You may also pass the url from an existing engine. ::
-
-        create_database(engine.url)
-
-    Has full support for mysql, postgres, and sqlite. In theory,
-    other database engines should be supported.
-    """
-
-    url = copy(make_url(url))
-
-    database = url.database
-
-    if url.drivername.startswith('postgres'):
-        url.database = 'postgres'
-    elif url.drivername.startswith('mssql'):
-        url.database = 'master'
-    elif not url.drivername.startswith('sqlite'):
-        url.database = None
-
-    if url.drivername == 'mssql+pyodbc':
-        engine = create_engine(url, connect_args={'autocommit': True})
-    elif url.drivername == 'postgresql+pg8000':
-        engine = create_engine(url, isolation_level='AUTOCOMMIT')
-    else:
-        engine = create_engine(url)
-    result_proxy = None
-
-    if engine.dialect.name == 'postgresql':
-        if engine.driver == 'psycopg2':
-            from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
-            engine.raw_connection().set_isolation_level(
-                ISOLATION_LEVEL_AUTOCOMMIT
-            )
-
-        if not template:
-            template = 'template1'
-
-        text = "CREATE DATABASE {0} ENCODING '{1}' TEMPLATE {2}".format(
-            quote(engine, database),
-            encoding,
-            quote(engine, template)
-        )
-        result_proxy = engine.execute(text)
-
-    elif engine.dialect.name == 'mysql':
-        text = "CREATE DATABASE {0} CHARACTER SET = '{1}'".format(
-            quote(engine, database),
-            encoding
-        )
-        result_proxy = engine.execute(text)
-
-    elif engine.dialect.name == 'sqlite' and database != ':memory:':
-        if database:
-            engine.execute("CREATE TABLE DB(id int);")
-            engine.execute("DROP TABLE DB;")
-
-    else:
-        text = 'CREATE DATABASE {0}'.format(quote(engine, database))
-        result_proxy = engine.execute(text)
-
-    if result_proxy is not None:
-        result_proxy.close()
-    engine.dispose()
