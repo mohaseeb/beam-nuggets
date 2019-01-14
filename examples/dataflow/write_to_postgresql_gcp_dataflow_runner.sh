@@ -18,4 +18,5 @@ python write_to_relational_db.py \
     --port 5432 \
     --database calendar \
     --username postgres \
-    --password postgres
+    --password postgres \
+    --create_if_missing True
