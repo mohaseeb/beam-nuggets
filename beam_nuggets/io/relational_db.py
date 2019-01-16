@@ -166,11 +166,12 @@ class _WriteToRelationalDBFn(DoFn):
 
     def start_bundle(self):
         self._db = SqlAlchemyDB(self.source_config)
-        self._db.start_session()
 
     def process(self, element):
         assert isinstance(element, dict)
+        self._db.start_session()
         self._db.write_record(self.table_config, element)
+        self._db.close_session()
 
     def finish_bundle(self):
-        self._db.close_session()
+        pass

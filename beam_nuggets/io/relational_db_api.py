@@ -17,7 +17,7 @@ from sqlalchemy.dialects.mysql import insert as mysql_insert
 from sqlalchemy.dialects.postgresql import insert as postgres_insert
 from sqlalchemy.engine.url import URL
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy_utils import database_exists, create_database
 
 
@@ -243,8 +243,7 @@ class SqlAlchemyDB(object):
     def __init__(self, source_config):
         self._source = source_config
 
-        self._SessionClass = sessionmaker(bind=create_engine(self._source.url))
-        self._session = None  # will be set in self.start_session()
+        self._SessionClass = scoped_session(sessionmaker(bind=create_engine(self._source.url)))
 
         self._name_to_table = {}  # tables metadata cache
 
@@ -253,16 +252,14 @@ class SqlAlchemyDB(object):
         is_database_missing = lambda: not database_exists(self._source.url)
         if create_if_missing and is_database_missing():
             create_database(self._source.url)
-        self._session = self._SessionClass()
 
     def close_session(self):
-        self._session.close_all()
-        self._session.bind.dispose()
-        self._session = None
+        self._SessionClass.bind.dispose()
+        self._SessionClass.remove()
 
     def read(self, table_name):
         table = self._open_table_for_read(table_name)
-        for record in table.records(self._session):
+        for record in table.records(self._SessionClass):
             yield record
 
     def write_record(self, table_config, record_dict):
@@ -277,7 +274,7 @@ class SqlAlchemyDB(object):
         """
         table = self._open_table_for_write(table_config, record_dict)
         table.write_record(
-            session=self._session,
+            session=self._SessionClass,
             create_insert_f=self._get_create_insert_f(table_config),
             record_dict=record_dict
         )
@@ -317,7 +314,7 @@ class SqlAlchemyDB(object):
         return table
 
     def _get_table(self, name, get_table_f, **get_table_f_params):
-        table_class = get_table_f(self._session, name, **get_table_f_params)
+        table_class = get_table_f(self._SessionClass, name, **get_table_f_params)
         if table_class:
             table = _Table(table_class=table_class, name=name)
         else:
@@ -350,8 +347,6 @@ class _Table(object):
             session.commit()
         except:
             session.rollback()
-            session.close_all()
-            session.bind.dispose()
             raise
 
     def _to_db_record(self, record_dict):
@@ -367,6 +362,7 @@ def load_table(session, name):
     if engine.dialect.has_table(engine, name):
         metadata = MetaData(bind=engine)
         table_class = create_table_class(Table(name, metadata, autoload=True))
+    session.bind.dispose()
     return table_class
 
 

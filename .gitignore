@@ -1,6 +1,16 @@
 *_
 _build
 
-# building
+# building / packaging
 dist
 build
+*.egg-info/
+
+# byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# editors
+.idea/
+
