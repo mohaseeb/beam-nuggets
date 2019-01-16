@@ -313,14 +313,15 @@
 
     <span class="k">def</span> <span class="nf">start_bundle</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_db</span> <span class="o">=</span> <span class="n">SqlAlchemyDB</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source_config</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_db</span><span class="o">.</span><span class="n">start_session</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">):</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_db</span><span class="o">.</span><span class="n">start_session</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_db</span><span class="o">.</span><span class="n">write_record</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table_config</span><span class="p">,</span> <span class="n">element</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_db</span><span class="o">.</span><span class="n">close_session</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">finish_bundle</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_db</span><span class="o">.</span><span class="n">close_session</span><span class="p">()</span>
+        <span class="k">pass</span>
 </pre></div>
 
            </div>
