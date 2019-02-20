@@ -152,10 +152,9 @@ scripts/build_test_deploy.sh
 # Backlog 
 * versioned docs?
 * Summarize the investigation of using Source/Sink Vs ParDo(and GroupBy) for IO
-* instruct how to use other DB drivers supported by sqlalchemy
-* Example how to run on GCP
 * Sql queries support in relational_db.Read
 * more nuggets: WriteToCsv
+* Investigate readyness of SDF ParDo, and possiblity to use for relational_db.Read
 * integration tests
 * DB transforms failures handling on IO transforms
 * more nuggets: Elasticsearch, Mongo 
