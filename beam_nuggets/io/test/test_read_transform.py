@@ -28,6 +28,18 @@ class TestReadTransform(TransformBaseTest):
                 equal_to(self.table_rows)
             )
 
+    def test_QueryFromRelationalDB(self):
+        # create a read pipeline with a SQL query, execute it and compare retrieved to actual rows
+        with TestPipeline() as p:
+            assert_that(
+                p | "Reading records from db" >> relational_db.Read(
+                    source_config=self.source_config,
+                    table_name=self.table_name,
+                    query='select * from ' + self.table_name
+                ),
+                equal_to(self.table_rows)
+            )
+
     def create_and_populate_test_table(self, n_rows=10):
         # test table schema and data
         table_name = 'students'
@@ -61,3 +73,4 @@ class TestReadTransform(TransformBaseTest):
 
 if __name__ == '__main__':
     unittest.main()
+
