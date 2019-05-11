@@ -265,6 +265,11 @@ class SqlAlchemyDB(object):
         for record in table.records(self._session):
             yield record
 
+    def query(self, table_name, query):
+        table = self._open_table_for_read(table_name)
+        for record in table.query_records(self._session, query):
+            yield record
+
     def write_record(self, table_config, record_dict):
         """Writes a single record to the specified table.
 
@@ -340,6 +345,11 @@ class _Table(object):
         for record in session.query(self._Class):
             yield self._from_db_record(record)
 
+    def query_records(self, session, query):
+        mapper = session.execute(query).keys()
+        for record in session.execute(query):
+            yield self._from_db_record(record, mapper)
+
     def write_record(self, session, create_insert_f, record_dict):
         try:
             insert_stmt = create_insert_f(
@@ -357,8 +367,11 @@ class _Table(object):
     def _to_db_record(self, record_dict):
         return self._Class(**record_dict)
 
-    def _from_db_record(self, db_record):
-        return {col: getattr(db_record, col) for col in self._column_names}
+    def _from_db_record(self, db_record, mapper=[]):
+        if mapper:
+            return {col: getattr(db_record, col) for col in mapper}
+        else:
+            return {col: getattr(db_record, col) for col in self._column_names}
 
 
 def load_table(session, name):
@@ -596,3 +609,4 @@ PYTHON_TO_DB_TYPE = [
     (lambda x: isinstance(x, datetime.datetime), DateTime),
     (lambda x: isinstance(x, datetime.date), Date),
 ]
+

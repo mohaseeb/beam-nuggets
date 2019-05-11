@@ -32,6 +32,7 @@ class Read(PTransform):
     Args:
         source_config (SourceConfiguration): specifies the target database.
         table_name (str): the name of the table to be read.
+        query (str): the SQL query to run against the table.
 
     Examples:
         Reading from a table on a postgres database. ::
@@ -65,11 +66,12 @@ class Read(PTransform):
         Where "name" and "num" are the column names.
     """
 
-    def __init__(self, source_config, table_name, *args, **kwargs):
+    def __init__(self, source_config, table_name, query='', *args, **kwargs):
         super(Read, self).__init__(*args, **kwargs)
         self._read_args = dict(
             source_config=source_config,
-            table_name=table_name
+            table_name=table_name,
+            query=query
         )
 
     def expand(self, pcoll):
@@ -84,11 +86,17 @@ class _ReadFromRelationalDBFn(DoFn):
     def process(self, element):
         db_args = dict(element)
         table_name = db_args.pop('table_name')
+        query = db_args.pop('query')
+
         db = SqlAlchemyDB(**db_args)
         db.start_session()
         try:
-            for record in db.read(table_name):
-                yield record
+            if query:
+                for record in db.query(table_name, query):
+                    yield record
+            else:
+                for record in db.read(table_name):
+                    yield record
         except:
             raise
         finally:
@@ -174,3 +182,4 @@ class _WriteToRelationalDBFn(DoFn):
 
     def finish_bundle(self):
         self._db.close_session()
+
