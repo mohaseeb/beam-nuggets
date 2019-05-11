@@ -179,6 +179,7 @@
 <span class="sd">    Args:</span>
 <span class="sd">        source_config (SourceConfiguration): specifies the target database.</span>
 <span class="sd">        table_name (str): the name of the table to be read.</span>
+<span class="sd">        query (str): the SQL query to run against the table.</span>
 
 <span class="sd">    Examples:</span>
 <span class="sd">        Reading from a table on a postgres database. ::</span>
@@ -212,11 +213,12 @@
 <span class="sd">        Where &quot;name&quot; and &quot;num&quot; are the column names.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_config</span><span class="p">,</span> <span class="n">table_name</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_config</span><span class="p">,</span> <span class="n">table_name</span><span class="p">,</span> <span class="n">query</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">Read</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_read_args</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
             <span class="n">source_config</span><span class="o">=</span><span class="n">source_config</span><span class="p">,</span>
-            <span class="n">table_name</span><span class="o">=</span><span class="n">table_name</span>
+            <span class="n">table_name</span><span class="o">=</span><span class="n">table_name</span><span class="p">,</span>
+            <span class="n">query</span><span class="o">=</span><span class="n">query</span>
         <span class="p">)</span>
 
 <div class="viewcode-block" id="Read.expand"><a class="viewcode-back" href="../../../beam_nuggets.io.relational_db.html#beam_nuggets.io.relational_db.Read.expand">[docs]</a>    <span class="k">def</span> <span class="nf">expand</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pcoll</span><span class="p">):</span>
@@ -231,11 +233,17 @@
     <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">):</span>
         <span class="n">db_args</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">element</span><span class="p">)</span>
         <span class="n">table_name</span> <span class="o">=</span> <span class="n">db_args</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;table_name&#39;</span><span class="p">)</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="n">db_args</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;query&#39;</span><span class="p">)</span>
+
         <span class="n">db</span> <span class="o">=</span> <span class="n">SqlAlchemyDB</span><span class="p">(</span><span class="o">**</span><span class="n">db_args</span><span class="p">)</span>
         <span class="n">db</span><span class="o">.</span><span class="n">start_session</span><span class="p">()</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">db</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">table_name</span><span class="p">):</span>
-                <span class="k">yield</span> <span class="n">record</span>
+            <span class="k">if</span> <span class="n">query</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">db</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">table_name</span><span class="p">,</span> <span class="n">query</span><span class="p">):</span>
+                    <span class="k">yield</span> <span class="n">record</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">db</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">table_name</span><span class="p">):</span>
+                    <span class="k">yield</span> <span class="n">record</span>
         <span class="k">except</span><span class="p">:</span>
             <span class="k">raise</span>
         <span class="k">finally</span><span class="p">:</span>
@@ -321,6 +329,7 @@
 
     <span class="k">def</span> <span class="nf">finish_bundle</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_db</span><span class="o">.</span><span class="n">close_session</span><span class="p">()</span>
+
 </pre></div>
 
            </div>

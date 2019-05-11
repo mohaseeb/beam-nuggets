@@ -149,7 +149,6 @@
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span>
 
 <span class="kn">import</span> <span class="nn">datetime</span>
-<span class="kn">from</span> <span class="nn">copy</span> <span class="k">import</span> <span class="n">copy</span>
 
 <span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="k">import</span> <span class="p">(</span>
     <span class="n">create_engine</span><span class="p">,</span> <span class="n">MetaData</span><span class="p">,</span> <span class="n">Table</span><span class="p">,</span> <span class="n">Column</span><span class="p">,</span>
@@ -163,11 +162,10 @@
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">sqlalchemy.dialects.mysql</span> <span class="k">import</span> <span class="n">insert</span> <span class="k">as</span> <span class="n">mysql_insert</span>
 <span class="kn">from</span> <span class="nn">sqlalchemy.dialects.postgresql</span> <span class="k">import</span> <span class="n">insert</span> <span class="k">as</span> <span class="n">postgres_insert</span>
-<span class="kn">from</span> <span class="nn">sqlalchemy.engine.url</span> <span class="k">import</span> <span class="n">URL</span><span class="p">,</span> <span class="n">make_url</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy.engine.url</span> <span class="k">import</span> <span class="n">URL</span>
 <span class="kn">from</span> <span class="nn">sqlalchemy.ext.declarative</span> <span class="k">import</span> <span class="n">declarative_base</span>
 <span class="kn">from</span> <span class="nn">sqlalchemy.orm</span> <span class="k">import</span> <span class="n">sessionmaker</span>
-<span class="kn">from</span> <span class="nn">sqlalchemy_utils</span> <span class="k">import</span> <span class="n">database_exists</span>
-<span class="kn">from</span> <span class="nn">sqlalchemy_utils.functions</span> <span class="k">import</span> <span class="n">quote</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy_utils</span> <span class="k">import</span> <span class="n">database_exists</span><span class="p">,</span> <span class="n">create_database</span>
 
 
 <div class="viewcode-block" id="SourceConfiguration"><a class="viewcode-back" href="../../../beam_nuggets.io.relational_db_api.html#beam_nuggets.io.relational_db_api.SourceConfiguration">[docs]</a><span class="k">class</span> <span class="nc">SourceConfiguration</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -401,17 +399,22 @@
         <span class="n">create_if_missing</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source</span><span class="o">.</span><span class="n">create_if_missing</span>
         <span class="n">is_database_missing</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="ow">not</span> <span class="n">database_exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_source</span><span class="o">.</span><span class="n">url</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">create_if_missing</span> <span class="ow">and</span> <span class="n">is_database_missing</span><span class="p">():</span>
-            <span class="n">_create_database_tmp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_source</span><span class="o">.</span><span class="n">url</span><span class="p">)</span>
+            <span class="n">create_database</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_source</span><span class="o">.</span><span class="n">url</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_session</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_SessionClass</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="SqlAlchemyDB.close_session"><a class="viewcode-back" href="../../../beam_nuggets.io.relational_db_api.html#beam_nuggets.io.relational_db_api.SqlAlchemyDB.close_session">[docs]</a>    <span class="k">def</span> <span class="nf">close_session</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_session</span><span class="o">.</span><span class="n">close_all</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_session</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_session</span><span class="o">.</span><span class="n">bind</span><span class="o">.</span><span class="n">dispose</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_session</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 <div class="viewcode-block" id="SqlAlchemyDB.read"><a class="viewcode-back" href="../../../beam_nuggets.io.relational_db_api.html#beam_nuggets.io.relational_db_api.SqlAlchemyDB.read">[docs]</a>    <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table_name</span><span class="p">):</span>
         <span class="n">table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_open_table_for_read</span><span class="p">(</span><span class="n">table_name</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">table</span><span class="o">.</span><span class="n">records</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_session</span><span class="p">):</span>
+            <span class="k">yield</span> <span class="n">record</span></div>
+
+<div class="viewcode-block" id="SqlAlchemyDB.query"><a class="viewcode-back" href="../../../beam_nuggets.io.relational_db_api.html#beam_nuggets.io.relational_db_api.SqlAlchemyDB.query">[docs]</a>    <span class="k">def</span> <span class="nf">query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table_name</span><span class="p">,</span> <span class="n">query</span><span class="p">):</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_open_table_for_read</span><span class="p">(</span><span class="n">table_name</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">table</span><span class="o">.</span><span class="n">query_records</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_session</span><span class="p">,</span> <span class="n">query</span><span class="p">):</span>
             <span class="k">yield</span> <span class="n">record</span></div>
 
 <div class="viewcode-block" id="SqlAlchemyDB.write_record"><a class="viewcode-back" href="../../../beam_nuggets.io.relational_db_api.html#beam_nuggets.io.relational_db_api.SqlAlchemyDB.write_record">[docs]</a>    <span class="k">def</span> <span class="nf">write_record</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table_config</span><span class="p">,</span> <span class="n">record_dict</span><span class="p">):</span>
@@ -489,6 +492,11 @@
         <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_Class</span><span class="p">):</span>
             <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">_from_db_record</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
 
+    <span class="k">def</span> <span class="nf">query_records</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session</span><span class="p">,</span> <span class="n">query</span><span class="p">):</span>
+        <span class="n">mapper</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">query</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">session</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">query</span><span class="p">):</span>
+            <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">_from_db_record</span><span class="p">(</span><span class="n">record</span><span class="p">,</span> <span class="n">mapper</span><span class="p">)</span>
+
     <span class="k">def</span> <span class="nf">write_record</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session</span><span class="p">,</span> <span class="n">create_insert_f</span><span class="p">,</span> <span class="n">record_dict</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">insert_stmt</span> <span class="o">=</span> <span class="n">create_insert_f</span><span class="p">(</span>
@@ -499,15 +507,18 @@
             <span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
         <span class="k">except</span><span class="p">:</span>
             <span class="n">session</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
-            <span class="n">session</span><span class="o">.</span><span class="n">close_all</span><span class="p">()</span>
+            <span class="n">session</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
             <span class="n">session</span><span class="o">.</span><span class="n">bind</span><span class="o">.</span><span class="n">dispose</span><span class="p">()</span>
             <span class="k">raise</span>
 
     <span class="k">def</span> <span class="nf">_to_db_record</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record_dict</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_Class</span><span class="p">(</span><span class="o">**</span><span class="n">record_dict</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_from_db_record</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db_record</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">{</span><span class="n">col</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">db_record</span><span class="p">,</span> <span class="n">col</span><span class="p">)</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_column_names</span><span class="p">}</span>
+    <span class="k">def</span> <span class="nf">_from_db_record</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db_record</span><span class="p">,</span> <span class="n">mapper</span><span class="o">=</span><span class="p">[]):</span>
+        <span class="k">if</span> <span class="n">mapper</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span><span class="n">col</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">db_record</span><span class="p">,</span> <span class="n">col</span><span class="p">)</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">mapper</span><span class="p">}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span><span class="n">col</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">db_record</span><span class="p">,</span> <span class="n">col</span><span class="p">)</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_column_names</span><span class="p">}</span>
 
 
 <div class="viewcode-block" id="load_table"><a class="viewcode-back" href="../../../beam_nuggets.io.relational_db_api.html#beam_nuggets.io.relational_db_api.load_table">[docs]</a><span class="k">def</span> <span class="nf">load_table</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
@@ -535,8 +546,19 @@
         <span class="p">)</span>
         <span class="n">metadata</span> <span class="o">=</span> <span class="n">MetaData</span><span class="p">(</span><span class="n">bind</span><span class="o">=</span><span class="n">session</span><span class="o">.</span><span class="n">bind</span><span class="p">)</span>
         <span class="n">sqlalchemy_table</span> <span class="o">=</span> <span class="n">define_table_f</span><span class="p">(</span><span class="n">metadata</span><span class="p">)</span>
-        <span class="n">metadata</span><span class="o">.</span><span class="n">create_all</span><span class="p">()</span>
-        <span class="n">table_class</span> <span class="o">=</span> <span class="n">create_table_class</span><span class="p">(</span><span class="n">sqlalchemy_table</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">metadata</span><span class="o">.</span><span class="n">create_all</span><span class="p">()</span>
+            <span class="n">table_class</span> <span class="o">=</span> <span class="n">create_table_class</span><span class="p">(</span><span class="n">sqlalchemy_table</span><span class="p">)</span>
+            <span class="n">session</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">table_class</span> <span class="o">=</span> <span class="n">load_table</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">table_class</span><span class="p">:</span>
+                <span class="c1"># If another worker has already created the table, get ready</span>
+                <span class="c1"># for more transactions and carry on</span>
+                <span class="n">session</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Otherwise, raise the exception</span>
+                <span class="k">raise</span> <span class="n">e</span>
 
     <span class="k">return</span> <span class="n">table_class</span></div>
 
@@ -735,88 +757,6 @@
     <span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="p">),</span> <span class="n">Date</span><span class="p">),</span>
 <span class="p">]</span>
 
-
-<span class="c1"># TODO Below is a copy of sqlalchemy_utils.create_database with a fix to</span>
-<span class="c1">#  support creating PostgreSQL DBs using pg8000. We should remove this tmp fix</span>
-<span class="c1">#  when the following PR is merged:</span>
-<span class="c1">#  https://github.com/kvesteri/sqlalchemy-utils/pull/356</span>
-<span class="k">def</span> <span class="nf">_create_database_tmp</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf8&#39;</span><span class="p">,</span> <span class="n">template</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Issue the appropriate CREATE DATABASE statement.</span>
-
-<span class="sd">    :param url: A SQLAlchemy engine URL.</span>
-<span class="sd">    :param encoding: The encoding to create the database as.</span>
-<span class="sd">    :param template:</span>
-<span class="sd">        The name of the template from which to create the new database. At the</span>
-<span class="sd">        moment only supported by PostgreSQL driver.</span>
-
-<span class="sd">    To create a database, you can pass a simple URL that would have</span>
-<span class="sd">    been passed to ``create_engine``. ::</span>
-
-<span class="sd">        create_database(&#39;postgres://postgres@localhost/name&#39;)</span>
-
-<span class="sd">    You may also pass the url from an existing engine. ::</span>
-
-<span class="sd">        create_database(engine.url)</span>
-
-<span class="sd">    Has full support for mysql, postgres, and sqlite. In theory,</span>
-<span class="sd">    other database engines should be supported.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="n">url</span> <span class="o">=</span> <span class="n">copy</span><span class="p">(</span><span class="n">make_url</span><span class="p">(</span><span class="n">url</span><span class="p">))</span>
-
-    <span class="n">database</span> <span class="o">=</span> <span class="n">url</span><span class="o">.</span><span class="n">database</span>
-
-    <span class="k">if</span> <span class="n">url</span><span class="o">.</span><span class="n">drivername</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;postgres&#39;</span><span class="p">):</span>
-        <span class="n">url</span><span class="o">.</span><span class="n">database</span> <span class="o">=</span> <span class="s1">&#39;postgres&#39;</span>
-    <span class="k">elif</span> <span class="n">url</span><span class="o">.</span><span class="n">drivername</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;mssql&#39;</span><span class="p">):</span>
-        <span class="n">url</span><span class="o">.</span><span class="n">database</span> <span class="o">=</span> <span class="s1">&#39;master&#39;</span>
-    <span class="k">elif</span> <span class="ow">not</span> <span class="n">url</span><span class="o">.</span><span class="n">drivername</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;sqlite&#39;</span><span class="p">):</span>
-        <span class="n">url</span><span class="o">.</span><span class="n">database</span> <span class="o">=</span> <span class="kc">None</span>
-
-    <span class="k">if</span> <span class="n">url</span><span class="o">.</span><span class="n">drivername</span> <span class="o">==</span> <span class="s1">&#39;mssql+pyodbc&#39;</span><span class="p">:</span>
-        <span class="n">engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">connect_args</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;autocommit&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
-    <span class="k">elif</span> <span class="n">url</span><span class="o">.</span><span class="n">drivername</span> <span class="o">==</span> <span class="s1">&#39;postgresql+pg8000&#39;</span><span class="p">:</span>
-        <span class="n">engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">isolation_level</span><span class="o">=</span><span class="s1">&#39;AUTOCOMMIT&#39;</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
-    <span class="n">result_proxy</span> <span class="o">=</span> <span class="kc">None</span>
-
-    <span class="k">if</span> <span class="n">engine</span><span class="o">.</span><span class="n">dialect</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;postgresql&#39;</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">engine</span><span class="o">.</span><span class="n">driver</span> <span class="o">==</span> <span class="s1">&#39;psycopg2&#39;</span><span class="p">:</span>
-            <span class="kn">from</span> <span class="nn">psycopg2.extensions</span> <span class="k">import</span> <span class="n">ISOLATION_LEVEL_AUTOCOMMIT</span>
-            <span class="n">engine</span><span class="o">.</span><span class="n">raw_connection</span><span class="p">()</span><span class="o">.</span><span class="n">set_isolation_level</span><span class="p">(</span>
-                <span class="n">ISOLATION_LEVEL_AUTOCOMMIT</span>
-            <span class="p">)</span>
-
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">template</span><span class="p">:</span>
-            <span class="n">template</span> <span class="o">=</span> <span class="s1">&#39;template1&#39;</span>
-
-        <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;CREATE DATABASE </span><span class="si">{0}</span><span class="s2"> ENCODING &#39;</span><span class="si">{1}</span><span class="s2">&#39; TEMPLATE </span><span class="si">{2}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-            <span class="n">quote</span><span class="p">(</span><span class="n">engine</span><span class="p">,</span> <span class="n">database</span><span class="p">),</span>
-            <span class="n">encoding</span><span class="p">,</span>
-            <span class="n">quote</span><span class="p">(</span><span class="n">engine</span><span class="p">,</span> <span class="n">template</span><span class="p">)</span>
-        <span class="p">)</span>
-        <span class="n">result_proxy</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
-
-    <span class="k">elif</span> <span class="n">engine</span><span class="o">.</span><span class="n">dialect</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;mysql&#39;</span><span class="p">:</span>
-        <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;CREATE DATABASE </span><span class="si">{0}</span><span class="s2"> CHARACTER SET = &#39;</span><span class="si">{1}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-            <span class="n">quote</span><span class="p">(</span><span class="n">engine</span><span class="p">,</span> <span class="n">database</span><span class="p">),</span>
-            <span class="n">encoding</span>
-        <span class="p">)</span>
-        <span class="n">result_proxy</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
-
-    <span class="k">elif</span> <span class="n">engine</span><span class="o">.</span><span class="n">dialect</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;sqlite&#39;</span> <span class="ow">and</span> <span class="n">database</span> <span class="o">!=</span> <span class="s1">&#39;:memory:&#39;</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">database</span><span class="p">:</span>
-            <span class="n">engine</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;CREATE TABLE DB(id int);&quot;</span><span class="p">)</span>
-            <span class="n">engine</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;DROP TABLE DB;&quot;</span><span class="p">)</span>
-
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">text</span> <span class="o">=</span> <span class="s1">&#39;CREATE DATABASE </span><span class="si">{0}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">quote</span><span class="p">(</span><span class="n">engine</span><span class="p">,</span> <span class="n">database</span><span class="p">))</span>
-        <span class="n">result_proxy</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">result_proxy</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">result_proxy</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-    <span class="n">engine</span><span class="o">.</span><span class="n">dispose</span><span class="p">()</span>
 </pre></div>
 
            </div>

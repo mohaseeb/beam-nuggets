@@ -171,7 +171,7 @@ and writing to relational databases. <a class="reference external" href="https:/
 databases.</p>
 <dl class="class">
 <dt id="beam_nuggets.io.relational_db.Read">
-<em class="property">class </em><code class="descclassname">beam_nuggets.io.relational_db.</code><code class="descname">Read</code><span class="sig-paren">(</span><em>source_config</em>, <em>table_name</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/beam_nuggets/io/relational_db.html#Read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#beam_nuggets.io.relational_db.Read" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">beam_nuggets.io.relational_db.</code><code class="descname">Read</code><span class="sig-paren">(</span><em>source_config</em>, <em>table_name</em>, <em>query=''</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/beam_nuggets/io/relational_db.html#Read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#beam_nuggets.io.relational_db.Read" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">apache_beam.transforms.ptransform.PTransform</span></code></p>
 <p>A <code class="xref py py-class docutils literal notranslate"><span class="pre">PTransform</span></code> for reading
 tables on relational databases.</p>
@@ -184,6 +184,7 @@ tables on relational databases.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>source_config</strong> (<a class="reference internal" href="beam_nuggets.io.relational_db_api.html#beam_nuggets.io.relational_db_api.SourceConfiguration" title="beam_nuggets.io.relational_db_api.SourceConfiguration"><em>SourceConfiguration</em></a>) – specifies the target database.</li>
 <li><strong>table_name</strong> (<em>str</em>) – the name of the table to be read.</li>
+<li><strong>query</strong> (<em>str</em>) – the SQL query to run against the table.</li>
 </ul>
 </td>
 </tr>
