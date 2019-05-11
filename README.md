@@ -76,6 +76,7 @@ using the DataFlowRunner.
 An example showing how you can use beam-nugget's [relational_db.Read](http://mohaseeb.com/beam-nuggets/beam_nuggets.io.relational_db.html#beam_nuggets.io.relational_db.Read) 
 transform to read from a PostgreSQL database table. 
 ```python
+from __future__ import print_function
 import apache_beam as beam
 from apache_beam.options.pipeline_options import PipelineOptions
 from beam_nuggets.io import relational_db
@@ -92,6 +93,7 @@ with beam.Pipeline(options=PipelineOptions()) as p:
     records = p | "Reading records from db" >> relational_db.Read(
         source_config=source_config,
         table_name='months',
+        query='select num, name from months'  # optional. When omitted, all table records are returned. 
     )
     records | 'Writing to stdout' >> beam.Map(print)
 ```
@@ -152,9 +154,8 @@ scripts/build_test_deploy.sh
 # Backlog 
 * versioned docs?
 * Summarize the investigation of using Source/Sink Vs ParDo(and GroupBy) for IO
-* Sql queries support in relational_db.Read
 * more nuggets: WriteToCsv
-* Investigate readyness of SDF ParDo, and possiblity to use for relational_db.Read
+* Investigate readiness of SDF ParDo, and possibility to use for relational_db.Read
 * integration tests
 * DB transforms failures handling on IO transforms
 * more nuggets: Elasticsearch, Mongo 

@@ -55,6 +55,7 @@ class Read(PTransform):
                 records = p | "Reading records from db" >> relational_db.Read(
                     source_config=source_config,
                     table_name=table_name,
+                    query='select name, num from months'  # optional. When omitted, all table records are returned.
                 )
                 records | 'Writing to stdout' >> beam.Map(print)
 
