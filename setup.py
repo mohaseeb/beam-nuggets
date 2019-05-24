@@ -11,8 +11,7 @@ REQUIRED_PACKAGES = [
     # Below are drivers for connection to specific DBs
     'pg8000>=1.12.4,<2.0.0',
     'PyMySQL>=0.9.3,<2.0.0',
-    'kafka',
-    'psycopg2'
+    'kafka>===1.3.5',
 ]
 
 REQUIRED_PACKAGES_TEST = [
