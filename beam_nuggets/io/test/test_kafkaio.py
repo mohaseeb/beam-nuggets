@@ -1,24 +1,32 @@
 import unittest
 
 from apache_beam.testing.test_pipeline import TestPipeline
-from apache_beam.testing.util import assert_that, equal_to
+import apache_beam as beam
 
 from beam_nuggets.io import kafkaio
-from .test_base import TransformBaseTest
 
 
-class TestKafkaReadTransform(TransformBaseTest):
+class TestKafkaProduceTransform(unittest.TestCase):
 
     def setUp(self):
-        super(TestKafkaReadTransform, self).setUp()
+        super(TestKafkaProduceTransform, self).setUp()
+
+    def test_ProduceKafkaMessage(self):
+        #create messages and push messages into Apache Kafka
+        with TestPipeline() as p:
+            (p | "Creating records" >> beam.Create([('dev_1', '{"device": "0001", status": "healthy"}')])
+               | "Produce kafka message" >> kafkaio.KafkaProduce(topic="test_stream", servers="localhost:9092")
+                )
+
+class TestKafkaConsumeTransform(unittest.TestCase):
+
+    def setUp(self):
+        super(TestKafkaConsumeTransform, self).setUp()
 
     def test_ConsumeFromKafka(self):
-        # create read pipeline, execute it and compare retrieved to actual rows
+        #create a streaming Kafka consumer
         with TestPipeline() as p:
-            assert_that(
-                p | "Reading records from db" >> relational_db.Read(
-                    source_config=self.source_config,
-                    table_name=self.table_name
-                ),
-                equal_to(self.table_rows)
-            )
+            p | "Consume kafka messages" >> kafkaio.KafkaConsume(topic="test_stream", servers="localhost:9092")
+
+if __name__ == '__main__':
+    unittest.main()

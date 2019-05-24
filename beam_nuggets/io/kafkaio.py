@@ -5,7 +5,8 @@ from kafka import KafkaConsumer, KafkaProducer
 import json
 
 class KafkaConsume(PTransform):
-    """A :class:`~apache_beam.transforms.ptransform.PTransform` for reading from an Apache Kafka Topic
+    """A :class:`~apache_beam.transforms.ptransform.PTransform` for reading from an Apache Kafka topic. This is a streaming
+    Transform that never returns.
 
     It outputs a :class:`~apache_beam.pvalue.PCollection` of
     ``key-values:s``, each object is a Kafka message in the form (msg-key, msg)
@@ -32,7 +33,7 @@ class KafkaConsume(PTransform):
             ("device 1", {"status": "healthy"})
             ("job #2647", {"status": "failed"})
 
-        Where the key is the Kafka message key and the element is the Kafka message being passed through the topic
+        Where the first element of the tuple is the Kafka message key and the second element is the Kafka message being passed through the topic
     """
 
     def __init__(self, topic=None, servers='127.0.0.1:9092', group_id=None):
@@ -71,8 +72,9 @@ class _ConsumeKafkaTopic(DoFn):
                 continue
 
 class KafkaProduce(PTransform):
-    """A :class:`~apache_beam.transforms.ptransform.PTransform` for push messages
-    into an Apache Kafka topic.
+    """A :class:`~apache_beam.transforms.ptransform.PTransform` for pushing messages
+    into an Apache Kafka topic. This class expects a tuple with the first element being the message key
+    and the second element being the message.
 
     Examples:
         Examples:
@@ -82,13 +84,11 @@ class KafkaProduce(PTransform):
             from apache_beam.options.pipeline_options import PipelineOptions
             from beam_nuggets.io import kafkaio
 
-            kafka_topic = 'notifications'
-
             with beam.Pipeline(options=PipelineOptions()) as p:
                 notifications = (p 
-                                 | "Creating data" >> beam.Create(['{"device": "0001", status": "healthy"}'])
+                                 | "Creating data" >> beam.Create([('dev_1', '{"device": "0001", status": "healthy"}')])
                                  | "Pushing messages to Kafka" >> kafkaio.KafkaProduce(
-                                                                                        topic=kafka_topic,
+                                                                                        topic='notifications',
                                                                                         servers="localhost:9092"
                                                                                     )
                                 )
@@ -96,7 +96,7 @@ class KafkaProduce(PTransform):
 
         The output will be something like ::
 
-            ("notifications", '{"device": "0001", status": "healthy"}')
+            ("dev_1", '{"device": "0001", status": "healthy"}')
 
         Where the key is the Kafka topic published to and the element is the Kafka message produced
     """
@@ -131,7 +131,9 @@ class _ProduceKafkaMessage(DoFn):
         producer = KafkaProducer(bootstrap_servers=self.attributes["servers"])
 
         try:
-            producer.send(attributes['topic'], element.encode())
-            yield (attributes['topic'], element)
+            producer.send(self.attributes['topic'], element[1].encode(), key=element[0].encode())
+            yield (self.attributes['topic'], element)
         except Exception as e:
-            print(e)
+            raise
+        finally:
+            producer.close()
