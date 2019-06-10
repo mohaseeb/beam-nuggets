@@ -24,9 +24,12 @@ class TestKafkaConsumeTransform(unittest.TestCase):
         super(TestKafkaConsumeTransform, self).setUp()
 
     def test_ConsumeFromKafka(self):
+        kafka_config = {"topic": "test_stream",
+                        "bootstrap_servers": "localhost:9092",
+                        "group_id": "test_group"}
         #create a streaming Kafka consumer
         with TestPipeline() as p:
-            p | "Consume kafka messages" >> kafkaio.KafkaConsume(topic="test_stream", servers="localhost:9092")
+            p | "Consume kafka messages" >> kafkaio.KafkaConsume(kafka_config)
 
 if __name__ == '__main__':
     unittest.main()

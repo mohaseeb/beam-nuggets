@@ -19,13 +19,12 @@ class KafkaConsume(PTransform):
             from beam_nuggets.io import kafkaio
 
             kafka_topic = 'notifications'
+            kafka_config = {"topic": "kafka_topic",
+                            "servers": "localhost:9092",
+                            "group_id": "notification_consumer_group"}
 
             with beam.Pipeline(options=PipelineOptions()) as p:
-                notifications = p | "Reading messages from Kafka" >> kafkaio.KafkaConsume(
-                    topic=kafka_topic,
-                    servers="localhost:9092",
-                    group_id="notification_consumer_group"
-                )
+                notifications = p | "Reading messages from Kafka" >> kafkaio.KafkaConsume(kafka_config)
                 notifications | 'Writing to stdout' >> beam.Map(print)
 
         The output will be something like ::
@@ -36,7 +35,7 @@ class KafkaConsume(PTransform):
         Where the first element of the tuple is the Kafka message key and the second element is the Kafka message being passed through the topic
     """
 
-    def __init__(self, topic=None, servers='127.0.0.1:9092', group_id=None):
+    def __init__(self, consumer_config, *args, **kwargs):
         """Initializes ``KafkaConsume``
 
         Args:
@@ -46,24 +45,23 @@ class KafkaConsume(PTransform):
 
         """
         super(KafkaConsume, self).__init__()
-        self._attributes = dict(
-            topic=topic, 
-            servers=servers, 
-            group_id=group_id)
+        self._config = consumer_config
 
     def expand(self, pcoll):
         return (
-            pcoll 
-            | Create([self._attributes]) 
-            | ParDo(_ConsumeKafkaTopic(self._attributes))
+            pcoll
+            | Create([self._config])
+            | ParDo(_ConsumeKafkaTopic(self._config))
         )
 
 class _ConsumeKafkaTopic(DoFn):
     """Internal ``DoFn`` to read from Kafka topic and return messages"""
 
-    def process(self, attributes):
-        consumer = KafkaConsumer(attributes["topic"], bootstrap_servers=attributes["servers"])
-            
+    def process(self, config):
+        consumer_config = dict(config)
+        topic = consumer_config.pop('topic')
+        consumer = KafkaConsumer(topic, **consumer_config)
+
         for msg in consumer:
             try:
                 yield (msg.key, msg.value.decode())
@@ -116,7 +114,7 @@ class KafkaProduce(PTransform):
 
     def expand(self, pcoll):
         return (
-            pcoll 
+            pcoll
             | ParDo(_ProduceKafkaMessage(self._attributes))
         )
 
@@ -127,13 +125,14 @@ class _ProduceKafkaMessage(DoFn):
         super(_ProduceKafkaMessage, self).__init__(*args, **kwargs)
         self.attributes = attributes
 
-    def process(self, element):
-        producer = KafkaProducer(bootstrap_servers=self.attributes["servers"])
+    def start_bundle(self):
+        self._producer = KafkaProducer(bootstrap_servers=self.attributes["servers"])
 
+    def process(self, element):
         try:
-            producer.send(self.attributes['topic'], element[1].encode(), key=element[0].encode())
-            yield (self.attributes['topic'], element)
+            self._producer.send(self.attributes['topic'], element[1].encode(), key=element[0].encode())
+            yield element
         except Exception as e:
             raise
         finally:
-            producer.close()
+            self._producer.close()
