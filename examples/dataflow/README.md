@@ -50,10 +50,10 @@ to execute the example.
 - GCP environment setup (a crude list)
   - To provide connectivity between the GCP workers (that will be spun to 
   execute the pipeline) and the PostgreSQL instance, all resources (DB, 
-  workers) has created on the same GCP region (`us-central1` in my case),
+  workers) were created on the same GCP region (`us-central1` in my case),
   so the workers can talk to the DB using my GCP project private networks (
   one for the DB, and one for the workers setup. GCP automatically takes care of setting up the 
-  necessary connectivity between the DB and the workers networks).
+  necessary connectivity between the DB network and the workers network).
   - A PostgreSQL instance is created on us-central1 region. `Private IP` 
   connectivity 
   is then enabled for the instance (under `Connections` on the PostgreSQL 

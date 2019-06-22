@@ -11,12 +11,12 @@ python write_to_relational_db.py \
     --runner DataflowRunner \
     --project try-dataflow-python \
     --region us-central1 \
-    --temp_location gs://my-bucket/tmp/ \
+    --temp_location gs://$GCP_BUCKET_NAME/tmp/ \
     --requirements_file /tmp/requirements.txt \
     --drivername postgresql+pg8000 \
-    --host 10.78.96.3 \
-    --port 5432 \
-    --database calendar \
-    --username postgres \
-    --password postgres \
+    --host $DB_HOST \
+    --port $DB_PORT \
+    --database calendar3 \
+    --username $DB_USER \
+    --password $DB_PASSWORD \
     --create_if_missing True
