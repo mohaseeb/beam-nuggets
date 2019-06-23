@@ -6,6 +6,7 @@ import apache_beam as beam
 from beam_nuggets.io import kafkaio
 
 
+@unittest.skip("tests aren't functional yet")
 class TestKafkaProduceTransform(unittest.TestCase):
 
     def setUp(self):
@@ -18,6 +19,8 @@ class TestKafkaProduceTransform(unittest.TestCase):
                | "Produce kafka message" >> kafkaio.KafkaProduce(topic="test_stream", servers="localhost:9092")
                 )
 
+
+@unittest.skip("tests aren't functional yet")
 class TestKafkaConsumeTransform(unittest.TestCase):
 
     def setUp(self):
@@ -30,6 +33,7 @@ class TestKafkaConsumeTransform(unittest.TestCase):
         #create a streaming Kafka consumer
         with TestPipeline() as p:
             p | "Consume kafka messages" >> kafkaio.KafkaConsume(kafka_config)
+
 
 if __name__ == '__main__':
     unittest.main()

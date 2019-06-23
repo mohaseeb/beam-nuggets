@@ -110,7 +110,11 @@ for writing to relational database tables.
 <br>Above transforms uses [SqlAlchemy](https://www.sqlalchemy.org/) to communicate with the database, 
 and hence they can read from and write to all relational databases supported
  by SqlAlchemy. 
-The transforms [are tested](https://github.com/mohaseeb/beam-nuggets/tree/master/beam_nuggets/io/test) against PostgreSQL, MySQL and SQLite.   
+The transforms [are tested](https://github.com/mohaseeb/beam-nuggets/tree/master/beam_nuggets/io/test) against PostgreSQL, MySQL and SQLite.
+* [kafkaio.KafkaProduce]() for writing to Kafka topics.
+* [kafkaio.KafkaConsume]() for consuming from kafka topics.
+* [csvio.Read](http://mohaseeb.com/beam-nuggets/beam_nuggets.io.csvio.html#beam_nuggets.io.csvio.Read)
+for reading CSV files.
 <!--read from sql database-->
 <!--read from postgres postgresql-->
 <!--read from mysql-->
@@ -119,8 +123,8 @@ The transforms [are tested](https://github.com/mohaseeb/beam-nuggets/tree/master
 <!--write to postgres postgresql-->
 <!--write to mysql-->
 <!--write to oracle-->
-* [csvio.Read](http://mohaseeb.com/beam-nuggets/beam_nuggets.io.csvio.html#beam_nuggets.io.csvio.Read)
-for reading CSV files.
+<!--read from kafka topic-->
+<!--write to kafka topic-->
 ### Others
 * [SelectFromNestedDict](http://mohaseeb.com/beam-nuggets/beam_nuggets.transforms.nested_dict.html#beam_nuggets.transforms.nested_dict.SelectFromNestedDict)
 Selects a subset from records formed of nested dictionaries.

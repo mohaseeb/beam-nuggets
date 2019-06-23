@@ -1,12 +1,13 @@
-from apache_beam import PTransform, ParDo, DoFn, Create, pvalue, Windowing
-from apache_beam.transforms.window import GlobalWindows
+from __future__ import division, print_function
 
+from apache_beam import PTransform, ParDo, DoFn, Create
 from kafka import KafkaConsumer, KafkaProducer
-import json
+
 
 class KafkaConsume(PTransform):
     """A :class:`~apache_beam.transforms.ptransform.PTransform` for reading from an Apache Kafka topic. This is a streaming
-    Transform that never returns.
+    Transform that never returns. The transform uses `KafkaConsumer` from the
+    `kafka` python library.
 
     It outputs a :class:`~apache_beam.pvalue.PCollection` of
     ``key-values:s``, each object is a Kafka message in the form (msg-key, msg)
@@ -14,13 +15,14 @@ class KafkaConsume(PTransform):
     Examples:
         Consuming from a Kafka Topic `notifications` ::
 
+            from __future__ import print_function
             import apache_beam as beam
             from apache_beam.options.pipeline_options import PipelineOptions
             from beam_nuggets.io import kafkaio
 
-            kafka_topic = 'notifications'
-            kafka_config = {"topic": "kafka_topic",
-                            "servers": "localhost:9092",
+            kafka_topic = "notifications"
+            kafka_config = {"topic": kafka_topic,
+                            "bootstrap_servers": "localhost:9092",
                             "group_id": "notification_consumer_group"}
 
             with beam.Pipeline(options=PipelineOptions()) as p:
@@ -39,10 +41,9 @@ class KafkaConsume(PTransform):
         """Initializes ``KafkaConsume``
 
         Args:
-            topic: Kafka topic to read from
-            servers: list of Kafka servers to listen to
-            group_id: specify consumer group for dynamic partition assignment and offset commits
-
+            consumer_config (dict): the kafka consumer configuration. The
+                supported configurations are those of `KafkaConsumer` from
+                the `kafka` python library.
         """
         super(KafkaConsume, self).__init__()
         self._config = consumer_config
@@ -51,8 +52,9 @@ class KafkaConsume(PTransform):
         return (
             pcoll
             | Create([self._config])
-            | ParDo(_ConsumeKafkaTopic(self._config))
+            | ParDo(_ConsumeKafkaTopic())
         )
+
 
 class _ConsumeKafkaTopic(DoFn):
     """Internal ``DoFn`` to read from Kafka topic and return messages"""
@@ -69,15 +71,18 @@ class _ConsumeKafkaTopic(DoFn):
                 print(e)
                 continue
 
+
 class KafkaProduce(PTransform):
     """A :class:`~apache_beam.transforms.ptransform.PTransform` for pushing messages
     into an Apache Kafka topic. This class expects a tuple with the first element being the message key
-    and the second element being the message.
+    and the second element being the message. The transform uses `KafkaProducer`
+    from the `kafka` python library.
 
     Examples:
         Examples:
         Pushing message to a Kafka Topic `notifications` ::
 
+            from __future__ import print_function
             import apache_beam as beam
             from apache_beam.options.pipeline_options import PipelineOptions
             from beam_nuggets.io import kafkaio
@@ -117,6 +122,7 @@ class KafkaProduce(PTransform):
             pcoll
             | ParDo(_ProduceKafkaMessage(self._attributes))
         )
+
 
 class _ProduceKafkaMessage(DoFn):
     """Internal ``DoFn`` to publish message to Kafka topic"""
