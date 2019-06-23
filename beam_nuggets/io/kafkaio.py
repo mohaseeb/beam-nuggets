@@ -12,6 +12,11 @@ class KafkaConsume(PTransform):
     It outputs a :class:`~apache_beam.pvalue.PCollection` of
     ``key-values:s``, each object is a Kafka message in the form (msg-key, msg)
 
+    Args:
+        consumer_config (dict): the kafka consumer configuration. The
+            supported configurations are those of `KafkaConsumer` from
+            the `kafka` python library.
+
     Examples:
         Consuming from a Kafka Topic `notifications` ::
 
@@ -39,11 +44,6 @@ class KafkaConsume(PTransform):
 
     def __init__(self, consumer_config, *args, **kwargs):
         """Initializes ``KafkaConsume``
-
-        Args:
-            consumer_config (dict): the kafka consumer configuration. The
-                supported configurations are those of `KafkaConsumer` from
-                the `kafka` python library.
         """
         super(KafkaConsume, self).__init__()
         self._config = consumer_config
@@ -78,6 +78,10 @@ class KafkaProduce(PTransform):
     and the second element being the message. The transform uses `KafkaProducer`
     from the `kafka` python library.
 
+    Args:
+        topic: Kafka topic to publish to
+        servers: list of Kafka servers to listen to
+
     Examples:
         Examples:
         Pushing message to a Kafka Topic `notifications` ::
@@ -106,11 +110,6 @@ class KafkaProduce(PTransform):
 
     def __init__(self, topic=None, servers='127.0.0.1:9092'):
         """Initializes ``KafkaProduce``
-
-        Args:
-            topic: Kafka topic to publish to
-            servers: list of Kafka servers to listen to
-
         """
         super(KafkaProduce, self).__init__()
         self._attributes = dict(

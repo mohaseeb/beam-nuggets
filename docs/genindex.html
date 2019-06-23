@@ -18,32 +18,34 @@
   
 
   
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="#" />
     <link rel="search" title="Search" href="search.html" /> 
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -155,6 +157,7 @@
  | <a href="#E"><strong>E</strong></a>
  | <a href="#G"><strong>G</strong></a>
  | <a href="#I"><strong>I</strong></a>
+ | <a href="#K"><strong>K</strong></a>
  | <a href="#L"><strong>L</strong></a>
  | <a href="#P"><strong>P</strong></a>
  | <a href="#Q"><strong>Q</strong></a>
@@ -180,6 +183,8 @@
       <li><a href="beam_nuggets.io.html#module-beam_nuggets.io">beam_nuggets.io (module)</a>
 </li>
       <li><a href="beam_nuggets.io.csvio.html#module-beam_nuggets.io.csvio">beam_nuggets.io.csvio (module)</a>
+</li>
+      <li><a href="beam_nuggets.io.kafkaio.html#module-beam_nuggets.io.kafkaio">beam_nuggets.io.kafkaio (module)</a>
 </li>
       <li><a href="beam_nuggets.io.relational_db.html#module-beam_nuggets.io.relational_db">beam_nuggets.io.relational_db (module)</a>
 </li>
@@ -224,6 +229,10 @@
       <li><a href="beam_nuggets.io.csvio.html#beam_nuggets.io.csvio.Read.expand">expand() (beam_nuggets.io.csvio.Read method)</a>
 
       <ul>
+        <li><a href="beam_nuggets.io.kafkaio.html#beam_nuggets.io.kafkaio.KafkaConsume.expand">(beam_nuggets.io.kafkaio.KafkaConsume method)</a>
+</li>
+        <li><a href="beam_nuggets.io.kafkaio.html#beam_nuggets.io.kafkaio.KafkaProduce.expand">(beam_nuggets.io.kafkaio.KafkaProduce method)</a>
+</li>
         <li><a href="beam_nuggets.io.relational_db.html#beam_nuggets.io.relational_db.Read.expand">(beam_nuggets.io.relational_db.Read method)</a>
 </li>
         <li><a href="beam_nuggets.io.relational_db.html#beam_nuggets.io.relational_db.Write.expand">(beam_nuggets.io.relational_db.Write method)</a>
@@ -244,6 +253,18 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="beam_nuggets.io.relational_db_api.html#beam_nuggets.io.relational_db_api.infer_db_type">infer_db_type() (in module beam_nuggets.io.relational_db_api)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="K">K</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="beam_nuggets.io.kafkaio.html#beam_nuggets.io.kafkaio.KafkaConsume">KafkaConsume (class in beam_nuggets.io.kafkaio)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="beam_nuggets.io.kafkaio.html#beam_nuggets.io.kafkaio.KafkaProduce">KafkaProduce (class in beam_nuggets.io.kafkaio)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -363,26 +384,16 @@
   
 
 
-  
-
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-        <script type="text/javascript" src="_static/language_data.js"></script>
-    
-
-  
-
-  <script type="text/javascript" src="_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>
