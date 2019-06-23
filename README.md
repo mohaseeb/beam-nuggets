@@ -111,8 +111,8 @@ for writing to relational database tables.
 and hence they can read from and write to all relational databases supported
  by SqlAlchemy. 
 The transforms [are tested](https://github.com/mohaseeb/beam-nuggets/tree/master/beam_nuggets/io/test) against PostgreSQL, MySQL and SQLite.
-* [kafkaio.KafkaProduce]() for writing to Kafka topics.
-* [kafkaio.KafkaConsume]() for consuming from kafka topics.
+* [kafkaio.KafkaProduce](http://mohaseeb.com/beam-nuggets/beam_nuggets.io.kafkaio.html#beam_nuggets.io.kafkaio.KafkaProduce) for writing to Kafka topics.
+* [kafkaio.KafkaConsume](http://mohaseeb.com/beam-nuggets/beam_nuggets.io.kafkaio.html#beam_nuggets.io.kafkaio.KafkaConsume) for consuming from kafka topics.
 * [csvio.Read](http://mohaseeb.com/beam-nuggets/beam_nuggets.io.csvio.html#beam_nuggets.io.csvio.Read)
 for reading CSV files.
 <!--read from sql database-->
