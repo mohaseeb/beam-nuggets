@@ -10,7 +10,8 @@ REQUIRED_PACKAGES = [
     'sqlalchemy-utils>=0.33.11,<0.34',
     # Below are drivers for connection to specific DBs
     'pg8000>=1.12.4,<2.0.0',
-    'PyMySQL>=0.9.3,<2.0.0'
+    'PyMySQL>=0.9.3,<2.0.0',
+    'kafka>===1.3.5',
 ]
 
 REQUIRED_PACKAGES_TEST = [
