@@ -15,6 +15,37 @@ git clone git@github.com:mohaseeb/beam-nuggets.git
 cd beam-nuggets
 pip install .
 ```
+# Supported transforms
+### IO
+* [relational_db.Read](http://mohaseeb.com/beam-nuggets/beam_nuggets.io.relational_db.html#beam_nuggets.io.relational_db.Read) 
+for reading from relational database tables. 
+* [relational_db.Write](http://mohaseeb.com/beam-nuggets/beam_nuggets.io.relational_db.html#beam_nuggets.io.relational_db.Write) 
+for writing to relational database tables.
+<br>Above transforms uses [SqlAlchemy](https://www.sqlalchemy.org/) to communicate with the database, 
+and hence they can read from and write to all relational databases supported
+ by SqlAlchemy. 
+The transforms [are tested](https://github.com/mohaseeb/beam-nuggets/tree/master/beam_nuggets/io/test) against PostgreSQL, MySQL and SQLite.
+* [kafkaio.KafkaProduce](http://mohaseeb.com/beam-nuggets/beam_nuggets.io.kafkaio.html#beam_nuggets.io.kafkaio.KafkaProduce) for writing to Kafka topics.
+* [kafkaio.KafkaConsume](http://mohaseeb.com/beam-nuggets/beam_nuggets.io.kafkaio.html#beam_nuggets.io.kafkaio.KafkaConsume) for consuming from kafka topics.
+* [csvio.Read](http://mohaseeb.com/beam-nuggets/beam_nuggets.io.csvio.html#beam_nuggets.io.csvio.Read)
+for reading CSV files.
+<!--read from sql database-->
+<!--read from postgres postgresql-->
+<!--read from mysql-->
+<!--read from oracle-->
+<!--write to sql database-->
+<!--write to postgres postgresql-->
+<!--write to mysql-->
+<!--write to oracle-->
+<!--read from kafka topic-->
+<!--write to kafka topic-->
+### Others
+* [SelectFromNestedDict](http://mohaseeb.com/beam-nuggets/beam_nuggets.transforms.nested_dict.html#beam_nuggets.transforms.nested_dict.SelectFromNestedDict)
+Selects a subset from records formed of nested dictionaries.
+* [ParseJson](beam_nuggets.transforms.json_.html#beam_nuggets.transforms.json_.ParseJson)
+* [AssignUniqueId](beam_nuggets.transforms.json_.html#beam_nuggets.transforms.json_.ParseJson)
+# Documentation
+See [here](http://mohaseeb.com/beam-nuggets/).
 # Usage
 Write data to an SQLite table using beam-nugget's 
 [relational_db.Write](http://mohaseeb.com/beam-nuggets/beam_nuggets.io.relational_db.html#beam_nuggets.io.relational_db.Write) transform.
@@ -101,37 +132,6 @@ with beam.Pipeline(options=PipelineOptions()) as p:
     records | 'Writing to stdout' >> beam.Map(print)
 ```
 See [here](https://github.com/mohaseeb/beam-nuggets/tree/master/examples) for more examples.
-# Supported transforms
-### IO
-* [relational_db.Read](http://mohaseeb.com/beam-nuggets/beam_nuggets.io.relational_db.html#beam_nuggets.io.relational_db.Read) 
-for reading from relational database tables. 
-* [relational_db.Write](http://mohaseeb.com/beam-nuggets/beam_nuggets.io.relational_db.html#beam_nuggets.io.relational_db.Write) 
-for writing to relational database tables.
-<br>Above transforms uses [SqlAlchemy](https://www.sqlalchemy.org/) to communicate with the database, 
-and hence they can read from and write to all relational databases supported
- by SqlAlchemy. 
-The transforms [are tested](https://github.com/mohaseeb/beam-nuggets/tree/master/beam_nuggets/io/test) against PostgreSQL, MySQL and SQLite.
-* [kafkaio.KafkaProduce](http://mohaseeb.com/beam-nuggets/beam_nuggets.io.kafkaio.html#beam_nuggets.io.kafkaio.KafkaProduce) for writing to Kafka topics.
-* [kafkaio.KafkaConsume](http://mohaseeb.com/beam-nuggets/beam_nuggets.io.kafkaio.html#beam_nuggets.io.kafkaio.KafkaConsume) for consuming from kafka topics.
-* [csvio.Read](http://mohaseeb.com/beam-nuggets/beam_nuggets.io.csvio.html#beam_nuggets.io.csvio.Read)
-for reading CSV files.
-<!--read from sql database-->
-<!--read from postgres postgresql-->
-<!--read from mysql-->
-<!--read from oracle-->
-<!--write to sql database-->
-<!--write to postgres postgresql-->
-<!--write to mysql-->
-<!--write to oracle-->
-<!--read from kafka topic-->
-<!--write to kafka topic-->
-### Others
-* [SelectFromNestedDict](http://mohaseeb.com/beam-nuggets/beam_nuggets.transforms.nested_dict.html#beam_nuggets.transforms.nested_dict.SelectFromNestedDict)
-Selects a subset from records formed of nested dictionaries.
-* [ParseJson](beam_nuggets.transforms.json_.html#beam_nuggets.transforms.json_.ParseJson)
-* [AssignUniqueId](beam_nuggets.transforms.json_.html#beam_nuggets.transforms.json_.ParseJson)
-# Documentation
-See [here](http://mohaseeb.com/beam-nuggets/).
 # Development
 * Install
 ```bash
