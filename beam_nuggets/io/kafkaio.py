@@ -133,11 +133,12 @@ class _ProduceKafkaMessage(DoFn):
     def start_bundle(self):
         self._producer = KafkaProducer(bootstrap_servers=self.attributes["servers"])
 
+    def finish_bundle(self):
+        self._producer.close()
+
     def process(self, element):
         try:
             self._producer.send(self.attributes['topic'], element[1].encode(), key=element[0].encode())
             yield element
         except Exception as e:
             raise
-        finally:
-            self._producer.close()
