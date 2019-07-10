@@ -22,7 +22,7 @@ assert SourceConfiguration is not None
 assert TableConfiguration is not None
 
 
-class Read(PTransform):
+class DBRead(PTransform):
     """A :class:`~apache_beam.transforms.ptransform.PTransform` for reading
     tables on relational databases.
 
@@ -68,7 +68,7 @@ class Read(PTransform):
     """
 
     def __init__(self, source_config, table_name, query='', *args, **kwargs):
-        super(Read, self).__init__(*args, **kwargs)
+        super(DBRead, self).__init__(*args, **kwargs)
         self._read_args = dict(
             source_config=source_config,
             table_name=table_name,
