@@ -61,10 +61,11 @@ to execute the example.
   See [here](https://cloud.google.com/sql/docs/postgres/private-ip) for more
    information.
   - A `bucket` on the GCP `Storage` was created.
-  - For the script to authenticate against GCP, I followed the instructions 
-  [found here](https://cloud.google.com/docs/authentication/production#auth-cloud-compute-engine-python).
-  I used the authetication strategy that sets the environment variable 
-  `GOOGLE_APPLICATION_CREDENTIALS`.    
+  - For the script to authenticate against GCP, I followed the
+    instructions
+    [found here](https://cloud.google.com/docs/authentication/production#auth-cloud-compute-engine-python).
+    I used the authetnication strategy that sets the environment
+    variable `GOOGLE_APPLICATION_CREDENTIALS`.
   - The pipeline was executed while explicitly specifying the region where 
   the pipeline to be executed (see `write_to_postgresql_gcp_dataflow_runner.sh`). 
   The default region was `us-central1`, at the time of writing this document.  
