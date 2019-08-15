@@ -171,7 +171,7 @@
 <span class="k">assert</span> <span class="n">TableConfiguration</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
 
 
-<div class="viewcode-block" id="Read"><a class="viewcode-back" href="../../../beam_nuggets.io.relational_db.html#beam_nuggets.io.relational_db.Read">[docs]</a><span class="k">class</span> <span class="nc">Read</span><span class="p">(</span><span class="n">PTransform</span><span class="p">):</span>
+<div class="viewcode-block" id="ReadFromDB"><a class="viewcode-back" href="../../../beam_nuggets.io.relational_db.html#beam_nuggets.io.relational_db.ReadFromDB">[docs]</a><span class="k">class</span> <span class="nc">ReadFromDB</span><span class="p">(</span><span class="n">PTransform</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;A :class:`~apache_beam.transforms.ptransform.PTransform` for reading</span>
 <span class="sd">    tables on relational databases.</span>
 
@@ -201,7 +201,7 @@
 <span class="sd">            table_name = &#39;months&#39;</span>
 
 <span class="sd">            with beam.Pipeline(options=PipelineOptions()) as p:</span>
-<span class="sd">                records = p | &quot;Reading records from db&quot; &gt;&gt; relational_db.Read(</span>
+<span class="sd">                records = p | &quot;Reading records from db&quot; &gt;&gt; relational_db.ReadFromDB(</span>
 <span class="sd">                    source_config=source_config,</span>
 <span class="sd">                    table_name=table_name,</span>
 <span class="sd">                    query=&#39;select name, num from months&#39;  # optional. When omitted, all table records are returned.</span>
@@ -217,14 +217,14 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_config</span><span class="p">,</span> <span class="n">table_name</span><span class="p">,</span> <span class="n">query</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">Read</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">ReadFromDB</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_read_args</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
             <span class="n">source_config</span><span class="o">=</span><span class="n">source_config</span><span class="p">,</span>
             <span class="n">table_name</span><span class="o">=</span><span class="n">table_name</span><span class="p">,</span>
             <span class="n">query</span><span class="o">=</span><span class="n">query</span>
         <span class="p">)</span>
 
-<div class="viewcode-block" id="Read.expand"><a class="viewcode-back" href="../../../beam_nuggets.io.relational_db.html#beam_nuggets.io.relational_db.Read.expand">[docs]</a>    <span class="k">def</span> <span class="nf">expand</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pcoll</span><span class="p">):</span>
+<div class="viewcode-block" id="ReadFromDB.expand"><a class="viewcode-back" href="../../../beam_nuggets.io.relational_db.html#beam_nuggets.io.relational_db.ReadFromDB.expand">[docs]</a>    <span class="k">def</span> <span class="nf">expand</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pcoll</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">(</span>
             <span class="n">pcoll</span>
             <span class="o">|</span> <span class="n">Create</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">_read_args</span><span class="p">])</span>

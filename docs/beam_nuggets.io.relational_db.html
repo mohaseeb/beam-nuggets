@@ -172,8 +172,8 @@
 and writing to relational databases. <a class="reference external" href="https://www.sqlalchemy.org/">SQLAlchemy</a> is used for interfacing the
 databases.</p>
 <dl class="class">
-<dt id="beam_nuggets.io.relational_db.Read">
-<em class="property">class </em><code class="descclassname">beam_nuggets.io.relational_db.</code><code class="descname">Read</code><span class="sig-paren">(</span><em>source_config</em>, <em>table_name</em>, <em>query=''</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/beam_nuggets/io/relational_db.html#Read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#beam_nuggets.io.relational_db.Read" title="Permalink to this definition">¶</a></dt>
+<dt id="beam_nuggets.io.relational_db.ReadFromDB">
+<em class="property">class </em><code class="descclassname">beam_nuggets.io.relational_db.</code><code class="descname">ReadFromDB</code><span class="sig-paren">(</span><em>source_config</em>, <em>table_name</em>, <em>query=''</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/beam_nuggets/io/relational_db.html#ReadFromDB"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#beam_nuggets.io.relational_db.ReadFromDB" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">apache_beam.transforms.ptransform.PTransform</span></code></p>
 <p>A <code class="xref py py-class docutils literal notranslate"><span class="pre">PTransform</span></code> for reading
 tables on relational databases.</p>
@@ -209,7 +209,7 @@ tables on relational databases.</p>
 <span class="n">table_name</span> <span class="o">=</span> <span class="s1">&#39;months&#39;</span>
 
 <span class="k">with</span> <span class="n">beam</span><span class="o">.</span><span class="n">Pipeline</span><span class="p">(</span><span class="n">options</span><span class="o">=</span><span class="n">PipelineOptions</span><span class="p">())</span> <span class="k">as</span> <span class="n">p</span><span class="p">:</span>
-    <span class="n">records</span> <span class="o">=</span> <span class="n">p</span> <span class="o">|</span> <span class="s2">&quot;Reading records from db&quot;</span> <span class="o">&gt;&gt;</span> <span class="n">relational_db</span><span class="o">.</span><span class="n">Read</span><span class="p">(</span>
+    <span class="n">records</span> <span class="o">=</span> <span class="n">p</span> <span class="o">|</span> <span class="s2">&quot;Reading records from db&quot;</span> <span class="o">&gt;&gt;</span> <span class="n">relational_db</span><span class="o">.</span><span class="n">ReadFromDB</span><span class="p">(</span>
         <span class="n">source_config</span><span class="o">=</span><span class="n">source_config</span><span class="p">,</span>
         <span class="n">table_name</span><span class="o">=</span><span class="n">table_name</span><span class="p">,</span>
         <span class="n">query</span><span class="o">=</span><span class="s1">&#39;select name, num from months&#39;</span>  <span class="c1"># optional. When omitted, all table records are returned.</span>
@@ -224,8 +224,8 @@ tables on relational databases.</p>
 </div>
 <p>Where “name” and “num” are the column names.</p>
 <dl class="method">
-<dt id="beam_nuggets.io.relational_db.Read.expand">
-<code class="descname">expand</code><span class="sig-paren">(</span><em>pcoll</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/beam_nuggets/io/relational_db.html#Read.expand"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#beam_nuggets.io.relational_db.Read.expand" title="Permalink to this definition">¶</a></dt>
+<dt id="beam_nuggets.io.relational_db.ReadFromDB.expand">
+<code class="descname">expand</code><span class="sig-paren">(</span><em>pcoll</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/beam_nuggets/io/relational_db.html#ReadFromDB.expand"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#beam_nuggets.io.relational_db.ReadFromDB.expand" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
