@@ -22,7 +22,7 @@ assert SourceConfiguration is not None
 assert TableConfiguration is not None
 
 
-class DBRead(PTransform):
+class ReadFromDB(PTransform):
     """A :class:`~apache_beam.transforms.ptransform.PTransform` for reading
     tables on relational databases.
 
@@ -52,7 +52,7 @@ class DBRead(PTransform):
             table_name = 'months'
 
             with beam.Pipeline(options=PipelineOptions()) as p:
-                records = p | "Reading records from db" >> relational_db.Read(
+                records = p | "Reading records from db" >> relational_db.ReadFromDB(
                     source_config=source_config,
                     table_name=table_name,
                     query='select name, num from months'  # optional. When omitted, all table records are returned.
@@ -68,7 +68,7 @@ class DBRead(PTransform):
     """
 
     def __init__(self, source_config, table_name, query='', *args, **kwargs):
-        super(DBRead, self).__init__(*args, **kwargs)
+        super(ReadFromDB, self).__init__(*args, **kwargs)
         self._read_args = dict(
             source_config=source_config,
             table_name=table_name,
