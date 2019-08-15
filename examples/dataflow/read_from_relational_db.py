@@ -24,13 +24,8 @@ def main():
             username=db_args.username,
             password=db_args.password,
         )
-        rrr = relational_db.Read(
-            source_config=source_config,
-            table_name=db_args.table
-        )
 
-        import ipdb; ipdb.set_trace()
-        months = p | "Reading records from db" >> relational_db.Read(
+        months = p | "Reading records from db" >> relational_db.ReadFromDB(
             source_config=source_config,
             table_name=db_args.table
         )

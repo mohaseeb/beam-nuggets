@@ -6,7 +6,7 @@ from apache_beam.options.pipeline_options import PipelineOptions
 from beam_nuggets.io import relational_db
 
 with beam.Pipeline(options=PipelineOptions()) as p:
-    months = p | "Reading records from db" >> relational_db.Read(
+    months = p | "Reading records from db" >> relational_db.ReadFromDB(
         source_config=relational_db.SourceConfiguration(
             drivername='sqlite',
             database='/tmp/months_db.sqlite'

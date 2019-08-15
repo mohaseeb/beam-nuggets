@@ -17,7 +17,7 @@ pip install .
 ```
 # Supported transforms
 ### IO
-* [relational_db.Read](http://mohaseeb.com/beam-nuggets/beam_nuggets.io.relational_db.html#beam_nuggets.io.relational_db.Read) 
+* [relational_db.ReadFromDB](http://mohaseeb.com/beam-nuggets/beam_nuggets.io.relational_db.html#beam_nuggets.io.relational_db.ReadFromDB) 
 for reading from relational database tables. 
 * [relational_db.Write](http://mohaseeb.com/beam-nuggets/beam_nuggets.io.relational_db.html#beam_nuggets.io.relational_db.Write) 
 for writing to relational database tables.
@@ -107,7 +107,7 @@ Click [here](https://github.com/mohaseeb/beam-nuggets/tree/master/examples/dataf
 for more examples, including writing to PostgreSQL in Google Cloud Platform 
 using the DataFlowRunner. 
 <br><br>
-An example showing how you can use beam-nugget's [relational_db.Read](http://mohaseeb.com/beam-nuggets/beam_nuggets.io.relational_db.html#beam_nuggets.io.relational_db.Read) 
+An example showing how you can use beam-nugget's [relational_db.ReadFromDB](http://mohaseeb.com/beam-nuggets/beam_nuggets.io.relational_db.html#beam_nuggets.io.relational_db.ReadFromDB) 
 transform to read from a PostgreSQL database table. 
 ```python
 from __future__ import print_function
@@ -124,7 +124,7 @@ with beam.Pipeline(options=PipelineOptions()) as p:
         password='password',
         database='calendar',
     )
-    records = p | "Reading records from db" >> relational_db.Read(
+    records = p | "Reading records from db" >> relational_db.ReadFromDB(
         source_config=source_config,
         table_name='months',
         query='select num, name from months'  # optional. When omitted, all table records are returned. 
@@ -162,7 +162,7 @@ scripts/build_test_deploy.sh
 * versioned docs?
 * Summarize the investigation of using Source/Sink Vs ParDo(and GroupBy) for IO
 * more nuggets: WriteToCsv
-* Investigate readiness of SDF ParDo, and possibility to use for relational_db.Read
+* Investigate readiness of SDF ParDo, and possibility to use for relational_db.ReadFromDB
 * integration tests
 * DB transforms failures handling on IO transforms
 * more nuggets: Elasticsearch, Mongo 

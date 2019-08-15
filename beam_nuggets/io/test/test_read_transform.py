@@ -21,7 +21,7 @@ class TestReadTransform(TransformBaseTest):
         # create read pipeline, execute it and compare retrieved to actual rows
         with TestPipeline() as p:
             assert_that(
-                p | "Reading records from db" >> relational_db.Read(
+                p | "Reading records from db" >> relational_db.ReadFromDB(
                     source_config=self.source_config,
                     table_name=self.table_name
                 ),
@@ -32,7 +32,7 @@ class TestReadTransform(TransformBaseTest):
         # create a read pipeline with a SQL query, execute it and compare retrieved to actual rows
         with TestPipeline() as p:
             assert_that(
-                p | "Reading records from db" >> relational_db.Read(
+                p | "Reading records from db" >> relational_db.ReadFromDB(
                     source_config=self.source_config,
                     table_name=self.table_name,
                     query='select * from ' + self.table_name
