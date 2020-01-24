@@ -3,6 +3,7 @@ from __future__ import division, print_function
 import json
 
 import apache_beam as beam
+from beam_nuggets.compat import iteritems
 
 
 class ParseJson(beam.DoFn):
@@ -18,5 +19,5 @@ class ParseJson(beam.DoFn):
         """
         yield {
             k: json.loads(v) if k in self.only_keys else v
-            for k, v in element.iteritems()
+            for k, v in iteritems(element)
         }
