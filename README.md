@@ -168,8 +168,9 @@ scripts/build_test_deploy.sh
 * more nuggets: Elasticsearch, Mongo 
 * WriteToRelationalDB, logging
 
-# Contributers
-[mohaseeb](https://github.com/mohaseeb), [astrocox](https://github.com/astrocox), [2514millerj](https://github.com/2514millerj)
+# Contributions by
+[mohaseeb](https://github.com/mohaseeb), [astrocox](https://github.com/astrocox),  
+[2514millerj](https://github.com/2514millerj), [alfredo](https://github.com/alfredo)
 
 # Licence
 MIT
