@@ -134,7 +134,6 @@ class TestWriteTransform(TransformBaseTest):
         # written (i.e. first written first returned)
 
     def test_auto_column_type_inference(self):
-        import pandas as pd
         from sqlalchemy import Integer, Float, String
         NAME = 'name'
         NUM = 'num'
@@ -168,7 +167,10 @@ class TestWriteTransform(TransformBaseTest):
         # load created table metadata
         table = self.db.load_table_class(self.table_name).__table__
         columns = [col for col in table.columns]
-        get_column = lambda name: filter(lambda c: c.name == name, columns)[0]
+
+        def get_column(_name):
+            [_column] = [c for c in columns if c.name == _name]
+            return _column
 
         # verify inferred column types is as expected
         for col_name, expec_col_type in expected_column_types:
