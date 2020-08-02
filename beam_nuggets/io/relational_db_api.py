@@ -3,6 +3,7 @@ from __future__ import division, print_function
 
 import datetime
 
+from beam_nuggets.compat import iteritems
 from sqlalchemy import (
     create_engine, MetaData, Table, Column,
     Integer,
@@ -454,7 +455,7 @@ def _columns_from_sample_record(record, primary_key_column_names, drivername):
         ]
         other_columns = [
             Column(col, infer_db_type(value, drivername))
-            for col, value in record.iteritems()
+            for col, value in iteritems(record)
             if col not in primary_key_column_names
         ]
     else:
@@ -464,7 +465,7 @@ def _columns_from_sample_record(record, primary_key_column_names, drivername):
         primary_key_columns = [Column(pri_col_name, Integer, primary_key=True)]
         other_columns = [
             Column(col, infer_db_type(value, drivername))
-            for col, value in record.iteritems()
+            for col, value in iteritems(record)
         ]
     return primary_key_columns + other_columns
 
