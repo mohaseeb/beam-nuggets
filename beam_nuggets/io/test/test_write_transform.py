@@ -24,7 +24,7 @@ class TestWriteTransform(TransformBaseTest):
 
     def execute_pipeline(self, source_config, table_config, records):
         with TestPipeline() as p:
-            months = p | "Reading records" >> beam.Create(records)
+            months = p | "Reading records" >> beam.Create(records, reshuffle=False)
             months | 'Writing to table' >> relational_db.Write(
                 source_config=source_config,
                 table_config=table_config
