@@ -9,6 +9,13 @@ Subpackages
     beam_nuggets.io
     beam_nuggets.transforms
 
+Submodules
+----------
+
+.. toctree::
+
+   beam_nuggets.compat
+
 Module contents
 ---------------
 

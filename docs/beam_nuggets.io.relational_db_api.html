@@ -1,8 +1,7 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html4" lang="en" >
 <head>
   <meta charset="utf-8">
   
@@ -12,12 +11,18 @@
   
 
   
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
   
   
   
 
   
-  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -29,10 +34,6 @@
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="beam_nuggets.transforms package" href="beam_nuggets.transforms.html" />
@@ -50,7 +51,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> beam-nuggets
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> beam-nuggets
           
 
           
@@ -73,6 +74,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -94,6 +96,7 @@
 <li class="toctree-l3"><a class="reference internal" href="beam_nuggets.transforms.html">beam_nuggets.transforms package</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="beam_nuggets.html#submodules">Submodules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="beam_nuggets.html#module-beam_nuggets">Module contents</a></li>
 </ul>
 </li>
@@ -103,6 +106,7 @@
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -141,7 +145,7 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="index.html">Docs</a> &raquo;</li>
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
           <li><a href="beam_nuggets.html">beam_nuggets package</a> &raquo;</li>
         
@@ -213,7 +217,7 @@ missing database before writing to it.</li>
 </table>
 <p class="rubric">Examples</p>
 <p>MySQL database</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">beam_nuggets.io</span> <span class="k">import</span> <span class="n">relational_db</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">beam_nuggets.io</span> <span class="kn">import</span> <span class="n">relational_db</span>
 <span class="n">src_cnf</span> <span class="o">=</span> <span class="n">relational_db</span><span class="o">.</span><span class="n">SourceConfiguration</span><span class="p">(</span>
     <span class="n">drivername</span><span class="o">=</span><span class="s1">&#39;mysql+pymysql&#39;</span><span class="p">,</span>
     <span class="n">host</span><span class="o">=</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span>
@@ -227,7 +231,7 @@ missing database before writing to it.</li>
 </pre></div>
 </div>
 <p>PostgreSQL database</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">beam_nuggets.io</span> <span class="k">import</span> <span class="n">relational_db</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">beam_nuggets.io</span> <span class="kn">import</span> <span class="n">relational_db</span>
 <span class="n">src_cnf</span> <span class="o">=</span> <span class="n">relational_db</span><span class="o">.</span><span class="n">SourceConfiguration</span><span class="p">(</span>
     <span class="n">drivername</span><span class="o">=</span><span class="s1">&#39;postgresql&#39;</span><span class="p">,</span>
     <span class="n">host</span><span class="o">=</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span>
@@ -241,7 +245,7 @@ missing database before writing to it.</li>
 </pre></div>
 </div>
 <p>SQLite database</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">beam_nuggets.io</span> <span class="k">import</span> <span class="n">relational_db</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">beam_nuggets.io</span> <span class="kn">import</span> <span class="n">relational_db</span>
 <span class="n">src_cnf</span> <span class="o">=</span> <span class="n">relational_db</span><span class="o">.</span><span class="n">SourceConfiguration</span><span class="p">(</span>
     <span class="n">drivername</span><span class="o">=</span><span class="s1">&#39;sqlite&#39;</span><span class="p">,</span>
     <span class="n">database</span><span class="o">=</span><span class="s1">&#39;/tmp/test_db.sqlite&#39;</span>
@@ -313,7 +317,7 @@ creation.</li>
 <dl class="exception">
 <dt id="beam_nuggets.io.relational_db_api.SqlAlchemyDbException">
 <em class="property">exception </em><code class="descclassname">beam_nuggets.io.relational_db_api.</code><code class="descname">SqlAlchemyDbException</code><a class="reference internal" href="_modules/beam_nuggets/io/relational_db_api.html#SqlAlchemyDbException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#beam_nuggets.io.relational_db_api.SqlAlchemyDbException" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">exceptions.Exception</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
 </dd></dl>
 
 <dl class="class">
@@ -400,7 +404,7 @@ creating tables.</li>
 <p class="rubric">Examples</p>
 <p>A configuration for creating the table if missing using the specified
 columns to create the primary key.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">beam_nuggets.io</span> <span class="k">import</span> <span class="n">relational_db</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">beam_nuggets.io</span> <span class="kn">import</span> <span class="n">relational_db</span>
 
 <span class="n">table_config</span> <span class="o">=</span> <span class="n">relational_db</span><span class="o">.</span><span class="n">TableConfiguration</span><span class="p">(</span>
     <span class="n">name</span><span class="o">=</span><span class="s1">&#39;students&#39;</span><span class="p">,</span>
@@ -411,8 +415,8 @@ columns to create the primary key.</p>
 </div>
 <p>A configuration for creating the table if missing using the specified
 definition.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="k">import</span> <span class="n">Table</span><span class="p">,</span> <span class="n">Integer</span><span class="p">,</span> <span class="n">String</span><span class="p">,</span> <span class="n">Column</span>
-<span class="kn">from</span> <span class="nn">beam_nuggets.io</span> <span class="k">import</span> <span class="n">relational_db</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">Table</span><span class="p">,</span> <span class="n">Integer</span><span class="p">,</span> <span class="n">String</span><span class="p">,</span> <span class="n">Column</span>
+<span class="kn">from</span> <span class="nn">beam_nuggets.io</span> <span class="kn">import</span> <span class="n">relational_db</span>
 
 <span class="n">table_name</span> <span class="o">=</span> <span class="s1">&#39;students&#39;</span>
 
@@ -619,11 +623,19 @@ infer the column type).</li>
 
   <div role="contentinfo">
     <p>
+        
         &copy; Copyright 2019, Mohamed Haseeb
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -634,7 +646,6 @@ infer the column type).</li>
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {
