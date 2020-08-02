@@ -43,7 +43,7 @@ def main():
     options = PipelineOptions(pipeline_args)
     options.view_as(SetupOptions).save_main_session = True
     with beam.Pipeline(options=options) as p:
-        months = p | "Reading records" >> beam.Create(records)
+        months = p | "Reading records" >> beam.Create(records, reshuffle=False)
         months | 'Writing to DB' >> relational_db.Write(
             source_config=source_config,
             table_config=table_config
