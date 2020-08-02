@@ -19,7 +19,7 @@ REQUIRED_PACKAGES_TEST = [
     'testing.postgresql>=1.3.0,<2.0.0',
     'testing.mysqld>=1.4.0,<2.0.0',
     'numpy>=1.15.4,<2.0.0',
-    'pandas>=0.23.4,<0.24'
+    'pandas'
 ]
 
 REQUIRED_PACKAGES_DOCS = [
