@@ -62,11 +62,12 @@ class _ConsumeKafkaTopic(DoFn):
     def process(self, config):
         consumer_config = dict(config)
         topic = consumer_config.pop('topic')
+        value_decoder = consumer_config.pop('value_decoder', bytes.decode)
         consumer = KafkaConsumer(topic, **consumer_config)
 
         for msg in consumer:
             try:
-                yield (msg.key, msg.value.decode())
+                yield (msg.key, value_decoder(msg.value))
             except Exception as e:
                 print(e)
                 continue
