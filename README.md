@@ -169,8 +169,7 @@ scripts/build_test_deploy.sh
 * WriteToRelationalDB, logging
 
 # Contributions by
-[mohaseeb](https://github.com/mohaseeb), [astrocox](https://github.com/astrocox),  
-[2514millerj](https://github.com/2514millerj), [alfredo](https://github.com/alfredo)
+[mohaseeb](https://github.com/mohaseeb), [astrocox](https://github.com/astrocox), [2514millerj](https://github.com/2514millerj), [alfredo](https://github.com/alfredo), [shivangkumar](https://github.com/shivangkumar)
 
 # Licence
 MIT
