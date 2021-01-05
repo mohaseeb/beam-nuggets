@@ -3,9 +3,9 @@
 <!DOCTYPE html>
 <html class="writer-html4" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>beam_nuggets.io.kafkaio module &mdash; beam-nuggets 0.1.0 documentation</title>
   
@@ -16,7 +16,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -51,7 +54,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home" alt="Documentation Home"> beam-nuggets
+            <a href="index.html" class="icon icon-home"> beam-nuggets
           
 
           
@@ -141,6 +144,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -156,7 +161,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="_sources/beam_nuggets.io.kafkaio.rst.txt" rel="nofollow"> View page source</a>
           
         
@@ -174,7 +179,7 @@
 <span id="beam-nuggets-io-kafkaio-module"></span><h1>beam_nuggets.io.kafkaio module<a class="headerlink" href="#module-beam_nuggets.io.kafkaio" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="beam_nuggets.io.kafkaio.KafkaConsume">
-<em class="property">class </em><code class="descclassname">beam_nuggets.io.kafkaio.</code><code class="descname">KafkaConsume</code><span class="sig-paren">(</span><em>consumer_config</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/beam_nuggets/io/kafkaio.html#KafkaConsume"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#beam_nuggets.io.kafkaio.KafkaConsume" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">beam_nuggets.io.kafkaio.</code><code class="descname">KafkaConsume</code><span class="sig-paren">(</span><em>consumer_config</em>, <em>value_decoder=None</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/beam_nuggets/io/kafkaio.html#KafkaConsume"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#beam_nuggets.io.kafkaio.KafkaConsume" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">apache_beam.transforms.ptransform.PTransform</span></code></p>
 <p>A <code class="xref py py-class docutils literal notranslate"><span class="pre">PTransform</span></code> for reading from an Apache Kafka topic. This is a streaming
 Transform that never returns. The transform uses <cite>KafkaConsumer</cite> from the
@@ -185,26 +190,34 @@ Transform that never returns. The transform uses <cite>KafkaConsumer</cite> from
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>consumer_config</strong> (<em>dict</em>) – the kafka consumer configuration. The
-supported configurations are those of <cite>KafkaConsumer</cite> from
-the <cite>kafka</cite> python library.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>consumer_config</strong> (<em>dict</em>) – the kafka consumer configuration. The topic to
+be subscribed to should be specified with a key called ‘topic’. The
+remaining configurations are those of <cite>KafkaConsumer</cite> from the
+<cite>kafka</cite> python library.</li>
+<li><strong>value_decoder</strong> (<em>function</em>) – Optional function to decode the consumed
+message value. If not specified, “bytes.decode” is used by default.
+“bytes.decode” which assumes “utf-8” encoding.</li>
+</ul>
+</td>
 </tr>
 </tbody>
 </table>
 <p class="rubric">Examples</p>
 <p>Consuming from a Kafka Topic <cite>notifications</cite></p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
-<span class="kn">import</span> <span class="nn">apache_beam</span> <span class="k">as</span> <span class="nn">beam</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">apache_beam</span> <span class="k">as</span> <span class="nn">beam</span>
 <span class="kn">from</span> <span class="nn">apache_beam.options.pipeline_options</span> <span class="kn">import</span> <span class="n">PipelineOptions</span>
 <span class="kn">from</span> <span class="nn">beam_nuggets.io</span> <span class="kn">import</span> <span class="n">kafkaio</span>
 
-<span class="n">kafka_topic</span> <span class="o">=</span> <span class="s2">&quot;notifications&quot;</span>
-<span class="n">kafka_config</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;topic&quot;</span><span class="p">:</span> <span class="n">kafka_topic</span><span class="p">,</span>
-                <span class="s2">&quot;bootstrap_servers&quot;</span><span class="p">:</span> <span class="s2">&quot;localhost:9092&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;group_id&quot;</span><span class="p">:</span> <span class="s2">&quot;notification_consumer_group&quot;</span><span class="p">}</span>
+<span class="n">consumer_config</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;topic&quot;</span><span class="p">:</span> <span class="s2">&quot;notifications&quot;</span><span class="p">,</span>
+                   <span class="s2">&quot;bootstrap_servers&quot;</span><span class="p">:</span> <span class="s2">&quot;localhost:9092&quot;</span><span class="p">,</span>
+                   <span class="s2">&quot;group_id&quot;</span><span class="p">:</span> <span class="s2">&quot;notification_consumer_group&quot;</span><span class="p">}</span>
 
 <span class="k">with</span> <span class="n">beam</span><span class="o">.</span><span class="n">Pipeline</span><span class="p">(</span><span class="n">options</span><span class="o">=</span><span class="n">PipelineOptions</span><span class="p">())</span> <span class="k">as</span> <span class="n">p</span><span class="p">:</span>
-    <span class="n">notifications</span> <span class="o">=</span> <span class="n">p</span> <span class="o">|</span> <span class="s2">&quot;Reading messages from Kafka&quot;</span> <span class="o">&gt;&gt;</span> <span class="n">kafkaio</span><span class="o">.</span><span class="n">KafkaConsume</span><span class="p">(</span><span class="n">kafka_config</span><span class="p">)</span>
+    <span class="n">notifications</span> <span class="o">=</span> <span class="n">p</span> <span class="o">|</span> <span class="s2">&quot;Reading messages from Kafka&quot;</span> <span class="o">&gt;&gt;</span> <span class="n">kafkaio</span><span class="o">.</span><span class="n">KafkaConsume</span><span class="p">(</span>
+        <span class="n">consumer_config</span><span class="o">=</span><span class="n">consumer_config</span><span class="p">,</span>
+        <span class="n">value_decoder</span><span class="o">=</span><span class="nb">bytes</span><span class="o">.</span><span class="n">decode</span><span class="p">,</span>  <span class="c1"># optional</span>
+    <span class="p">)</span>
     <span class="n">notifications</span> <span class="o">|</span> <span class="s1">&#39;Writing to stdout&#39;</span> <span class="o">&gt;&gt;</span> <span class="n">beam</span><span class="o">.</span><span class="n">Map</span><span class="p">(</span><span class="nb">print</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -279,37 +292,29 @@ Pushing message to a Kafka Topic <cite>notifications</cite></p>
            
           </div>
           <footer>
-  
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="beam_nuggets.io.relational_db.html" class="btn btn-neutral float-right" title="beam_nuggets.io.relational_db module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="beam_nuggets.io.csvio.html" class="btn btn-neutral float-left" title="beam_nuggets.io.csvio module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+        <a href="beam_nuggets.io.relational_db.html" class="btn btn-neutral float-right" title="beam_nuggets.io.relational_db module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="beam_nuggets.io.csvio.html" class="btn btn-neutral float-left" title="beam_nuggets.io.csvio module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; Copyright 2019, Mohamed Haseeb
+        &#169; Copyright 2019, Mohamed Haseeb.
 
     </p>
   </div>
     
     
     
-    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     
     provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 
