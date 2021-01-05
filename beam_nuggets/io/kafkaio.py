@@ -13,25 +13,30 @@ class KafkaConsume(PTransform):
     ``key-values:s``, each object is a Kafka message in the form (msg-key, msg)
 
     Args:
-        consumer_config (dict): the kafka consumer configuration. The
-            supported configurations are those of `KafkaConsumer` from
-            the `kafka` python library.
+        consumer_config (dict): the kafka consumer configuration. The topic to
+            be subscribed to should be specified with a key called 'topic'. The
+            remaining configurations are those of `KafkaConsumer` from the
+            `kafka` python library.
+        value_decoder (function): Optional function to decode the consumed
+            message value. If not specified, "bytes.decode" is used by default.
+            "bytes.decode" which assumes "utf-8" encoding.
 
     Examples:
         Consuming from a Kafka Topic `notifications` ::
 
-            from __future__ import print_function
             import apache_beam as beam
             from apache_beam.options.pipeline_options import PipelineOptions
             from beam_nuggets.io import kafkaio
 
-            kafka_topic = "notifications"
-            kafka_config = {"topic": kafka_topic,
-                            "bootstrap_servers": "localhost:9092",
-                            "group_id": "notification_consumer_group"}
+            consumer_config = {"topic": "notifications",
+                               "bootstrap_servers": "localhost:9092",
+                               "group_id": "notification_consumer_group"}
 
             with beam.Pipeline(options=PipelineOptions()) as p:
-                notifications = p | "Reading messages from Kafka" >> kafkaio.KafkaConsume(kafka_config)
+                notifications = p | "Reading messages from Kafka" >> kafkaio.KafkaConsume(
+                    consumer_config=consumer_config,
+                    value_decoder=bytes.decode,  # optional
+                )
                 notifications | 'Writing to stdout' >> beam.Map(print)
 
         The output will be something like ::
@@ -42,16 +47,19 @@ class KafkaConsume(PTransform):
         Where the first element of the tuple is the Kafka message key and the second element is the Kafka message being passed through the topic
     """
 
-    def __init__(self, consumer_config, *args, **kwargs):
+    def __init__(self, consumer_config, value_decoder=None, *args, **kwargs):
         """Initializes ``KafkaConsume``
         """
         super(KafkaConsume, self).__init__()
-        self._config = consumer_config
+        self._consumer_args = dict(
+            consumer_config=consumer_config,
+            value_decoder=value_decoder,
+        )
 
     def expand(self, pcoll):
         return (
             pcoll
-            | Create([self._config])
+            | Create([self._consumer_args])
             | ParDo(_ConsumeKafkaTopic())
         )
 
@@ -59,15 +67,15 @@ class KafkaConsume(PTransform):
 class _ConsumeKafkaTopic(DoFn):
     """Internal ``DoFn`` to read from Kafka topic and return messages"""
 
-    def process(self, config):
-        consumer_config = dict(config)
+    def process(self, consumer_args):
+        consumer_config = consumer_args.pop('consumer_config')
         topic = consumer_config.pop('topic')
-        value_decoder = consumer_config.pop('value_decoder', bytes.decode)
+        value_decoder = consumer_args.pop('value_decoder') or bytes.decode
         consumer = KafkaConsumer(topic, **consumer_config)
 
         for msg in consumer:
             try:
-                yield (msg.key, value_decoder(msg.value))
+                yield msg.key, value_decoder(msg.value)
             except Exception as e:
                 print(e)
                 continue
