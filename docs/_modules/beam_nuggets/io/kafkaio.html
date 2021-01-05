@@ -3,9 +3,9 @@
 <!DOCTYPE html>
 <html class="writer-html4" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>beam_nuggets.io.kafkaio &mdash; beam-nuggets 0.1.0 documentation</title>
   
@@ -16,7 +16,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -49,7 +52,7 @@
           
 
           
-            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> beam-nuggets
+            <a href="../../../index.html" class="icon icon-home"> beam-nuggets
           
 
           
@@ -126,6 +129,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -165,25 +170,30 @@
 <span class="sd">    ``key-values:s``, each object is a Kafka message in the form (msg-key, msg)</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        consumer_config (dict): the kafka consumer configuration. The</span>
-<span class="sd">            supported configurations are those of `KafkaConsumer` from</span>
-<span class="sd">            the `kafka` python library.</span>
+<span class="sd">        consumer_config (dict): the kafka consumer configuration. The topic to</span>
+<span class="sd">            be subscribed to should be specified with a key called &#39;topic&#39;. The</span>
+<span class="sd">            remaining configurations are those of `KafkaConsumer` from the</span>
+<span class="sd">            `kafka` python library.</span>
+<span class="sd">        value_decoder (function): Optional function to decode the consumed</span>
+<span class="sd">            message value. If not specified, &quot;bytes.decode&quot; is used by default.</span>
+<span class="sd">            &quot;bytes.decode&quot; which assumes &quot;utf-8&quot; encoding.</span>
 
 <span class="sd">    Examples:</span>
 <span class="sd">        Consuming from a Kafka Topic `notifications` ::</span>
 
-<span class="sd">            from __future__ import print_function</span>
 <span class="sd">            import apache_beam as beam</span>
 <span class="sd">            from apache_beam.options.pipeline_options import PipelineOptions</span>
 <span class="sd">            from beam_nuggets.io import kafkaio</span>
 
-<span class="sd">            kafka_topic = &quot;notifications&quot;</span>
-<span class="sd">            kafka_config = {&quot;topic&quot;: kafka_topic,</span>
-<span class="sd">                            &quot;bootstrap_servers&quot;: &quot;localhost:9092&quot;,</span>
-<span class="sd">                            &quot;group_id&quot;: &quot;notification_consumer_group&quot;}</span>
+<span class="sd">            consumer_config = {&quot;topic&quot;: &quot;notifications&quot;,</span>
+<span class="sd">                               &quot;bootstrap_servers&quot;: &quot;localhost:9092&quot;,</span>
+<span class="sd">                               &quot;group_id&quot;: &quot;notification_consumer_group&quot;}</span>
 
 <span class="sd">            with beam.Pipeline(options=PipelineOptions()) as p:</span>
-<span class="sd">                notifications = p | &quot;Reading messages from Kafka&quot; &gt;&gt; kafkaio.KafkaConsume(kafka_config)</span>
+<span class="sd">                notifications = p | &quot;Reading messages from Kafka&quot; &gt;&gt; kafkaio.KafkaConsume(</span>
+<span class="sd">                    consumer_config=consumer_config,</span>
+<span class="sd">                    value_decoder=bytes.decode,  # optional</span>
+<span class="sd">                )</span>
 <span class="sd">                notifications | &#39;Writing to stdout&#39; &gt;&gt; beam.Map(print)</span>
 
 <span class="sd">        The output will be something like ::</span>
@@ -194,16 +204,19 @@
 <span class="sd">        Where the first element of the tuple is the Kafka message key and the second element is the Kafka message being passed through the topic</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">consumer_config</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">consumer_config</span><span class="p">,</span> <span class="n">value_decoder</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Initializes ``KafkaConsume``</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">KafkaConsume</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_config</span> <span class="o">=</span> <span class="n">consumer_config</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_consumer_args</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="n">consumer_config</span><span class="o">=</span><span class="n">consumer_config</span><span class="p">,</span>
+            <span class="n">value_decoder</span><span class="o">=</span><span class="n">value_decoder</span><span class="p">,</span>
+        <span class="p">)</span>
 
 <div class="viewcode-block" id="KafkaConsume.expand"><a class="viewcode-back" href="../../../beam_nuggets.io.kafkaio.html#beam_nuggets.io.kafkaio.KafkaConsume.expand">[docs]</a>    <span class="k">def</span> <span class="nf">expand</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pcoll</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">(</span>
             <span class="n">pcoll</span>
-            <span class="o">|</span> <span class="n">Create</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">])</span>
+            <span class="o">|</span> <span class="n">Create</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">_consumer_args</span><span class="p">])</span>
             <span class="o">|</span> <span class="n">ParDo</span><span class="p">(</span><span class="n">_ConsumeKafkaTopic</span><span class="p">())</span>
         <span class="p">)</span></div></div>
 
@@ -211,14 +224,15 @@
 <span class="k">class</span> <span class="nc">_ConsumeKafkaTopic</span><span class="p">(</span><span class="n">DoFn</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Internal ``DoFn`` to read from Kafka topic and return messages&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">):</span>
-        <span class="n">consumer_config</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">consumer_args</span><span class="p">):</span>
+        <span class="n">consumer_config</span> <span class="o">=</span> <span class="n">consumer_args</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;consumer_config&#39;</span><span class="p">)</span>
         <span class="n">topic</span> <span class="o">=</span> <span class="n">consumer_config</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;topic&#39;</span><span class="p">)</span>
+        <span class="n">value_decoder</span> <span class="o">=</span> <span class="n">consumer_args</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;value_decoder&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">bytes</span><span class="o">.</span><span class="n">decode</span>
         <span class="n">consumer</span> <span class="o">=</span> <span class="n">KafkaConsumer</span><span class="p">(</span><span class="n">topic</span><span class="p">,</span> <span class="o">**</span><span class="n">consumer_config</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">consumer</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="k">yield</span> <span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">key</span><span class="p">,</span> <span class="n">msg</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">decode</span><span class="p">())</span>
+                <span class="k">yield</span> <span class="n">msg</span><span class="o">.</span><span class="n">key</span><span class="p">,</span> <span class="n">value_decoder</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
                 <span class="k">continue</span>
@@ -300,28 +314,25 @@
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; Copyright 2019, Mohamed Haseeb
+        &#169; Copyright 2019, Mohamed Haseeb.
 
     </p>
   </div>
     
     
     
-    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     
     provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 
