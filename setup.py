@@ -9,7 +9,9 @@ REQUIRED_PACKAGES = [
     'SQLAlchemy>=1.2.14,<2.0.0',
     'sqlalchemy-utils>=0.33.11,<0.34',
     # Below are drivers for connection to specific DBs
-    'pg8000>=1.12.4,<2.0.0',
+    # 'pg8000>=1.12.4,<2.0.0',
+    'pg8000<=1.16.5',
+    # https://stackoverflow.com/questions/64519570/sqlalchemy-orm-call-fails-with-typeerror-expected-bytes-str-found
     'PyMySQL>=0.9.3,<2.0.0',
     'kafka-python>=2.0.1',
 ]
