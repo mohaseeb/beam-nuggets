@@ -170,7 +170,7 @@ class Write(PTransform):
         ))
 
 class _WriteToRelationalDBFn(DoFn):
-    def __init__(self, source_config, table_config, max_batch_size,*args, **kwargs):
+    def __init__(self, source_config, table_config, max_batch_size, *args, **kwargs):
         super(_WriteToRelationalDBFn, self).__init__(*args, **kwargs)
         self.source_config = source_config
         self.table_config = table_config
@@ -207,3 +207,4 @@ class _WriteToRelationalDBFn(DoFn):
     def finish_bundle(self):
         self.commit_records()
         self._db.close_session()
+

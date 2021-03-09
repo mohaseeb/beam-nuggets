@@ -361,7 +361,6 @@ class _Table(object):
                 record=record_dict
             )
             session.execute(insert_stmt)
-
         except:
             session.rollback()
             session.close()
