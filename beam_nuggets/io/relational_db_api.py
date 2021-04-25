@@ -3,7 +3,6 @@ from __future__ import division, print_function
 
 import datetime
 
-from beam_nuggets.compat import iteritems
 from sqlalchemy import (
     create_engine, MetaData, Table, Column,
     Integer,
@@ -12,7 +11,8 @@ from sqlalchemy import (
     Boolean,
     DateTime,
     Date,
-    insert as generic_insert
+    insert as generic_insert,
+    inspect,
 )
 from sqlalchemy.dialects.mysql import insert as mysql_insert
 from sqlalchemy.dialects.postgresql import insert as postgres_insert
@@ -20,6 +20,8 @@ from sqlalchemy.engine.url import URL
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy_utils import database_exists, create_database
+
+from beam_nuggets.compat import iteritems
 
 
 class SourceConfiguration(object):
@@ -347,9 +349,9 @@ class _Table(object):
             yield self._from_db_record(record)
 
     def query_records(self, session, query):
-        mapper = session.execute(query).keys()
+        column_names = session.execute(query).keys()
         for record in session.execute(query):
-            yield self._from_db_record(record, mapper)
+            yield self._from_db_record(record, column_names)
 
     def write_record(self, session, create_insert_f, record_dict):
         try:
@@ -368,17 +370,15 @@ class _Table(object):
     def _to_db_record(self, record_dict):
         return self._Class(**record_dict)
 
-    def _from_db_record(self, db_record, mapper=[]):
-        if mapper:
-            return {col: getattr(db_record, col) for col in mapper}
-        else:
-            return {col: getattr(db_record, col) for col in self._column_names}
+    def _from_db_record(self, db_record, column_names=None):
+        column_names = column_names or self._column_names
+        return {col: getattr(db_record, col) for col in column_names}
 
 
 def load_table(session, name):
     table_class = None
     engine = session.bind
-    if engine.dialect.has_table(engine, name):
+    if inspect(engine).has_table(name):
         metadata = MetaData(bind=engine)
         table_class = create_table_class(Table(name, metadata, autoload=True))
     return table_class
@@ -610,4 +610,3 @@ PYTHON_TO_DB_TYPE = [
     (lambda x: isinstance(x, datetime.datetime), DateTime),
     (lambda x: isinstance(x, datetime.date), Date),
 ]
-
