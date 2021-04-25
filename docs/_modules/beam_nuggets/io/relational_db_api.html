@@ -160,7 +160,6 @@
 
 <span class="kn">import</span> <span class="nn">datetime</span>
 
-<span class="kn">from</span> <span class="nn">beam_nuggets.compat</span> <span class="kn">import</span> <span class="n">iteritems</span>
 <span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">create_engine</span><span class="p">,</span> <span class="n">MetaData</span><span class="p">,</span> <span class="n">Table</span><span class="p">,</span> <span class="n">Column</span><span class="p">,</span>
     <span class="n">Integer</span><span class="p">,</span>
@@ -169,7 +168,8 @@
     <span class="n">Boolean</span><span class="p">,</span>
     <span class="n">DateTime</span><span class="p">,</span>
     <span class="n">Date</span><span class="p">,</span>
-    <span class="n">insert</span> <span class="k">as</span> <span class="n">generic_insert</span>
+    <span class="n">insert</span> <span class="k">as</span> <span class="n">generic_insert</span><span class="p">,</span>
+    <span class="n">inspect</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">sqlalchemy.dialects.mysql</span> <span class="kn">import</span> <span class="n">insert</span> <span class="k">as</span> <span class="n">mysql_insert</span>
 <span class="kn">from</span> <span class="nn">sqlalchemy.dialects.postgresql</span> <span class="kn">import</span> <span class="n">insert</span> <span class="k">as</span> <span class="n">postgres_insert</span>
@@ -177,6 +177,8 @@
 <span class="kn">from</span> <span class="nn">sqlalchemy.ext.declarative</span> <span class="kn">import</span> <span class="n">declarative_base</span>
 <span class="kn">from</span> <span class="nn">sqlalchemy.orm</span> <span class="kn">import</span> <span class="n">sessionmaker</span>
 <span class="kn">from</span> <span class="nn">sqlalchemy_utils</span> <span class="kn">import</span> <span class="n">database_exists</span><span class="p">,</span> <span class="n">create_database</span>
+
+<span class="kn">from</span> <span class="nn">beam_nuggets.compat</span> <span class="kn">import</span> <span class="n">iteritems</span>
 
 
 <div class="viewcode-block" id="SourceConfiguration"><a class="viewcode-back" href="../../../beam_nuggets.io.relational_db_api.html#beam_nuggets.io.relational_db_api.SourceConfiguration">[docs]</a><span class="k">class</span> <span class="nc">SourceConfiguration</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -504,9 +506,9 @@
             <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">_from_db_record</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">query_records</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session</span><span class="p">,</span> <span class="n">query</span><span class="p">):</span>
-        <span class="n">mapper</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">query</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="n">column_names</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">query</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">session</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">query</span><span class="p">):</span>
-            <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">_from_db_record</span><span class="p">(</span><span class="n">record</span><span class="p">,</span> <span class="n">mapper</span><span class="p">)</span>
+            <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">_from_db_record</span><span class="p">(</span><span class="n">record</span><span class="p">,</span> <span class="n">column_names</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">write_record</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session</span><span class="p">,</span> <span class="n">create_insert_f</span><span class="p">,</span> <span class="n">record_dict</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
@@ -525,17 +527,15 @@
     <span class="k">def</span> <span class="nf">_to_db_record</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record_dict</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_Class</span><span class="p">(</span><span class="o">**</span><span class="n">record_dict</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_from_db_record</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db_record</span><span class="p">,</span> <span class="n">mapper</span><span class="o">=</span><span class="p">[]):</span>
-        <span class="k">if</span> <span class="n">mapper</span><span class="p">:</span>
-            <span class="k">return</span> <span class="p">{</span><span class="n">col</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">db_record</span><span class="p">,</span> <span class="n">col</span><span class="p">)</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">mapper</span><span class="p">}</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="p">{</span><span class="n">col</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">db_record</span><span class="p">,</span> <span class="n">col</span><span class="p">)</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_column_names</span><span class="p">}</span>
+    <span class="k">def</span> <span class="nf">_from_db_record</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db_record</span><span class="p">,</span> <span class="n">column_names</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">column_names</span> <span class="o">=</span> <span class="n">column_names</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_column_names</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">col</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">db_record</span><span class="p">,</span> <span class="n">col</span><span class="p">)</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">column_names</span><span class="p">}</span>
 
 
 <div class="viewcode-block" id="load_table"><a class="viewcode-back" href="../../../beam_nuggets.io.relational_db_api.html#beam_nuggets.io.relational_db_api.load_table">[docs]</a><span class="k">def</span> <span class="nf">load_table</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
     <span class="n">table_class</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">engine</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">bind</span>
-    <span class="k">if</span> <span class="n">engine</span><span class="o">.</span><span class="n">dialect</span><span class="o">.</span><span class="n">has_table</span><span class="p">(</span><span class="n">engine</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">inspect</span><span class="p">(</span><span class="n">engine</span><span class="p">)</span><span class="o">.</span><span class="n">has_table</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
         <span class="n">metadata</span> <span class="o">=</span> <span class="n">MetaData</span><span class="p">(</span><span class="n">bind</span><span class="o">=</span><span class="n">engine</span><span class="p">)</span>
         <span class="n">table_class</span> <span class="o">=</span> <span class="n">create_table_class</span><span class="p">(</span><span class="n">Table</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">metadata</span><span class="p">,</span> <span class="n">autoload</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">table_class</span></div>
@@ -767,7 +767,6 @@
     <span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">),</span> <span class="n">DateTime</span><span class="p">),</span>
     <span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="p">),</span> <span class="n">Date</span><span class="p">),</span>
 <span class="p">]</span>
-
 </pre></div>
 
            </div>
