@@ -263,6 +263,9 @@ class SqlAlchemyDB(object):
         self._session.bind.dispose()
         self._session = None
 
+    def commit_session(self):
+        self._session.commit()
+
     def read(self, table_name):
         table = self._open_table_for_read(table_name)
         for record in table.records(self._session):
@@ -360,7 +363,6 @@ class _Table(object):
                 record=record_dict
             )
             session.execute(insert_stmt)
-            session.commit()
         except:
             session.rollback()
             session.close()

@@ -150,37 +150,61 @@ class Write(PTransform):
                 months = p | "Reading month records" >> beam.Create(records)
                 months | 'Writing to DB table' >> relational_db.Write(
                     source_config=source_config,
-                    table_config=table_config
+                    table_config=table_config,
+                #   max_batch_size=1500  
                 )
 
     """
 
-    def __init__(self, source_config, table_config, *args, **kwargs):
+    def __init__(self, source_config, table_config, max_batch_size=1000, *args, **kwargs):
         super(Write, self).__init__(*args, **kwargs)
         self.source_config = source_config
         self.table_config = table_config
+        self.max_batch_size = max_batch_size
 
     def expand(self, pcoll):
         return pcoll | ParDo(_WriteToRelationalDBFn(
             source_config=self.source_config,
-            table_config=self.table_config
+            table_config=self.table_config,
+            max_batch_size=self.max_batch_size
         ))
 
-
 class _WriteToRelationalDBFn(DoFn):
-    def __init__(self, source_config, table_config, *args, **kwargs):
+    def __init__(self, source_config, table_config, max_batch_size, *args, **kwargs):
         super(_WriteToRelationalDBFn, self).__init__(*args, **kwargs)
         self.source_config = source_config
         self.table_config = table_config
+        self.max_batch_size = max_batch_size
+    
+    def setup(self):
+        self._db = SqlAlchemyDB(self.source_config)
 
     def start_bundle(self):
-        self._db = SqlAlchemyDB(self.source_config)
         self._db.start_session()
+        self.record_counter = 0
+        self.records = []
 
     def process(self, element):
         assert isinstance(element, dict)
+        self.records.append(element)
+        self.record_counter = self.record_counter + 1
         self._db.write_record(self.table_config, element)
 
+        if (self.record_counter > self.max_batch_size):
+            self.commit_records()
+        
+    def commit_records(self):
+        if self.record_counter() == 0:
+            return
+
+        for record in self.records:
+            self._db.write_record(self.table_config, record)
+        
+        self._db.commit_session()
+        self.record_counter = 0
+        self.records = []
+
     def finish_bundle(self):
+        self.commit_records()
         self._db.close_session()
 
