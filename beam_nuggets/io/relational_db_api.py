@@ -122,6 +122,7 @@ class TableConfiguration(object):
 
     Args:
         name (str): the table name.
+        schema (str): the schema name.
         create_insert_f (function): a function that takes as input an
             SqlAlchemy table and a row record, and returns an statement for
             inserting the record into the table. The function doesn't
@@ -187,6 +188,7 @@ class TableConfiguration(object):
 
             table_config = relational_db.TableConfiguration(
                 name='students',
+                schema='school',
                 create_if_missing=True,
                 primary_key_columns=['id']
             )
@@ -210,6 +212,7 @@ class TableConfiguration(object):
 
             table_config = relational_db.TableConfiguration(
                 name=table_name,
+                schema=schema,
                 create_if_missing=True,
                 define_table_f=define_students_table
             )
@@ -222,12 +225,14 @@ class TableConfiguration(object):
     def __init__(
         self,
         name,
+        schema='public',
         define_table_f=None,
         create_if_missing=False,
         primary_key_columns=None,
         create_insert_f=None
     ):
         self.name = name
+        self.schema = schema
         self.define_table_f = define_table_f
         self.create_table_if_missing = create_if_missing
         self.primary_key_column_names = primary_key_columns or []
@@ -263,13 +268,13 @@ class SqlAlchemyDB(object):
         self._session.bind.dispose()
         self._session = None
 
-    def read(self, table_name):
-        table = self._open_table_for_read(table_name)
+    def read(self, table_name, schema):
+        table = self._open_table_for_read(table_name, schema)
         for record in table.records(self._session):
             yield record
 
-    def query(self, table_name, query):
-        table = self._open_table_for_read(table_name)
+    def query(self, table_name, schema, query):
+        table = self._open_table_for_read(table_name, schema)
         for record in table.query_records(self._session, query):
             yield record
 
@@ -301,33 +306,35 @@ class SqlAlchemyDB(object):
                 create_insert_f = create_insert
         return create_insert_f
 
-    def _open_table_for_read(self, name):
+    def _open_table_for_read(self, name, schema):
         return self._open_table(
             name=name,
+            schema=schema,
             get_table_f=load_table
         )
 
     def _open_table_for_write(self, table_config, record):
         return self._open_table(
             name=table_config.name,
+            schema=table_config.schema,
             get_table_f=create_table,
             table_config=table_config,
             record=record
         )
 
-    def _open_table(self, name, get_table_f, **get_table_f_params):
-        table = self._name_to_table.get(name, None)
+    def _open_table(self, name, schema, get_table_f, **get_table_f_params):
+        table = self._name_to_table.get((name, schema), None)
         if not table:
-            self._name_to_table[name] = (
-                self._get_table(name, get_table_f, **get_table_f_params)
+            self._name_to_table[(name, schema)] = (
+                self._get_table(name=name, schema=schema, get_table_f=get_table_f, **get_table_f_params)
             )
-            table = self._name_to_table[name]
+            table = self._name_to_table[(name, schema)]
         return table
 
-    def _get_table(self, name, get_table_f, **get_table_f_params):
-        table_class = get_table_f(self._session, name, **get_table_f_params)
+    def _get_table(self, name, schema, get_table_f, **get_table_f_params):
+        table_class = get_table_f(self._session, name, schema, **get_table_f_params)
         if table_class:
-            table = _Table(table_class=table_class, name=name)
+            table = _Table(table_class=table_class, name=name, schema=schema)
         else:
             raise SqlAlchemyDbException('Failed to get table {}'.format(name))
         return table
@@ -338,10 +345,11 @@ class SqlAlchemyDbException(Exception):
 
 
 class _Table(object):
-    def __init__(self, table_class, name):
+    def __init__(self, table_class, name, schema):
         self._Class = table_class
         self._sqlalchemy_table = table_class.__table__
         self.name = name
+        self.schema = schema
         self._column_names = get_column_names_from_table(table_class)
 
     def records(self, session):
@@ -375,18 +383,18 @@ class _Table(object):
         return {col: getattr(db_record, col) for col in column_names}
 
 
-def load_table(session, name):
+def load_table(session, name, schema):
     table_class = None
     engine = session.bind
-    if inspect(engine).has_table(name):
+    if inspect(engine).has_table(name, schema=schema):
         metadata = MetaData(bind=engine)
-        table_class = create_table_class(Table(name, metadata, autoload=True))
+        table_class = create_table_class(Table(name, metadata, autoload=True, schema=schema))
     return table_class
 
 
-def create_table(session, name, table_config, record):
+def create_table(session, name, schema, table_config, record):
     # Attempt to load from the DB
-    table_class = load_table(session, name)
+    table_class = load_table(session, name, schema)
 
     if not table_class and table_config.create_table_if_missing:
         define_table_f = (
@@ -394,6 +402,7 @@ def create_table(session, name, table_config, record):
             _get_default_define_f(
                 record=record,
                 name=name,
+                schema=schema,
                 primary_key_column_names=table_config.primary_key_column_names,
                 drivername=session.bind.url.drivername,
             )
@@ -424,7 +433,7 @@ def create_table_class(sqlalchemy_table):
     return TableClass
 
 
-def _get_default_define_f(record, name, primary_key_column_names, drivername):
+def _get_default_define_f(record, name, schema, primary_key_column_names, drivername):
     def define_table(metadata):
         """Defines an SqlAlchemy database table and adds it to the specified
         metadata object.
@@ -440,7 +449,7 @@ def _get_default_define_f(record, name, primary_key_column_names, drivername):
             primary_key_column_names=primary_key_column_names,
             drivername=drivername
         )
-        return Table(name, metadata, *columns)
+        return Table(name, metadata, *columns, schema=schema)
 
     return define_table
 

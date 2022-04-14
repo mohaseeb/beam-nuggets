@@ -18,6 +18,7 @@ from beam_nuggets.io.relational_db_api import (
 # It is intended SourceConfiguration and TableConfiguration are imported
 # from this module by the library users. Below is to make sure they've been
 # imported to this module.
+
 assert SourceConfiguration is not None
 assert TableConfiguration is not None
 
@@ -32,6 +33,7 @@ class ReadFromDB(PTransform):
     Args:
         source_config (SourceConfiguration): specifies the target database.
         table_name (str): the name of the table to be read.
+        schema (str): the name of the schema to be read.
         query (str): the SQL query to run against the table.
 
     Examples:
@@ -55,6 +57,7 @@ class ReadFromDB(PTransform):
                 records = p | "Reading records from db" >> relational_db.ReadFromDB(
                     source_config=source_config,
                     table_name=table_name,
+                    schema=schema,
                     query='select name, num from months'  # optional. When omitted, all table records are returned.
                 )
                 records | 'Writing to stdout' >> beam.Map(print)
@@ -67,19 +70,20 @@ class ReadFromDB(PTransform):
         Where "name" and "num" are the column names.
     """
 
-    def __init__(self, source_config, table_name, query='', *args, **kwargs):
+    def __init__(self, source_config, table_name, schema='public', query='', *args, **kwargs):
         super(ReadFromDB, self).__init__(*args, **kwargs)
         self._read_args = dict(
             source_config=source_config,
             table_name=table_name,
+            schema=schema,
             query=query
         )
 
     def expand(self, pcoll):
         return (
-            pcoll
-            | Create([self._read_args])
-            | ParDo(_ReadFromRelationalDBFn())
+                pcoll
+                | Create([self._read_args])
+                | ParDo(_ReadFromRelationalDBFn())
         )
 
 
@@ -87,16 +91,17 @@ class _ReadFromRelationalDBFn(DoFn):
     def process(self, element):
         db_args = dict(element)
         table_name = db_args.pop('table_name')
+        schema = db_args.pop('schema')
         query = db_args.pop('query')
 
         db = SqlAlchemyDB(**db_args)
         db.start_session()
         try:
             if query:
-                for record in db.query(table_name, query):
+                for record in db.query(table_name, schema, query):
                     yield record
             else:
-                for record in db.read(table_name):
+                for record in db.read(table_name, schema):
                     yield record
         except:
             raise
@@ -183,4 +188,3 @@ class _WriteToRelationalDBFn(DoFn):
 
     def finish_bundle(self):
         self._db.close_session()
-
