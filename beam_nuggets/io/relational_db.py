@@ -14,6 +14,9 @@ from beam_nuggets.io.relational_db_api import (
     SourceConfiguration,
     TableConfiguration
 )
+import logging
+
+logger = logging.getLogger(__name__)
 
 # It is intended SourceConfiguration and TableConfiguration are imported
 # from this module by the library users. Below is to make sure they've been
@@ -118,6 +121,7 @@ class Write(PTransform):
               - options for creating the target table if it was missing.
             See :class:`~beam_nuggets.io.relational_db_api.TableConfiguration`
             for details.
+        max_batch_size (int): max size of batches for batched writes to PG. Default=1000
 
     Examples:
         Writing to postgres database table. ::
@@ -150,37 +154,62 @@ class Write(PTransform):
                 months = p | "Reading month records" >> beam.Create(records)
                 months | 'Writing to DB table' >> relational_db.Write(
                     source_config=source_config,
-                    table_config=table_config
+                    table_config=table_config,
+                    max_batch_size=1500
                 )
 
     """
 
-    def __init__(self, source_config, table_config, *args, **kwargs):
+    def __init__(self, source_config, table_config, max_batch_size=1000, *args, **kwargs):
         super(Write, self).__init__(*args, **kwargs)
         self.source_config = source_config
         self.table_config = table_config
+        self.max_batch_size = max_batch_size
 
     def expand(self, pcoll):
         return pcoll | ParDo(_WriteToRelationalDBFn(
             source_config=self.source_config,
-            table_config=self.table_config
+            table_config=self.table_config,
+            max_batch_size=self.max_batch_size
         ))
 
 
 class _WriteToRelationalDBFn(DoFn):
-    def __init__(self, source_config, table_config, *args, **kwargs):
+    def __init__(self, source_config, table_config, max_batch_size, *args, **kwargs):
         super(_WriteToRelationalDBFn, self).__init__(*args, **kwargs)
         self.source_config = source_config
         self.table_config = table_config
+        self.max_batch_size = max_batch_size
+        self.records: list[dict] = []
+        self._db = None
+
+    def setup(self):
+        self._db = SqlAlchemyDB(self.source_config)
 
     def start_bundle(self):
-        self._db = SqlAlchemyDB(self.source_config)
         self._db.start_session()
+        self.records = []
 
     def process(self, element):
         assert isinstance(element, dict)
+        self.records.append(element)
         self._db.write_record(self.table_config, element)
 
-    def finish_bundle(self):
-        self._db.close_session()
+        if len(self.records) > self.max_batch_size:
+            self.commit_records()
 
+    def commit_records(self):
+        if len(self.records) == 0:
+            logger.info('No records to commit')
+            return
+
+        for record in self.records:
+            self._db.write_record(self.table_config, record)
+
+        self._db.commit_session()
+        logger.info(f'Committed {len(self.records)} records to PG.')
+        self.records = []
+
+    def finish_bundle(self):
+        self.commit_records()
+        self._db.close_session()
