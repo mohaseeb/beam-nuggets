@@ -179,7 +179,7 @@ class _WriteToRelationalDBFn(DoFn):
 
     def process(self, element):
         # assert isinstance(element, dict) or isinstance(element, list)
-        print(type(element), element)
+        print(type(element), str(element)[:500])
         self._db.write_record(self.table_config, element)
 
     def finish_bundle(self):
