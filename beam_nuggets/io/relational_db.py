@@ -178,7 +178,8 @@ class _WriteToRelationalDBFn(DoFn):
         self._db.start_session()
 
     def process(self, element):
-        assert isinstance(element, dict) or isinstance(element, list)
+        # assert isinstance(element, dict) or isinstance(element, list)
+        print(type(element), element)
         self._db.write_record(self.table_config, element)
 
     def finish_bundle(self):
