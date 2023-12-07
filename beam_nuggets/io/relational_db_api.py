@@ -103,6 +103,7 @@ class SourceConfiguration(object):
         database=None,
         username=None,
         password=None,
+        creator=None,
         create_if_missing=False,
     ):
         self.url = URL(
@@ -114,6 +115,7 @@ class SourceConfiguration(object):
             database=database
         )
         self.create_if_missing = create_if_missing
+        self.creator = creator
 
 
 class TableConfiguration(object):
@@ -246,7 +248,10 @@ class SqlAlchemyDB(object):
     def __init__(self, source_config):
         self._source = source_config
 
-        self._SessionClass = sessionmaker(bind=create_engine(self._source.url))
+        if self._source.creator:
+            self._SessionClass = sessionmaker(bind=create_engine(self._source.url, creator=self._source.creator))
+        else:
+            self._SessionClass = sessionmaker(bind=create_engine(self._source.url))
         self._session = None  # will be set in self.start_session()
 
         self._name_to_table = {}  # tables metadata cache

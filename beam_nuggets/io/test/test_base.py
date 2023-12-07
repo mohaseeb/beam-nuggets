@@ -21,10 +21,12 @@ class TransformBaseTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.postgres_source_config = cls.get_postgres_source_config()
+        cls.postgres_creator_source_config = cls.get_postgres_creator_source_config()
         cls.mysql_source_config = cls.get_mysql_source_config()
 
         cls.source_config = (
             cls.postgres_source_config or
+            cls.postgres_creator_source_config or
             cls.mysql_source_config or
             cls.get_sqlite_source_config()
         )
@@ -54,6 +56,26 @@ class TransformBaseTest(unittest.TestCase):
                 database='beam_nuggets_test_db',
                 create_if_missing=True,
             )
+    
+    @classmethod
+    def get_postgres_creator_source_config(cls):
+        cls.postgres_instance = cls.connect_to_postgresql()
+
+        def creator():
+            import pg8000
+            return pg8000.dbapi.connect(
+                host='localhost',
+                port=cls.postgres_instance.settings['port'],
+                user='postgres',
+                database='beam_nuggets_test_db',
+            )
+        if cls.postgres_instance:
+            return SourceConfiguration(
+                drivername='postgresql+pg8000',
+                creator=creator,
+                create_if_missing=True,
+            )
+
 
     @classmethod
     def connect_to_postgresql(cls):
